@@ -8,6 +8,8 @@ Rails.application.routes.draw do
       namespace :users do
         post 'auth/signup', to: 'registrations#create'
         post 'auth/signin', to: 'sessions#login' 
+        post 'password/forgot', to: 'passwords#forgot'
+        post 'password/reset', to: 'passwords#reset'
       end
     end
   end
