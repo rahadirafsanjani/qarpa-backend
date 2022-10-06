@@ -1,27 +1,21 @@
 class Api::V1::Users::PasswordsController < ApplicationController
   def forgot 
-    if params[:email].blank?
-      return render json: { error: 'Email not present' }
-    end
+    return render json: { error: 'Email not present' } if params[:email].blank?
 
     user = User.find_by(email:  params[:email])
     if user.present?
-    #   user.generate_password_token!
-
-      PasswordMailer.with(token: user.generate_password_token!, user: user, url: 'www.facebook.com').reset.deliver_now
+      PasswordMailer.with(token: user.generate_password_token!, user: user).reset.deliver_now
     else 
       render json: { error: ['Email address not found. Please check and try again.'] }, status: :not_found
     end
   end
 
   def reset 
+    return render json: { error: 'Token not present' } if params[:token].blank?
+    
     token = params[:token].to_s 
 
-    if params[:email].blank?
-      return render json: { error: 'Token not present' }
-    end
-
-    user = user.find_by(reset_password_token: token)
+    user = User.find_by(reset_password_token: token)
 
     if user.present? && user.password_token_valid?
       if user.reset_password!(params[:password])
