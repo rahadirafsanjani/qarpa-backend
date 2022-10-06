@@ -10,6 +10,7 @@ Rails.application.routes.draw do
         post 'auth/signin', to: 'sessions#login' 
         post 'password/forgot', to: 'passwords#forgot'
         post 'password/reset', to: 'passwords#reset'
+        put 'password/update', to: 'passwords#update'
       end
     end
   end
