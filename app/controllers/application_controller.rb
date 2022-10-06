@@ -1,7 +1,8 @@
 class ApplicationController < ActionController::API
-  SECRET_KEY = Rails.application.credentials.jwt.token
+  SECRET_KEY = Rails.application.credentials.jwt.secret
   
   def encode_token(payload)
+    payload[:exp] = Time.now.to_i + 1 * 3600
     JWT.encode(payload, SECRET_KEY)
   end
 
