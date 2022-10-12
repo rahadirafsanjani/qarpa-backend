@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  open_at: 2022-10-12 16:12:07
+  close_at: 2022-10-12 16:12:07
+  status: false
+  fund: 1
+  notes: MyString
+
+two:
+  name: MyString
+  open_at: 2022-10-12 16:12:07
+  close_at: 2022-10-12 16:12:07
+  status: false
+  fund: 1
+  notes: MyString
