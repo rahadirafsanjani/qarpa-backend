@@ -1,4 +1,7 @@
 class Branch < ApplicationRecord
+  belongs_to :address 
+  belongs_to :company
+
   validates :name, :fund, :notes, presence: true
   validates :fund, numericality: { only_integer: true }
 

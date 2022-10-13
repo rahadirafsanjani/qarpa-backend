@@ -3,10 +3,8 @@ class Api::V1::BranchesController < ApplicationController
   before_action :set_branch, only: %i[ close open ]
 
   def create 
-    @address = Address.new(new_address)
-
-    return render json: { message: @address.errors } if !@address.save
-
+    @address = Address.find_or_create_by(new_address)
+    return render json: { message: @address.errors } if !@address.valid?
     @branch = Branch.new(new_branch.merge(address_id: @address.id))
 
     if @branch.save
