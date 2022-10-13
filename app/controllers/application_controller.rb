@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  # SECRET_KEY = Rails.application.credentials.jwt.secret
+  SECRET_KEY = Rails.application.credentials.jwt.secret
   def encode_token(payload)
     payload[:exp] = Time.now.to_i + 1 * 3600
     JWT.encode(payload, SECRET_KEY)
@@ -14,7 +14,7 @@ class ApplicationController < ActionController::API
         JWT.decode(token, SECRET_KEY)
       rescue JWT::DecodeError
         nil
-      end    
+      end
     end
   end
 

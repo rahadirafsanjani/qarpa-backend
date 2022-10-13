@@ -22,7 +22,6 @@ class Api::V1::Users::RegistrationsController < ApplicationController
     end
   end
 
-
   def registration
       @company = Company.new(name: params[:company_name])
       @company.save!

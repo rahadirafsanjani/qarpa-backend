@@ -20,11 +20,9 @@ class User < ApplicationRecord
 
   def generate_password_token!
     token = generate_token
-    
     self.reset_password_token = token
     self.reset_password_sent_at = Time.now.utc
     save!(validate: false)
-
     return token
   end
 
@@ -45,7 +43,6 @@ class User < ApplicationRecord
   # regist by token
   def generate_regist_token!
     token = generate_regis_token
-
     self.regist_token = token
     self.regist_token_sent_at = Time.now.utc
     save!(validate: false)
@@ -54,7 +51,6 @@ class User < ApplicationRecord
 
   def destroy_token!
     self.regist_token = nil
-
     save!
   end
 
