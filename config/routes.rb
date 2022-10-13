@@ -20,6 +20,8 @@ Rails.application.routes.draw do
       #branches 
       scope 'branches' do
         post 'create', to: 'branches#create'
+        put 'close/:id', to: 'branches#close'
+        put 'open/:id', to: 'branches#open'
       end
     end
   end
