@@ -11,20 +11,32 @@ class Api::V1::Users::RegistrationsController < ApplicationController
     end
   end
 
+  # def token_redeem
+  #   return render json: { error: 'Token not present' } if params[:token].blank?
+  #   token = params[:token].to_s
+  #   @user = User.find_by(regist_token: params[:token])
+  #   if @user.present?
+  #     if @user.token_valid?
+  #       render json: { message: "token was found and secured", token: token }, status: :ok
+  #     else
+  #       render json: { message: "token was expire" }, status: :unprocessable_entity
+  #     end
+  #   else
+  #     render json: { message: "please input valid token" }, status: :unprocessable_entity
+  #   end
+  # end
+
   def token_redeem
     return render json: { error: 'Token not present' } if params[:token].blank?
     token = params[:token].to_s
     @user = User.find_by(regist_token: params[:token])
-    if @user.present?
-      if @user.token_valid?
-        render json: { message: "token was found and secured", token: token }, status: :ok
-      else
-        render json: { message: "token was expire" }, status: :unprocessable_entity
-      end
+    if @user.present? && @user.token_valid? { render json: { message: "token was expire" }, status: :unprocessable_entity }
+      render json: { message: "token was found and secured", token: token }, status: :ok
     else
       render json: { message: "please input valid token" }, status: :unprocessable_entity
     end
   end
+
 
   def registration
       @company = Company.new(name: params[:company_name])
