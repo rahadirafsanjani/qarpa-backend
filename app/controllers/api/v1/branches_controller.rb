@@ -16,7 +16,7 @@ class Api::V1::BranchesController < ApplicationController
     if @branch.close_branch()
       render json: { message: "The branch has been closed" }, status: :ok
     else
-      render json: { message: "Something went wrong" }, status: :unprocessable_entity
+      render json: { message: "The branch is already closed" }, status: :unprocessable_entity
     end
   end
 
@@ -24,7 +24,7 @@ class Api::V1::BranchesController < ApplicationController
     if @branch.open_branch()
       render json: { message: "The branch has been opened" }, status: :ok 
     else 
-      render json: { message: "Something went wrong" }, status: :unprocessable_entity
+      render json: { message: "The branch is already opened" }, status: :unprocessable_entity
     end
   end
 
