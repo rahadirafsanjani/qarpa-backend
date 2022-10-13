@@ -16,6 +16,11 @@ Rails.application.routes.draw do
         post 'password/reset', to: 'passwords#reset'
         put 'password/update', to: 'passwords#update'
       end
+      
+      #branches 
+      scope 'branches' do
+        post 'create', to: 'branches#create'
+      end
     end
   end
 end
