@@ -3,7 +3,7 @@ class Api::V1::BranchesController < ApplicationController
   before_action :set_branch, only: %i[ close open ]
 
   def create 
-    @branch = Branch.new(branch_params)
+    @branch = Branch.new(branch_params.merge(open_at: Time.now.utc))
 
     if @branch.save 
       render json: @branch, status: :created 
@@ -39,6 +39,6 @@ class Api::V1::BranchesController < ApplicationController
   end
 
   def branch_params 
-    params.require(:branch).permit(:company_id, :name, :fund, :notes).merge(open_at: Time.now.utc, status: true)
+    params.require(:branch).permit(:company_id, :name, :fund, :notes).merge(status: true)
   end
 end
