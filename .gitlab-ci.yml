@@ -1,0 +1,9 @@
+staging :
+  stage: deploy
+  script:
+    - gem install dpl
+    - dpl --provider=heroku --app=$APP_NAME --api-key=$HEROKU_API_KEY
+    - curl https://cli-assets.heroku.com/install.sh | sh
+    - heroku run rails db:migrate --exit-code --app $APP_NAME
+  only :
+  - development
