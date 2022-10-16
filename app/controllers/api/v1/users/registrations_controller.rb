@@ -34,5 +34,4 @@ class Api::V1::Users::RegistrationsController < ApplicationController
         render json: @user.errors, status: :unprocessable_entity
       end
   end
-
 end
