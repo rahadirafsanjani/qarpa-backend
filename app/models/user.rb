@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   belongs_to :company
+  belongs_to :branch
 
   require "securerandom"
   has_secure_password

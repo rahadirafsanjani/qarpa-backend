@@ -20,6 +20,11 @@ Rails.application.routes.draw do
         post 'inventory/product', to: 'products#new_product'
         delete 'inventory/product/:id', to: 'products#delete_product'
         put 'inventory/product/:id', to: 'products#update_product'
+
+        get 'show/:id', to: 'users#show'
+        post 'create', to: 'users#create'
+        put 'update/:id', to: 'users#update'
+        delete 'delete/:id', to: 'users#destroy'
       end
       
       #branches 
