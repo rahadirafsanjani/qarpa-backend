@@ -23,6 +23,13 @@ Rails.application.routes.draw do
         put 'close/:id', to: 'branches#close'
         put 'open/:id', to: 'branches#open'
       end
+
+      #customers 
+      scope 'customers' do
+        post 'create', to: 'customers#create'
+        put 'update/:id', to: 'customers#update'
+        delete 'delete/:id', to: 'customers#destroy' 
+      end
     end
   end
 end
