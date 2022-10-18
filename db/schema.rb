@@ -14,41 +14,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_17_120117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "addresses", force: :cascade do |t|
-    t.string "full_address"
-    t.string "postal_code", limit: 5
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "branches", force: :cascade do |t|
-    t.string "name"
-    t.datetime "open_at"
-    t.datetime "close_at"
-    t.boolean "status"
-    t.integer "fund"
-    t.string "notes"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "company_id"
-    t.bigint "address_id"
-    t.index ["address_id"], name: "index_branches_on_address_id"
-    t.index ["company_id"], name: "index_branches_on_company_id"
-  end
-
   create_table "companies", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "customers", force: :cascade do |t|
-    t.string "name"
-    t.string "phone"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "address_id"
-    t.index ["address_id"], name: "index_customers_on_address_id"
   end
 
   create_table "users", force: :cascade do |t|
