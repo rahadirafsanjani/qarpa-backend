@@ -51,6 +51,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_091831) do
     t.index ["address_id"], name: "index_customers_on_address_id"
   end
 
+  create_table "detail_orders", force: :cascade do |t|
+    t.integer "qty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "order_id"
+    t.bigint "product_id"
+    t.index ["order_id"], name: "index_detail_orders_on_order_id"
+    t.index ["product_id"], name: "index_detail_orders_on_product_id"
+  end
+
   create_table "inventories", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -67,6 +77,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_091831) do
     t.bigint "product_id"
     t.index ["inventory_id"], name: "index_inventory_products_on_inventory_id"
     t.index ["product_id"], name: "index_inventory_products_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.string "payment_method"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "branch_id"
+    t.bigint "user_id"
+    t.bigint "customer_id"
+    t.index ["branch_id"], name: "index_orders_on_branch_id"
+    t.index ["customer_id"], name: "index_orders_on_customer_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
