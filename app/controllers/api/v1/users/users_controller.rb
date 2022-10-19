@@ -5,11 +5,7 @@ class Api::V1::Users::UsersController < ApplicationController
   def create 
     @user = User.new(user_params.merge(role: 'employee', confirmed_at: Time.now.utc))
 
-    if @user.save 
-      response_to_json(@user, :created)
-    else
-      response_error(@user.errors, :unprocessable_entity)
-    end
+    @user.save ? response_to_json(@user, :created) : response_error(@user.errors, :unprocessable_entity)
   end
 
   def show 
@@ -17,11 +13,7 @@ class Api::V1::Users::UsersController < ApplicationController
   end
 
   def update 
-    if @user.update(user_params)
-      response_to_json(@user, :ok)
-    else
-      response_error(@user.errors, :unprocessable_entity)
-    end
+    @user.update(user_params) ? response_to_json(@user, :ok) : response_error(@user.errors, :unprocessable_entity)
   end
 
   def destroy 
