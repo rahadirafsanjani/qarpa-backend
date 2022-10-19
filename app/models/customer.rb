@@ -2,6 +2,7 @@ class Customer < ApplicationRecord
   attr_accessor :full_address, :postal_code
   before_validation :create_address
 
+  has_many :orders
   belongs_to :address
   
   validates :name, :phone, presence: true

@@ -40,6 +40,9 @@ Rails.application.routes.draw do
         put 'update/:id', to: 'customers#update'
         delete 'delete/:id', to: 'customers#destroy' 
       end
+
+      #order 
+      post 'orders', to: 'orders#create'
     end
   end
 end
