@@ -16,15 +16,18 @@ Rails.application.routes.draw do
         post 'password/forgot', to: 'passwords#forgot'
         post 'password/reset', to: 'passwords#reset'
         put 'password/update', to: 'passwords#update'
-        # create product
-        post 'inventory/product', to: 'products#new_product'
-        delete 'inventory/product/:id', to: 'products#delete_product'
-        put 'inventory/product/:id', to: 'products#update_product'
 
         get 'show/:id', to: 'users#show'
         post 'create', to: 'users#create'
         put 'update/:id', to: 'users#update'
         delete 'delete/:id', to: 'users#destroy'
+      end
+
+      scope 'inventory' do
+        # create product
+        post 'products', to: 'products#new_product'
+        put 'products/:id', to: 'products#update_product'
+        delete 'products/:id', to: 'products#delete_product'
       end
       
       #branches 
@@ -40,6 +43,9 @@ Rails.application.routes.draw do
         put 'update/:id', to: 'customers#update'
         delete 'delete/:id', to: 'customers#destroy' 
       end
+
+      #order 
+      post 'orders', to: 'orders#create'
     end
   end
 end

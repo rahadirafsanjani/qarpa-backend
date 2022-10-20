@@ -4,18 +4,18 @@ class Branch < ApplicationRecord
   
   belongs_to :address 
   belongs_to :company
-  has_many :users
+  has_many :users 
+  has_many :orders
   
   validates :name, :fund, :notes, presence: true
   validates :fund, numericality: { only_integer: true }
-  
 
   def close_branch
     return false if self.status == false
 
     self.close_at = Time.now.utc
     self.status = false
-    save!
+    save!(validate: false)
   end
 
   def open_branch
@@ -23,7 +23,7 @@ class Branch < ApplicationRecord
 
     self.open_at = Time.now.utc
     self.status = true
-    save!
+    save!(validate: false)
   end
 
   def create_address
