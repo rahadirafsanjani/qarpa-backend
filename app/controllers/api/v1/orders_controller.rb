@@ -1,7 +1,5 @@
 class Api::V1::OrdersController < ApplicationController
-  before_action :authorize 
-  before_action :check_user_permission
-  before_action :check_branch_status
+  before_action :authorize, :check_user_permission, :search_the_branch, :check_branch_status
     
   def create 
     @order = Order.new(order_params)
@@ -15,14 +13,19 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def check_user_permission 
-    response_to_json("You don't have permission to create new order", :forbidden) unless @user.branch.present?
+    response_to_json("You don't have permission to create new order", :forbidden) unless @user.branch.present? && @user.branch.id == order_params[:branch_id]
   end
 
-  def check_branch_status 
-    response_to_json("Please open the branch before do some order", :bad_request) unless @user.branch.status
+  def check_branch_status
+    response_to_json("Please open the branch before do some order", :bad_request) unless @branch.status
+  end
+
+  def search_the_branch
+    @branch = Branch.find_by(id: order_params[:branch_id])
+    response_to_json("Branch not found", :not_found) unless @branch.present?
   end
 
   def order_params 
-    params.require(:order).permit(:customer_id, :payment_method, item:[:product_id, :qty]).merge(user_id: @user.id, branch_id: @user.branch.id)
+    params.require(:order).permit(:customer_id, :payment_method, :branch_id, item:[:product_id, :qty]).merge(user_id: @user.id)
   end
 end
