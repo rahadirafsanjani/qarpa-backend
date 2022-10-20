@@ -33,7 +33,8 @@ class Api::V1::Users::PasswordsController < ApplicationController
   end
 
   def update
-    if @user.update(password: params[:password]) 
+    render json: { message: "Invalid username or address" } if !@user.authenticate(params[:old_password])
+    if @user.update(password: params[:new_password])
       render json: { message: "password updated successfully" }, status: :ok
     else 
       render json: @user.errors, status: :unprocessable_entity
