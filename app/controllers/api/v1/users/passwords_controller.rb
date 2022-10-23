@@ -1,34 +1,30 @@
 class Api::V1::Users::PasswordsController < ApplicationController
   before_action :authorize, only: %i[ update ]
+  before_action :email_present?, only: %i[ forgot ]
+  before_action :token_present?, only: %i[ reset ]
 
   def forgot
-    return render json: { error: 'Email not present' } if params[:email].blank?
-
     user = User.find_by(email: params[:email])
     if user.present?
       PasswordMailer.with(token: user.generate_password_token!, user: user).reset.deliver_now
-
-      render json: { message: "If an account with that email was found, we have sent a link to reset your password" }
+      response_to_json("If an account with thath email was found, we have sent a link to reset your password", :ok)
     else
-      render json: { message: 'Email address not found. Please check and try again.' }, status: :not_found
+      response_to_json("Email address not found. Please check and try again", :not_found)
     end
   end
 
   def reset 
-    return render json: { message: 'Token not present' } if params[:token].blank?
-
     token = params[:token].to_s 
-
     user = User.find_by(reset_password_token: token)
 
     if user.present? && user.password_token_valid?
       if user.reset_password!(params[:password])
-        render json: { message: 'password updated successfully' }, status: :ok
+        response_to_json("Password updated succressfully", :ok)
       else
-        render json: { message: user.errors.full_messages }, status: :unprocessable_entity
+        response_to_json(user.errors.full_messages, :unprocessable_entity)
       end
     else
-      render json: { message: 'Link not valid or expired. Try generating a new link.' }, status: :not_found
+      response_to_json("Link not valid or expired. Try generating a new link", :not_found)
     end
   end
 
@@ -41,6 +37,14 @@ class Api::V1::Users::PasswordsController < ApplicationController
   end
 
   private 
+
+  def email_present?
+    return response_to_json("Email not present", :unprocessable_entity) if params[:email].blank?
+  end
+  
+  def token_present?
+    return response_to_json("Token not present", :unprocessable_entity) if params[:token].blank?
+  end
 
   def response_to_json(message, status)
     render json: { message: message }, status: status
