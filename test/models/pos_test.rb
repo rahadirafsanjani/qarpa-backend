@@ -1,6 +1,6 @@
 require "test_helper"
 
-class PoTest < ActiveSupport::TestCase
+class PosTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

@@ -1,0 +1,2 @@
+class Pos < ApplicationRecord
+end
