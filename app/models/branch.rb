@@ -7,8 +7,13 @@ class Branch < ApplicationRecord
   has_many :users 
   has_many :orders
   
-  validates :name, :fund, :notes, presence: true
-  validates :fund, numericality: { only_integer: true }
+  validates :name, presence: true
+  validate :validate_address
+
+  def validate_address 
+    errors.add(:full_address, "Full address cannot be blank") if self.full_address.blank?
+    errors.add(:postal_code, "Postal code cannto be blank") if self.postal_code.blank?
+  end
 
   def close_branch
     return false if self.status == false
