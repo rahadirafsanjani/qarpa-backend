@@ -1,6 +1,6 @@
 class Branch < ApplicationRecord
   attr_accessor :full_address, :postal_code
-  before_validation :create_address
+  before_validation :validate_address, :create_address
   
   belongs_to :address 
   belongs_to :company
@@ -8,13 +8,14 @@ class Branch < ApplicationRecord
   has_many :users 
   
   validates :name, presence: true
-  validate :validate_address
+  # validate :validate_address
 
   private
 
   def validate_address 
     errors.add(:full_address, "Full address cannot be blank") if self.full_address.blank?
-    errors.add(:postal_code, "Postal code cannto be blank") if self.postal_code.blank?
+    errors.add(:postal_code, "Postal code cannot be blank") if self.postal_code.blank?
+    raise ActiveRecord::Rollback if self.postal_code.blank? || self.full_address.blank?
   end
 
   def create_address
