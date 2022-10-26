@@ -1,6 +1,16 @@
 class Api::V1::BranchesController < ApplicationController
   before_action :authorize 
 
+  def index 
+    @branches = Branch.where(company_id: @user.company_id)
+    response_to_json(@branches, :ok)
+  end
+
+  def get_branch_by_id
+    @branch = Branch.where(id: @user.branch)
+    response_to_json(@branch, :ok) 
+  end
+
   def create 
     @branch = Branch.new(branch_params)
     

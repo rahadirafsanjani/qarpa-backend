@@ -8,7 +8,6 @@ class Branch < ApplicationRecord
   has_many :users 
   
   validates :name, presence: true
-  # validate :validate_address
 
   private
 

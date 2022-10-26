@@ -32,6 +32,8 @@ Rails.application.routes.draw do
       
       #branches 
       post 'branches', to: 'branches#create'
+      get 'branches', to: 'branches#index'
+      get 'branch', to: 'branches#get_branch_by_id'
 
       #customers 
       scope 'customers' do
