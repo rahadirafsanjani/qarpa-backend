@@ -1,29 +1,30 @@
 class Branch < ApplicationRecord
   attr_accessor :full_address, :postal_code
-  before_validation :create_address
+  before_validation :validate_address, :create_address
   
   belongs_to :address 
   belongs_to :company
+  has_many :pos, class_name: "Pos", foreign_key: "branch_id"
   has_many :users 
-  has_many :orders
   
-  validates :name, :fund, :notes, presence: true
-  validates :fund, numericality: { only_integer: true }
+  validates :name, presence: true
 
-  def close_branch
-    return false if self.status == false
-
-    self.close_at = Time.now.utc
-    self.status = false
+  def open_branch 
+    self.status = true 
     save!(validate: false)
   end
 
-  def open_branch
-    return false if self.status == true
+  def close_branch
+    self.status = false
+    self.save!(validate: false)
+  end
 
-    self.open_at = Time.now.utc
-    self.status = true
-    save!(validate: false)
+  private
+
+  def validate_address 
+    errors.add(:full_address, "Full address cannot be blank") if self.full_address.blank?
+    errors.add(:postal_code, "Postal code cannot be blank") if self.postal_code.blank?
+    raise ActiveRecord::Rollback if self.postal_code.blank? || self.full_address.blank?
   end
 
   def create_address

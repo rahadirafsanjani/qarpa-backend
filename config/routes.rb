@@ -31,10 +31,14 @@ Rails.application.routes.draw do
       end
       
       #branches 
-      scope 'branches' do
-        post 'create', to: 'branches#create'
-        put 'close/:id', to: 'branches#close'
-        put 'open/:id', to: 'branches#open'
+      post 'branches', to: 'branches#create'
+      get 'branches', to: 'branches#index'
+      get 'branch', to: 'branches#get_branch_by_id'
+
+      #pos
+      scope 'branches/pos' do
+        post 'open', to: 'pos#open'
+        put 'close/:id', to: 'pos#close'
       end
 
       #customers 
