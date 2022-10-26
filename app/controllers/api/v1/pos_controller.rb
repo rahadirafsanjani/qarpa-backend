@@ -4,19 +4,19 @@ class Api::V1::PosController < ApplicationController
 
   def open 
     @pos = Pos.new(pos_params)
-    @pos.save ? response_to_json(@pos, :created) : 
+    @pos.save ? response_to_json("New pos has been opened", @pos, :created) : 
                 response_error(@pos.errors, :unprocessable_entity)
   end
 
   def close 
-    @pos.close_pos ? response_to_json(@pos, :ok) :
+    @pos.close_pos ? response_to_json("Pos has been closed", @pos, :ok) :
                      response_error("Something went wrong", :unprocessable_entity)
   end
 
   private 
 
-  def response_to_json(message, status) 
-    render json: message, status: status
+  def response_to_json(message, data, status) 
+    render json: { message: message, data: data }, status: status
   end
 
   def response_error(message, status) 
