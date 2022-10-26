@@ -18,6 +18,11 @@ class Api::V1::ManagementWorksController < ApplicationController
                  response_error(@work.errors, :unprocessable_entity)
   end
 
+  def show 
+    @work = ManagementWork.task_response(id: params[:id])
+    render json: @work, status: :ok
+  end
+
   def update 
     @work.update(management_work_params) ? response_to_json("Task updated successfully", @work, :ok) :
                                            response_error(@work.errors, :unprocessable_entity)
