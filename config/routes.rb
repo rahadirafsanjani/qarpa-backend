@@ -36,6 +36,8 @@ Rails.application.routes.draw do
       get 'branch', to: 'branches#get_branch_by_id'
 
       #work order management
+      get 'work_managements', to: 'management_works#index'
+      get 'employee/work_managements', to: 'management_works#get_for_employee'
       post 'work_managements', to: "management_works#create"
       put 'work_managements/:id', to: "management_works#done"
 
