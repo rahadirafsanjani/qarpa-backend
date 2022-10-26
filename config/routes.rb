@@ -35,6 +35,12 @@ Rails.application.routes.draw do
       get 'branches', to: 'branches#index'
       get 'branch', to: 'branches#get_branch_by_id'
 
+      #pos
+      scope 'branches/pos' do
+        post 'open', to: 'pos#open'
+        put 'close/:id', to: 'pos#close'
+      end
+
       #customers 
       scope 'customers' do
         post 'create', to: 'customers#create'

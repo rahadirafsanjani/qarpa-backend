@@ -4,10 +4,20 @@ class Branch < ApplicationRecord
   
   belongs_to :address 
   belongs_to :company
-  has_many :pos
+  has_many :poss
   has_many :users 
   
   validates :name, presence: true
+
+  def open_branch 
+    self.status = true 
+    save!(validate: false)
+  end
+
+  def close_branch
+    self.status = false
+    self.save!(validate: false)
+  end
 
   private
 
