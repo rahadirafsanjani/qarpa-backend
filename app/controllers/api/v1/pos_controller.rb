@@ -9,7 +9,8 @@ class Api::V1::PosController < ApplicationController
   end
 
   def close 
-    @pos.close_pos
+    @pos.close_pos ? response_to_json(@pos, :ok) :
+                     response_error("Something went wrong", :unprocessable_entity)
   end
 
   private 
@@ -23,7 +24,7 @@ class Api::V1::PosController < ApplicationController
   end
 
   def set_pos 
-    @pos = Pos.find_by(params[:id])
+    @pos = Pos.find_by(id: params[:id])
     response_error("Pos not found", :not_found) unless @pos.present?  
   end
 
