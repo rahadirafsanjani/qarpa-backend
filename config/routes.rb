@@ -35,6 +35,18 @@ Rails.application.routes.draw do
       get 'branches', to: 'branches#index'
       get 'branch', to: 'branches#get_branch_by_id'
 
+      #work order management
+      get 'work_managements', to: 'management_works#index'
+      get 'work_managements/:id', to: "management_works#show"
+      post 'work_managements', to: "management_works#create"
+      put 'work_managements/update/:id', to: 'management_works#update'
+      
+      #work order management for employee
+      scope 'employee' do 
+        get 'work_managements', to: 'management_works#get_for_employee'
+        put 'work_managements/:id', to: "management_works#done"
+      end
+
       #pos
       scope 'branches/pos' do
         post 'open', to: 'pos#open'
