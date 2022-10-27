@@ -7,8 +7,8 @@ class ManagementWork < ApplicationRecord
 
   enum :status, { todo: 0, done: 1 }
 
-  def self.task_response where = {}
-    management_works = ManagementWork.includes(:user).references(:user).where(where)
+  def self.task_response params = {}
+    management_works = ManagementWork.includes(:user).where(params)
     management_works.map do |work|
       {
         "id": work.id,
@@ -32,7 +32,7 @@ class ManagementWork < ApplicationRecord
   end
 
   def date_validation 
-    unless self.start_at.blank? && self.end_at.blank?
+    unless self.start_at.blank? || self.end_at.blank?
       errors.add(:start_at, "Start at cannot bigger than end at") if self.start_at > self.end_at
     end
   end
