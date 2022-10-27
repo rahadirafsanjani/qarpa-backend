@@ -6,7 +6,6 @@ class Products < ActiveRecord::Migration[7.0]
       t.string :quantity_type
       t.string :category
       t.datetime :expire
-      t.string :image
       t.integer :price
 
       t.timestamps
