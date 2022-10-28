@@ -6,9 +6,15 @@ class Api::V1::BranchesController < ApplicationController
     response_to_json(@branches, :ok)
   end
 
-  def get_branch_by_id
-    @branch = Branch.where(id: @user.branch)
+  def get_for_employee
+    @branch = Branch.where(id: @user.branch_id)
     response_to_json(@branch, :ok) 
+  end
+
+  def show
+    @branch = Branch.find_by(id: params[:id])
+    @branch.present? ? response_to_json(@branch, :ok) :
+                     response_error("Branch not found", :not_found)
   end
 
   def create 

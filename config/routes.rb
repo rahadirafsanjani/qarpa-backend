@@ -33,7 +33,8 @@ Rails.application.routes.draw do
       #branches 
       post 'branches', to: 'branches#create'
       get 'branches', to: 'branches#index'
-      get 'branch', to: 'branches#get_branch_by_id'
+      get 'branches/:id', to: 'branches#show'
+      get 'employee/branches', to: 'branches#get_for_employee'
 
       #work order management
       get 'work_managements', to: 'management_works#index'
