@@ -14,10 +14,12 @@ class LeaveManagement < ApplicationRecord
     end
   end
 
-  def self.show_leave params = {}
-    leave_management = LeaveManagement.find_by(params)
-    return false if leave_management.blank?
-    new_response(leave_management)
+  def action params
+    data = false
+    data = self.leave_status_approved! if params == 'approved'
+    data = self.leave_status_reject! if params == 'reject'
+    
+    return data
   end
   
   private 

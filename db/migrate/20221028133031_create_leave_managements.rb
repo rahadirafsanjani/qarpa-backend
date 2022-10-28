@@ -5,7 +5,7 @@ class CreateLeaveManagements < ActiveRecord::Migration[7.0]
       t.string :notes
       t.date :start_at
       t.date :end_at
-      t.integer :status
+      t.integer :status, :default => 0
       t.belongs_to :user, index: true
 
       t.timestamps
