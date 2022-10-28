@@ -33,11 +33,14 @@ class Api::V1::ProductsController < ApplicationController
 
   def show_suplai
     @product = Product.where(category: "suplai")
+                      .where(inventory_id: set_company_env)
     render json: get_all_data
   end
 
   def show_stock
     @product = Product.where(category: "stock")
+                      .where(inventory_id: set_company_env)
+
     render json: get_all_data
   end
 
@@ -56,5 +59,8 @@ class Api::V1::ProductsController < ApplicationController
   end
   def get_specific_data
     NewProductSerializer.new(@product).serializable_hash[:data][:attributes]
+  end
+  def set_company_env
+    Inventory.find_by(company_id: @user.company_id)
   end
 end
