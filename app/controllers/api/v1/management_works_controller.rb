@@ -19,7 +19,7 @@ class Api::V1::ManagementWorksController < ApplicationController
   end
 
   def show 
-    @work = ManagementWork.task_response(id: params[:id])
+    @work = ManagementWork.show_task(id: params[:id])
     render json: @work, status: :ok
   end
 

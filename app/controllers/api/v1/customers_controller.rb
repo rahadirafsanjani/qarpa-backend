@@ -2,6 +2,11 @@ class Api::V1::CustomersController < ApplicationController
   before_action :authorize
   before_action :set_customer, only: %i[ update destroy ]
 
+  def index 
+    @customers = Customer.where(company_id: @user.company_id)
+    response_to_json(@customers, :ok)
+  end
+
   def create 
     @customer = Customer.new(customer_params)
     

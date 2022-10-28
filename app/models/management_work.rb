@@ -8,9 +8,21 @@ class ManagementWork < ApplicationRecord
   enum :status, { todo: 0, done: 1 }
 
   def self.task_response params = {}
-    management_works = ManagementWork.includes(:user).where(params)
+    management_works = ManagementWork.includes(:user).where(params).order('id DESC')
     management_works.map do |work|
-      {
+      new_response(work)
+    end
+  end
+
+  def self.show_task params = {}
+    management_work = ManagementWork.find_by(params)
+    new_response(management_work)
+  end
+  
+  private 
+
+  def self.new_response(work)
+    {
         "id": work.id,
         "user_id": work.user_id,
         "name": work.user.name,
@@ -21,10 +33,7 @@ class ManagementWork < ApplicationRecord
         "end_at": work.end_at,
         "number_of_days": (work.end_at - work.start_at).to_i
       }
-    end
   end
-  
-  private 
 
   def validate_date_params 
     errors.add(:start_at, "Start at cannot be blank") if self.start_at.blank?
