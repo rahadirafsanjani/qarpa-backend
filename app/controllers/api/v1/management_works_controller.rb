@@ -50,6 +50,6 @@ class Api::V1::ManagementWorksController < ApplicationController
   end
 
   def management_work_params 
-    params.require(:management_work).permit(:task, :description, :start_at, :end_at, :user_id).merge(company_id: @user.company.id)
+    params.require(:management_work).permit(:task, :description, :start_at, :end_at, :user_id).merge(company_id: @user.company_id)
   end
 end
