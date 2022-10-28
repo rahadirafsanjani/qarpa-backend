@@ -2,6 +2,11 @@ class Api::V1::LeaveManagementsController < ApplicationController
   before_action :authorize
   before_action :set_leave_managements, only: %i[ action ]
 
+  def index 
+    @leaves = LeaveManagement.leave_response(user: { company_id: @user.company_id })
+    render json: @leaves, status: :ok
+  end
+
   def create 
     @leave = LeaveManagement.new(leave_management_params)
     @leave.save ? response_to_json("Leave created successfully", @leave, :created) : 

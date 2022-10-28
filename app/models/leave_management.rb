@@ -8,7 +8,7 @@ class LeaveManagement < ApplicationRecord
   enum :leave_status, { waiting: 0, approved: 1, reject: 2 }, prefix: true
 
   def self.leave_response params = {}
-    leave_managements = LeaveManagement.includes(:user).where(params).order('id DESC')
+    leave_managements = LeaveManagement.includes(:user).where(params).order('leave_managements.id DESC')
     leave_managements.map do |leave_management|
       new_response(leave_management)
     end
@@ -18,7 +18,7 @@ class LeaveManagement < ApplicationRecord
     data = false
     data = self.leave_status_approved! if params == 'approved'
     data = self.leave_status_reject! if params == 'reject'
-    
+
     return data
   end
   

@@ -66,6 +66,7 @@ Rails.application.routes.draw do
       post 'orders', to: 'orders#create'
 
       #leave management
+      get 'leave_managements', to: 'leave_managements#index'
       post 'leave_managements', to: 'leave_managements#create'
       put 'leave_managements/actions', to: 'leave_managements#action'
     end
