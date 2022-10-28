@@ -37,7 +37,6 @@ class Api::V1::CustomersController < ApplicationController
   def set_customer 
     @customer = Customer.find_by(id: params[:id])
     response_error("Customer not found", :not_found) unless @customer.present? 
-    end
   end
 
   def customer_params 

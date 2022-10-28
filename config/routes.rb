@@ -54,6 +54,7 @@ Rails.application.routes.draw do
       end
 
       #customers 
+      get 'customers', to: 'customers#index'
       scope 'customers' do
         post 'create', to: 'customers#create'
         put 'update/:id', to: 'customers#update'
