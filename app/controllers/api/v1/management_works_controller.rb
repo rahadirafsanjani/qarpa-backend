@@ -20,7 +20,8 @@ class Api::V1::ManagementWorksController < ApplicationController
 
   def show 
     @work = ManagementWork.show_task(id: params[:id])
-    render json: @work, status: :ok
+    @work ? response_to_json("Task found", @work, :ok) :
+            response_error("Task not found", :not_found)
   end
 
   def update 

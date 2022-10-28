@@ -16,6 +16,7 @@ class ManagementWork < ApplicationRecord
 
   def self.show_task params = {}
     management_work = ManagementWork.find_by(params)
+    return false if management_work.blank?
     new_response(management_work)
   end
   
