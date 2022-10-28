@@ -2,41 +2,44 @@ class Api::V1::CustomersController < ApplicationController
   before_action :authorize
   before_action :set_customer, only: %i[ update destroy ]
 
+  def index 
+    @customers = Customer.where(company_id: @user.company_id)
+    response_to_json(@customers, :ok)
+  end
+
   def create 
     @customer = Customer.new(customer_params)
     
-    if @customer.save 
-      render json: @customer, status: :created 
-    else
-      render json: @customer.errors, status: :unprocessable_entity
-    end
+    @customer.save ? response_to_json(@customer, :created) : 
+                     response_error(@customer.errors, :unprocessable_entity)
   end
 
   def update 
-    if @customer.update(customer_params)
-      render json: @customer, status: :ok 
-    else
-      render json: @customer.errors, status: :unprocessable_entity
-    end
+    @customer.update(customer_params) ? response_to_json(@customer, :ok) :
+                                        response_error(@customer.errors, :unprocessable_entity) 
   end
 
   def destroy
-    @customer.destroy
-
-    render json: @customer, status: :ok
+    @customer.destroy ? response_to_json(@customer, :ok) :
+                        response_error("Something went wrong", :unprocessable_entity)
   end
 
   private 
 
+  def response_to_json(message, status)
+    render json: message, status: status
+  end
+
+  def response_error(message, status)
+    render json: { message: message }, status: status
+  end
+
   def set_customer 
-    begin
-      @customer = Customer.find(params[:id])
-    rescue ActiveRecord::RecordNotFound 
-      render json: { message: "Customer not found" }, status: :not_found    
-    end
+    @customer = Customer.find_by(id: params[:id])
+    response_error("Customer not found", :not_found) unless @customer.present? 
   end
 
   def customer_params 
-    params.require(:customer).permit(:name, :phone, :full_address, :postal_code) 
+    params.require(:customer).permit(:name, :phone, :full_address, :postal_code).merge(company_id: @user.company_id) 
   end
 end
