@@ -13,7 +13,19 @@ class LeaveManagement < ApplicationRecord
       new_response(leave_management)
     end
   end
-
+  
+  def self.leave_response_employee params
+    data = {}
+    leave_status = LeaveManagement.group(:leave_status).where(user_id: params).count
+    data[:reject] = leave_status['reject'] || 0
+    data[:approved] = leave_status['approved'] || 0
+    data[:waiting] = leave_status['waiting'] || 0
+    
+    data[:data] = LeaveManagement.where(user_id: params)
+    
+    return data
+  end
+  
   def action params
     data = false
     data = self.leave_status_approved! if params == 'approved'

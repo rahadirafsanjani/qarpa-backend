@@ -67,6 +67,7 @@ Rails.application.routes.draw do
 
       #leave management
       get 'leave_managements', to: 'leave_managements#index'
+      get 'employee/leave_managements', to: 'leave_managements#get_for_employee'
       post 'leave_managements', to: 'leave_managements#create'
       put 'leave_managements/actions', to: 'leave_managements#action'
     end

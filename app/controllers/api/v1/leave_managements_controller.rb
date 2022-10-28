@@ -7,6 +7,11 @@ class Api::V1::LeaveManagementsController < ApplicationController
     render json: @leaves, status: :ok
   end
 
+  def get_for_employee
+    @leaves = LeaveManagement.leave_response_employee(@user.id)
+    render json: @leaves, status: :ok
+  end
+
   def create 
     @leave = LeaveManagement.new(leave_management_params)
     @leave.save ? response_to_json("Leave created successfully", @leave, :created) : 
