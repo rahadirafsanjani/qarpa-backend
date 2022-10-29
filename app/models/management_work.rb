@@ -10,31 +10,25 @@ class ManagementWork < ApplicationRecord
   def self.task_response params = {}
     management_works = ManagementWork.includes(:user).where(params).order('id DESC')
     management_works.map do |work|
-      new_response(work)
+      work.new_response
     end
   end
 
-  def self.show_task params = {}
-    management_work = ManagementWork.find_by(params)
-    return false if management_work.blank?
-    new_response(management_work)
-  end
-  
-  private 
-
-  def self.new_response(work)
+  def new_response
     {
-        "id": work.id,
-        "user_id": work.user_id,
-        "name": work.user.name,
-        "task": work.task,
-        "description": work.description,
-        "status": work.status,
-        "start_at": work.start_at,
-        "end_at": work.end_at,
-        "number_of_days": (work.end_at - work.start_at).to_i
-      }
+        "id": self.id,
+        "user_id": self.user_id,
+        "name": self.user.name,
+        "task": self.task,
+        "description": self.description,
+        "status": self.status,
+        "start_at": self.start_at,
+        "end_at": self.end_at,
+        "number_of_days": (self.end_at - self.start_at).to_i
+    }
   end
+
+  private 
 
   def validate_date_params 
     errors.add(:start_at, "Start at cannot be blank") if self.start_at.blank?
