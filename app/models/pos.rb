@@ -18,6 +18,20 @@ class Pos < ApplicationRecord
     branch.close_branch
   end
 
+  def new_response
+    {
+      "id": self.id,
+      "fund": self.fund,
+      "notes": self.notes,
+      "open_at": self.open_at,
+      "close_at": self.close_at,
+      "created_at": self.created_at,
+      "updated_at": self.updated_at,
+      "branch_id": self.branch_id,
+      "user_id": self.user_id 
+    }
+  end
+
   private
 
   def search_branch 
