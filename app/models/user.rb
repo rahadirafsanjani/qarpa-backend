@@ -1,6 +1,7 @@
 class User < ApplicationRecord
-  has_many :management_works
   has_many :orders
+  has_many :management_works
+  has_many :leave_managements
   belongs_to :company
   belongs_to :branch, optional: true
 

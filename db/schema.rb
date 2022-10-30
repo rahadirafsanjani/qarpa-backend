@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_27_074322) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_28_140943) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,6 +75,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_27_074322) do
     t.bigint "product_id"
     t.index ["inventory_id"], name: "index_inventory_products_on_inventory_id"
     t.index ["product_id"], name: "index_inventory_products_on_product_id"
+  end
+
+  create_table "leave_managements", force: :cascade do |t|
+    t.string "title"
+    t.string "notes"
+    t.date "start_at"
+    t.date "end_at"
+    t.integer "leave_status", default: 0
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_leave_managements_on_user_id"
   end
 
   create_table "management_works", force: :cascade do |t|
