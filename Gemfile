@@ -51,4 +51,5 @@ group :development do
 end
 
 gem "jsonapi-serializer", "~> 2.2"
-
+gem 'image_processing', '~> 1.12', '>= 1.12.2'
+gem 'mini_magick', '~> 4.11'

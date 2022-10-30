@@ -18,6 +18,7 @@ Rails.application.routes.draw do
         put 'password/update', to: 'passwords#update'
         # another need with user
         get 'show/:id', to: 'users#show'
+        # get 'show'
         post 'create', to: 'users#create'
         put 'update/:id', to: 'users#update'
         delete 'delete/:id', to: 'users#destroy'

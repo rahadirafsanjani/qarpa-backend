@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :orders
   belongs_to :company
   belongs_to :branch, optional: true
+  has_one_attached :avatar
 
   require "securerandom"
   has_secure_password
@@ -64,4 +65,9 @@ class User < ApplicationRecord
   def generate_regis_token
     SecureRandom.base58(6)
   end
+
+  def avatar_url
+    Rails.application.routes.url_helpers.url_for(avatar)
+  end
+
 end
