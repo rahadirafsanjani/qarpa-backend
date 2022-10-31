@@ -56,11 +56,10 @@ Rails.application.routes.draw do
 
       #customers 
       get 'customers', to: 'customers#index'
-      scope 'customers' do
-        post 'create', to: 'customers#create'
-        put 'update/:id', to: 'customers#update'
-        delete 'delete/:id', to: 'customers#destroy' 
-      end
+      get 'customers/:id', to: 'customers#show'
+      post 'customers', to: 'customer#create'
+      put 'customers/:id', to: 'customer#update'
+      delete 'customers/:id', to: 'customer#destroy'
 
       #order 
       post 'orders', to: 'orders#create'
