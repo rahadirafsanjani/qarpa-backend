@@ -69,6 +69,9 @@ Rails.application.routes.draw do
       get 'employee/leave_managements', to: 'leave_managements#get_for_employee'
       post 'leave_managements', to: 'leave_managements#create'
       put 'leave_managements/actions', to: 'leave_managements#action'
+
+      #bank account
+      resources :bank_accounts
     end
   end
 end
