@@ -57,9 +57,9 @@ Rails.application.routes.draw do
       #customers 
       get 'customers', to: 'customers#index'
       get 'customers/:id', to: 'customers#show'
-      post 'customers', to: 'customer#create'
-      put 'customers/:id', to: 'customer#update'
-      delete 'customers/:id', to: 'customer#destroy'
+      post 'customers', to: 'customers#create'
+      put 'customers/:id', to: 'customers#update'
+      delete 'customers/:id', to: 'customers#destroy'
 
       #order 
       post 'orders', to: 'orders#create'

@@ -1,6 +1,6 @@
 class Api::V1::CustomersController < ApplicationController
   before_action :authorize
-  before_action :set_customer, only: %i[ update destroy ]
+  before_action :set_customer, only: %i[ update destroy show ]
 
   def index 
     @customers = Customer.customer_response(company_id: @user.company_id)
@@ -17,6 +17,10 @@ class Api::V1::CustomersController < ApplicationController
   def update 
     @customer.update(customer_params) ? response_to_json("Customer updated", @customer.new_response, :ok) :
                                         response_error(@customer.errors, :unprocessable_entity) 
+  end
+
+  def show 
+    response_to_json("Customer found", @customer.new_response, :ok)
   end
 
   def destroy
