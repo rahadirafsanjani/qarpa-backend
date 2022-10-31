@@ -4,9 +4,11 @@ class Customer < ApplicationRecord
 
   has_many :orders
   belongs_to :address
+  belongs_to :company
   
   validate :validate_address
-  validates :name, :phone, presence: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :name, :phone, :email, presence: true
   validates :phone, numericality: { only_integer: true }
 
   private 
