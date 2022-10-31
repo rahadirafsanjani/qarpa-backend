@@ -3,24 +3,24 @@ class Api::V1::CustomersController < ApplicationController
   before_action :set_customer, only: %i[ update destroy ]
 
   def index 
-    @customers = Customer.where(company_id: @user.company_id)
+    @customers = Customer.customer_response(company_id: @user.company_id)
     response_to_json(@customers, :ok)
   end
 
   def create 
     @customer = Customer.new(customer_params)
     
-    @customer.save ? response_to_json(@customer, :created) : 
+    @customer.save ? response_to_json(@customer.new_response, :created) : 
                      response_error(@customer.errors, :unprocessable_entity)
   end
 
   def update 
-    @customer.update(customer_params) ? response_to_json(@customer, :ok) :
+    @customer.update(customer_params) ? response_to_json(@customer.new_response, :ok) :
                                         response_error(@customer.errors, :unprocessable_entity) 
   end
 
   def destroy
-    @customer.destroy ? response_to_json(@customer, :ok) :
+    @customer.destroy ? response_to_json(@customer.new_response, :ok) :
                         response_error("Something went wrong", :unprocessable_entity)
   end
 
@@ -40,6 +40,6 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def customer_params 
-    params.require(:customer).permit(:name, :phone, :full_address, :postal_code).merge(company_id: @user.company_id) 
+    params.require(:customer).permit(:name, :phone, :full_address, :postal_code, :email).merge(company_id: @user.company_id) 
   end
 end
