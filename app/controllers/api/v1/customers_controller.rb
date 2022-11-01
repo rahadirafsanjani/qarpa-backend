@@ -44,6 +44,6 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def customer_params 
-    params.require(:customer).permit(:name, :phone, :full_address, :postal_code, :email).merge(company_id: @user.company_id) 
+    params.require(:customer).permit(:name, :phone, :full_address, :email).merge(company_id: @user.company_id) 
   end
 end

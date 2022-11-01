@@ -1,5 +1,5 @@
 class Customer < ApplicationRecord
-  attr_accessor :full_address, :postal_code
+  attr_accessor :full_address
   before_validation :create_address
 
   has_many :orders
@@ -32,11 +32,10 @@ class Customer < ApplicationRecord
 
   def validate_address 
     errors.add(:full_address, "full address cannot be blank") if self.full_address.blank?
-    errors.add(:postal_code, "postal code cannot be blank") if self.postal_code.blank?
   end
 
   def create_address
-    address = Address.find_or_create_by(full_address: self.full_address, postal_code: self.postal_code)
+    address = Address.find_or_create_by(full_address: self.full_address)
     self.address_id = address.id
   end
 end
