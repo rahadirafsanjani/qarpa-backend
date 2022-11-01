@@ -35,6 +35,6 @@ class Api::V1::BranchesController < ApplicationController
   end
 
   def branch_params 
-    params.require(:branch).permit(:name, :full_address, :postal_code).merge(company_id: @user.company_id, status: false)
+    params.require(:branch).permit(:name, :full_address, :phone).merge(company_id: @user.company_id, status: false)
   end
 end
