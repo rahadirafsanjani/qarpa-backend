@@ -4,16 +4,16 @@ class Api::V1::Users::UsersController < ApplicationController
 
   def create 
     @user = User.new(user_params.merge(role: 'employee', confirmed_at: Time.now.utc))
-
-    @user.save ? response_to_json(@user, :created) : response_error(@user.errors, :unprocessable_entity)
+    AvatarGenerator.call(@user)
+    @user.save ? response_to_json(ProfileUserSerializer.new(@user).serializable_hash[:data][:attributes], :created) : response_error(@user.errors, :unprocessable_entity)
   end
 
   def show 
-    response_to_json(@user, :ok)
+    response_to_json(ProfileUserSerializer.new(@user).serializable_hash[:data][:attributes], :ok)
   end
 
   def update 
-    @user.update(user_params) ? response_to_json(@user, :ok) : response_error(@user.errors, :unprocessable_entity)
+    @user.update(user_params) ? response_to_json(ProfileUserSerializer.new(@user).serializable_hash[:data][:attributes], :ok) : response_error(@user.errors, :unprocessable_entity)
   end
 
   def destroy 

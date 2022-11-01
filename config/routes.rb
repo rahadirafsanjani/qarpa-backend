@@ -16,8 +16,9 @@ Rails.application.routes.draw do
         post 'password/forgot', to: 'passwords#forgot'
         post 'password/reset', to: 'passwords#reset'
         put 'password/update', to: 'passwords#update'
-
+        # another need with user
         get 'show/:id', to: 'users#show'
+        # get 'show'
         post 'create', to: 'users#create'
         put 'update/:id', to: 'users#update'
         delete 'delete/:id', to: 'users#destroy'
@@ -25,6 +26,8 @@ Rails.application.routes.draw do
 
       scope 'inventory' do
         # create product
+        get 'products/suplai', to: "products#show_suplai"
+        get 'products/stock', to: "products#show_stock"
         post 'products', to: 'products#new_product'
         put 'products/:id', to: 'products#update_product'
         delete 'products/:id', to: 'products#delete_product'
