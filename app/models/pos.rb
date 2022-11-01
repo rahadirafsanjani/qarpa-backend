@@ -20,15 +20,15 @@ class Pos < ApplicationRecord
 
   def new_response
     {
-      "id": self.id,
+      "pos_id": self.id,
+      "branch_id": self.branch_id,
+      "user_id": self.user_id, 
       "fund": self.fund,
       "notes": self.notes,
       "open_at": self.open_at,
       "close_at": self.close_at,
       "created_at": self.created_at,
-      "updated_at": self.updated_at,
-      "branch_id": self.branch_id,
-      "user_id": self.user_id 
+      "updated_at": self.updated_at
     }
   end
 

@@ -53,8 +53,8 @@ Rails.application.routes.draw do
 
       #pos
       scope 'branches/pos' do
-        post 'open/:id', to: 'pos#open'
-        put 'close/:id', to: 'pos#close'
+        post 'open', to: 'pos#open'
+        put 'close', to: 'pos#close'
       end
 
       #customers 
