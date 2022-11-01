@@ -25,10 +25,15 @@ class Api::V1::Users::RegistrationsController < ApplicationController
   def registration
       @company = Company.new(name: params[:company_name])
       @company.save!
+      @address = Address.new(full_address: params[:full_address])
+      @address.save!
+      @inventory = Inventory.new(company_id: @company.id, address_id: @address.id)
+      @inventory.save!
 
       @user = User.find_by(regist_token: params[:token])
       if @user.update(name: params[:name], password: params[:password], company_id: @company.id, role: "owner") && @user.token_valid?
-        render json: { message: "registration successfully" }, status: :ok
+        AvatarGenerator.call(@user)
+        render json: ProfileUserSerializer.new(@user).serializable_hash[:data][:attributes], status: :ok
         @user.destroy_token!
       else
         render json: @user.errors, status: :unprocessable_entity
