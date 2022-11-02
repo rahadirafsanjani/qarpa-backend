@@ -75,6 +75,12 @@ Rails.application.routes.draw do
 
       #bank account
       resources :bank_accounts
+      
+      # attendance
+      scope 'attendances' do
+      post 'check_in', to: 'attendances#create'
+      put 'check_out', to: 'attendances#update'
+      end
     end
   end
 end

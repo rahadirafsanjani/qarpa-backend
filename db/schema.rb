@@ -48,6 +48,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_063935) do
     t.datetime "updated_at", null: false
   end
 
+<<<<<<< HEAD
   create_table "bank_accounts", force: :cascade do |t|
     t.string "username"
     t.string "bank"
@@ -56,6 +57,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_063935) do
     t.datetime "updated_at", null: false
     t.bigint "company_id"
     t.index ["company_id"], name: "index_bank_accounts_on_company_id"
+=======
+  create_table "attendances", force: :cascade do |t|
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.datetime "check_in"
+    t.datetime "check_out"
+    t.boolean "status", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_attendances_on_user_id"
+>>>>>>> 0ed82f403428b14a167b4a5b34d46cff50bb520b
   end
 
   create_table "branches", force: :cascade do |t|
