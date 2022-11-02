@@ -1,5 +1,6 @@
 class Api::V1::BranchesController < ApplicationController
   before_action :authorize 
+  before_action :user_permission, only: %i[ index create ]
 
   def index 
     @branches = Branch.get_all_branch(company_id: @user.company_id)

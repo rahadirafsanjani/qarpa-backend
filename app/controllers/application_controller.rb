@@ -39,6 +39,6 @@ class ApplicationController < ActionController::API
   end
 
   def user_permission 
-    response_error("you don't have permission to access this resource", :forbidden)
+    response_error("you don't have permission to access this resource", :forbidden) unless @user.is_owner?
   end
 end
