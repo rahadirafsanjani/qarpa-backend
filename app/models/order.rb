@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  attr_accessor :item
+  attr_accessor :items
   after_save :create_detail_orders, :reduce_stock
   before_save :get_products, :validate_stock_products
 
@@ -11,7 +11,7 @@ class Order < ApplicationRecord
   private 
 
   def validate_stock_products
-    @request = self.item
+    @request = self.items
     @request.each do |item|
       @products.each do |product|
         if product.quantity < item[:qty]
@@ -34,7 +34,7 @@ class Order < ApplicationRecord
   end
 
   def get_products 
-    products_id = self.item.map do |item|
+    products_id = self.items.map do |item|
       item[:product_id]
     end
     
@@ -42,10 +42,10 @@ class Order < ApplicationRecord
   end
 
   def create_detail_orders
-    self.item.map do |item|
+    self.items.map do |item|
       item[:order_id] = self.id
     end
     
-    DetailOrder.insert_all(self.item)
+    DetailOrder.insert_all(self.items)
   end
 end
