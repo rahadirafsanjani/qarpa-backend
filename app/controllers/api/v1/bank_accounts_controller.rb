@@ -27,14 +27,6 @@ class Api::V1::BankAccountsController < ApplicationController
 
   private 
 
-  def response_to_json(message, data, status)
-    render json: { message: message, data: data }, status: status
-  end
-
-  def response_error(message, status)
-    render json: { message: message }, status: status
-  end
-
   def set_bank_account
     @bank_account = BankAccount.find_by(id: params[:id])
     response_error("Bank account not found", :not_found) unless @bank_account.present?

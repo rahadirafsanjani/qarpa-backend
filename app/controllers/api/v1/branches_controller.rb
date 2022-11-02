@@ -26,14 +26,6 @@ class Api::V1::BranchesController < ApplicationController
 
   private 
 
-  def response_to_json(message, data, status) 
-    render json: { message: message, data: data }, status: status
-  end
-
-  def response_error(message, status) 
-    render json: { message: message }, status: status
-  end
-
   def branch_params 
     params.require(:branch).permit(:name, :full_address, :phone).merge(company_id: @user.company_id, status: false)
   end

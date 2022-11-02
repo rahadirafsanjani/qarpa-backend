@@ -34,21 +34,16 @@ Rails.application.routes.draw do
       end
       
       #branches 
-      post 'branches', to: 'branches#create'
-      get 'branches', to: 'branches#index'
-      get 'branches/:id', to: 'branches#show'
+      resources :branches, only: %i[ create index show ]
       get 'employee/branches', to: 'branches#get_for_employee'
 
       #work order management
-      get 'work_managements', to: 'management_works#index'
-      get 'work_managements/:id', to: "management_works#show"
-      post 'work_managements', to: "management_works#create"
-      put 'work_managements/update/:id', to: 'management_works#update'
+      resources :management_works, except: %i[ destroy ]
       
       #work order management for employee
       scope 'employee' do 
-        get 'work_managements', to: 'management_works#get_for_employee'
-        put 'work_managements/:id', to: "management_works#done"
+        get 'management_works', to: 'management_works#get_for_employee'
+        put 'management_works/:id', to: "management_works#done"
       end
 
       #pos
@@ -58,19 +53,14 @@ Rails.application.routes.draw do
       end
 
       #customers 
-      get 'customers', to: 'customers#index'
-      get 'customers/:id', to: 'customers#show'
-      post 'customers', to: 'customers#create'
-      put 'customers/:id', to: 'customers#update'
-      delete 'customers/:id', to: 'customers#destroy'
+      resources :customers
 
       #order 
       post 'orders', to: 'orders#create'
 
       #leave management
-      get 'leave_managements', to: 'leave_managements#index'
+      resources :leave_managements, only: %i[ create index ]
       get 'employee/leave_managements', to: 'leave_managements#get_for_employee'
-      post 'leave_managements', to: 'leave_managements#create'
       put 'leave_managements/actions', to: 'leave_managements#action'
 
       #bank account
