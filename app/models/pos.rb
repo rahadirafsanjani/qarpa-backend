@@ -1,6 +1,7 @@
 class Pos < ApplicationRecord
   before_create :open_pos
   belongs_to :branch
+  has_many :orders
 
   validates :fund, :notes, :branch_id, presence: true
   validates :fund, numericality: { only_integer: true }
