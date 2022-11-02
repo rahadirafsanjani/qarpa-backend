@@ -15,6 +15,10 @@ class User < ApplicationRecord
   validates :password, length: { minimum: 6 }
   validates :name, :email, :password, presence: true
 
+  def is_owner?
+    return self.role == "owner"
+  end
+
   def login_response 
     {
       "id": self.id,

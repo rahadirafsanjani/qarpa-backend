@@ -37,4 +37,8 @@ class ApplicationController < ActionController::API
   def response_error(message, status)
     render json: { message: message }, status: status
   end
+
+  def user_permission 
+    response_error("you don't have permission to access this resource", :forbidden)
+  end
 end
