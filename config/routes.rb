@@ -53,17 +53,16 @@ Rails.application.routes.draw do
 
       #pos
       scope 'branches/pos' do
-        post 'open/:id', to: 'pos#open'
-        put 'close/:id', to: 'pos#close'
+        post 'open', to: 'pos#open'
+        put 'close', to: 'pos#close'
       end
 
       #customers 
       get 'customers', to: 'customers#index'
-      scope 'customers' do
-        post 'create', to: 'customers#create'
-        put 'update/:id', to: 'customers#update'
-        delete 'delete/:id', to: 'customers#destroy' 
-      end
+      get 'customers/:id', to: 'customers#show'
+      post 'customers', to: 'customers#create'
+      put 'customers/:id', to: 'customers#update'
+      delete 'customers/:id', to: 'customers#destroy'
 
       #order 
       post 'orders', to: 'orders#create'
@@ -74,6 +73,9 @@ Rails.application.routes.draw do
       post 'leave_managements', to: 'leave_managements#create'
       put 'leave_managements/actions', to: 'leave_managements#action'
 
+      #bank account
+      resources :bank_accounts
+      
       # attendance
       scope 'attendances' do
       post 'check_in', to: 'attendances#create'

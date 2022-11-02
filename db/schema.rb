@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_01_063935) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -48,6 +48,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
     t.datetime "updated_at", null: false
   end
 
+<<<<<<< HEAD
+  create_table "bank_accounts", force: :cascade do |t|
+    t.string "username"
+    t.string "bank"
+    t.string "account_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "company_id"
+    t.index ["company_id"], name: "index_bank_accounts_on_company_id"
+=======
   create_table "attendances", force: :cascade do |t|
     t.decimal "latitude"
     t.decimal "longitude"
@@ -58,6 +68,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["user_id"], name: "index_attendances_on_user_id"
+>>>>>>> 0ed82f403428b14a167b4a5b34d46cff50bb520b
   end
 
   create_table "branches", force: :cascade do |t|
@@ -67,6 +78,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
     t.bigint "company_id"
     t.bigint "address_id"
     t.boolean "status"
+    t.string "phone"
     t.index ["address_id"], name: "index_branches_on_address_id"
     t.index ["company_id"], name: "index_branches_on_company_id"
   end
@@ -84,6 +96,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
     t.datetime "updated_at", null: false
     t.bigint "address_id"
     t.bigint "company_id"
+    t.string "email"
     t.index ["address_id"], name: "index_customers_on_address_id"
     t.index ["company_id"], name: "index_customers_on_company_id"
   end
@@ -143,11 +156,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.string "payment_method"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "customer_id"
     t.bigint "pos_id"
+    t.integer "discount"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["pos_id"], name: "index_orders_on_pos_id"
   end
@@ -171,12 +184,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
     t.string "quantity_type"
     t.string "category"
     t.datetime "expire"
+    t.string "image"
     t.integer "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "supplier_id"
-    t.bigint "inventory_id"
-    t.index ["inventory_id"], name: "index_products_on_inventory_id"
     t.index ["supplier_id"], name: "index_products_on_supplier_id"
   end
 
