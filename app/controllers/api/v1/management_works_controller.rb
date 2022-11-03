@@ -4,12 +4,12 @@ class Api::V1::ManagementWorksController < ApplicationController
 
   def index 
     @works = ManagementWork.task_response(company_id: @user.company_id)
-    render json: @works, status: :ok
+    response_to_json("List task", @works, :ok)
   end
 
   def get_for_employee
     @works = ManagementWork.task_response(user_id: @user.id)
-    render json: @works, status: :ok
+    response_to_json("List task", @works, :ok)
   end
 
   def create
@@ -38,14 +38,6 @@ class Api::V1::ManagementWorksController < ApplicationController
   def set_management_works
     @work = ManagementWork.find_by(id: params[:id])
     response_error("Task not found", :not_found) unless @work.present?
-  end
-
-  def response_to_json(message, data, status)
-    render json: { message: message, data: data }, status: status
-  end
-
-  def response_error(message, status)
-    render json: { message: message }, status: status
   end
 
   def management_work_params 

@@ -4,34 +4,26 @@ class Api::V1::LeaveManagementsController < ApplicationController
 
   def index 
     @leaves = LeaveManagement.leave_response(user: { company_id: @user.company_id })
-    render json: @leaves, status: :ok
+    response_to_json("List time off", @leaves, :ok)
   end
 
   def get_for_employee
     @leaves = LeaveManagement.leave_response_employee(@user.id)
-    render json: @leaves, status: :ok
+    response_to_json("List time off", @leaves, :ok)
   end
 
   def create 
     @leave = LeaveManagement.new(leave_management_params)
-    @leave.save ? response_to_json("Leave created successfully", @leave, :created) : 
+    @leave.save ? response_to_json("Leave created successfully", @leave.new_response, :created) : 
                   response_error(@leave.errors, :unprocessable_entity)
   end
 
   def action 
-    @leave.action(params[:status]) ? response_to_json("Leave updated successfully", @leave, :ok) :
+    @leave.action(params[:status]) ? response_to_json("Leave updated successfully", @leave.new_response, :ok) :
                                      response_error("Something went wrong", :unprocessable_entity)
   end
 
   private 
-
-  def response_to_json(message, data, status)
-    render json: { message: message, data: data }, status: status
-  end
-
-  def response_error(message, status)
-    render json: { message: message }, status: status
-  end
 
   def set_leave_managements 
     @leave = LeaveManagement.find_by(id: params[:id])

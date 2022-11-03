@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  attr_accessor :item
+  attr_accessor :items
   after_save :create_detail_orders, :reduce_stock
   before_save :get_products, :validate_stock_products
 
@@ -11,22 +11,25 @@ class Order < ApplicationRecord
   private 
 
   def validate_stock_products
-    @request = self.item
-    @request.each do |item|
+    valid = 0
+
+    self.items.each do |item|
       @products.each do |product|
-        if product.quantity < item[:qty]
+        if product.id == item[:product_id] && product.quantity < item[:qty]
           errors.add(:qty, "#{product.name} not enough stock")
-          raise ActiveRecord::Rollback
+          valid = valid + 1
         end
       end 
     end
+
+    raise ActiveRecord::Rollback unless valid.zero?
   end
 
   def reduce_stock 
-    @products.map do |product|
-      @request.each do |request|
-        if product[:id] == request[:product_id]
-          product[:quantity] = product[:quantity] - request[:qty]
+    self.items.each do |item| 
+      @products.each do |product|
+        if product.id == item[:product_id]
+          product[:quantity] = product[:quantity] - item[:qty]
           product.save!(validate: false)
         end
       end
@@ -34,18 +37,16 @@ class Order < ApplicationRecord
   end
 
   def get_products 
-    products_id = self.item.map do |item|
+    @products = Product.where(id: get_product_id)
+  end
+
+  def get_product_id 
+    return self.items.map do |item|
       item[:product_id]
     end
-    
-    @products = Product.where(id: products_id)
   end
 
   def create_detail_orders
-    self.item.map do |item|
-      item[:order_id] = self.id
-    end
-    
-    DetailOrder.insert_all(self.item)
+    self.detail_orders.insert_all(self.items)
   end
 end

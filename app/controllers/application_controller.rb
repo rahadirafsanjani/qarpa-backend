@@ -29,4 +29,16 @@ class ApplicationController < ActionController::API
   def authorize 
     render json: { message: 'You have to log in.' }, status: :unauthorized unless authorized_user
   end
+
+  def response_to_json(message, data, status)
+    render json: { message: message, data: data }, status: status
+  end
+
+  def response_error(message, status)
+    render json: { message: message }, status: status
+  end
+
+  def user_permission 
+    response_error("you don't have permission to access this resource", :forbidden) unless @user.is_owner?
+  end
 end

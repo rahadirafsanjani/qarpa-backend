@@ -10,7 +10,7 @@ class LeaveManagement < ApplicationRecord
   def self.leave_response params = {}
     leave_managements = LeaveManagement.includes(:user).where(params).order('leave_managements.id DESC')
     leave_managements.map do |leave_management|
-      new_response(leave_management)
+      leave_management.new_response
     end
   end
   
@@ -34,20 +34,20 @@ class LeaveManagement < ApplicationRecord
     return data
   end
   
-  private 
-
-  def self.new_response(leave)
+  def new_response
     {
-        "id": leave.id,
-        "user_id": leave.user_id,
-        "name": leave.user.name,
-        "title": leave.title,
-        "notes": leave.notes,
-        "status": leave.leave_status,
-        "start_at": leave.start_at,
-        "end_at": leave.end_at,
+        "id": self.id,
+        "user_id": self.user_id,
+        "name": self.user.name,
+        "title": self.title,
+        "notes": self.notes,
+        "status": self.leave_status,
+        "start_at": self.start_at,
+        "end_at": self.end_at,
       }
   end
+  
+  private 
 
   def validate_date_params 
     errors.add(:start_at, "Start at cannot be blank") if self.start_at.blank?

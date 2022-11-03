@@ -1,5 +1,6 @@
 class Api::V1::BranchesController < ApplicationController
   before_action :authorize 
+  before_action :user_permission, only: %i[ index create ]
 
   def index 
     @branches = Branch.get_all_branch(company_id: @user.company_id)
@@ -25,14 +26,6 @@ class Api::V1::BranchesController < ApplicationController
   end
 
   private 
-
-  def response_to_json(message, data, status) 
-    render json: { message: message, data: data }, status: status
-  end
-
-  def response_error(message, status) 
-    render json: { message: message }, status: status
-  end
 
   def branch_params 
     params.require(:branch).permit(:name, :full_address, :phone).merge(company_id: @user.company_id, status: false)
