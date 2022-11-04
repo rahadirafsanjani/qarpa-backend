@@ -88,8 +88,6 @@ GEM
     io-console (0.5.11)
     irb (1.4.1)
       reline (>= 0.3.0)
-    jsonapi-serializer (2.2.0)
-      activesupport (>= 4.2)
     jwt (2.5.0)
     loofah (2.19.0)
       crass (~> 1.0.2)
@@ -173,7 +171,6 @@ DEPENDENCIES
   bootsnap
   debug
   image_processing (~> 1.12, >= 1.12.2)
-  jsonapi-serializer (~> 2.2)
   jwt
   mini_magick (~> 4.11)
   pg (~> 1.1)

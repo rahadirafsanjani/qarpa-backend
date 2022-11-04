@@ -5,7 +5,7 @@ class LeaveManagement < ApplicationRecord
   validates :title, :notes, :start_at, :end_at, presence: true
   validate :date_validation
 
-  enum :leave_status, { waiting: 0, approved: 1, reject: 2 }, prefix: true
+  enum :leave_status, { menunggu: 0, disetujui: 1, ditolak: 2 }, prefix: true
 
   def self.leave_response params = {}
     leave_managements = LeaveManagement.includes(:user).where(params).order('leave_managements.id DESC')
@@ -17,9 +17,9 @@ class LeaveManagement < ApplicationRecord
   def self.leave_response_employee params
     data = {}
     leave_status = LeaveManagement.group(:leave_status).where(user_id: params).count
-    data[:reject] = leave_status['reject'] || 0
-    data[:approved] = leave_status['approved'] || 0
-    data[:waiting] = leave_status['waiting'] || 0
+    data[:menunggu] = leave_status['menunggu'] || 0
+    data[:disetujui] = leave_status['disetujui'] || 0
+    data[:ditolak] = leave_status['ditolak'] || 0
     
     data[:data] = LeaveManagement.where(user_id: params)
     
@@ -28,8 +28,8 @@ class LeaveManagement < ApplicationRecord
   
   def action params
     data = false
-    data = self.leave_status_approved! if params == 'approved'
-    data = self.leave_status_reject! if params == 'reject'
+    data = self.leave_status_disetujui! if params == 'disetujui'
+    data = self.leave_status_ditolak! if params == 'ditolak'
 
     return data
   end
