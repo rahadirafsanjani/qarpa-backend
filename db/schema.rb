@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_03_095635) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -183,12 +183,24 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
     t.string "quantity_type"
     t.string "category"
     t.datetime "expire"
-    t.string "image"
     t.integer "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "supplier_id"
+    t.bigint "inventory_id"
+    t.index ["inventory_id"], name: "index_products_on_inventory_id"
     t.index ["supplier_id"], name: "index_products_on_supplier_id"
+  end
+
+  create_table "shippings", force: :cascade do |t|
+    t.datetime "assign_at"
+    t.bigint "destination_id", null: false
+    t.bigint "origin_id", null: false
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["destination_id"], name: "index_shippings_on_destination_id"
+    t.index ["origin_id"], name: "index_shippings_on_origin_id"
   end
 
   create_table "suppliers", force: :cascade do |t|
@@ -217,4 +229,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_01_080500) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "shippings", "addresses", column: "destination_id"
+  add_foreign_key "shippings", "addresses", column: "origin_id"
 end

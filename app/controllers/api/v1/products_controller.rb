@@ -1,4 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
+  include ActiveStorage::SetCurrent
   before_action :authorize
   before_action :new_product_from_supplier, only: %i[ new_product ]
   before_action :pick_product, only: %i[ update_product delete_product ]
@@ -8,9 +9,9 @@ class Api::V1::ProductsController < ApplicationController
     @product = Product.new(set_product.merge(supplier_id: @supplier.id)
                                       .merge(inventory_id: @inventory.id))
     if @product.save
-      render json: get_specific_data
+      response_to_json("Product created", @product.new_response, :ok)
     else
-      render json: { message: "product cant be add to, maybe there was problem" }
+      response_error("product cant be add to, maybe there was problem", :unprocessable_entity)
     end
   end
 
@@ -19,29 +20,22 @@ class Api::V1::ProductsController < ApplicationController
     if @product.destroy
       render json: { message: "product was deleted succesfuly" }
     else
-      render json: { message: "something err" }
+      response_error("product cant be delete to, maybe there was problem", :unprocessable_entity)
     end
   end
 
   def update_product
     if @product.update(set_product)
-      render json: get_specific_data
+      response_to_json("Product created", @product.new_response, :ok)
     else
-      render json: { message: "there some err" }, status: :unprocessable_entity
+      response_error("product cant be update to, maybe there was problem", :unprocessable_entity)
     end
   end
 
   def show_suplai
-    @product = Product.where(category: "suplai")
-                      .where(inventory_id: set_company_env)
-    render json: get_all_data
-  end
-
-  def show_stock
-    @product = Product.where(category: "stock")
-                      .where(inventory_id: set_company_env)
-
-    render json: get_all_data
+    @product = Product.where(inventory_id: set_company_env)
+                      .get_all_products
+    response_to_json("success", @product, :ok)
   end
 
   private
@@ -53,12 +47,6 @@ class Api::V1::ProductsController < ApplicationController
   end
   def new_product_from_supplier
     @supplier = Supplier.find_or_create_by(name: params[:name_supplier])
-  end
-  def get_all_data
-    CatalogProductSerializer.new(@product).serializable_hash[:data]
-  end
-  def get_specific_data
-    NewProductSerializer.new(@product).serializable_hash[:data][:attributes]
   end
   def set_company_env
     Inventory.find_by(company_id: @user.company_id)
