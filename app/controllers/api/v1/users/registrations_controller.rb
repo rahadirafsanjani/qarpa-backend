@@ -33,7 +33,7 @@ class Api::V1::Users::RegistrationsController < ApplicationController
       @user = User.find_by(regist_token: params[:token])
       if @user.update(name: params[:name], password: params[:password], company_id: @company.id, role: "owner") && @user.token_valid?
         AvatarGenerator.call(@user)
-        render json: ProfileUserSerializer.new(@user).serializable_hash[:data][:attributes], status: :ok
+        render json: @user, status: :ok
         @user.destroy_token!
       else
         render json: @user.errors, status: :unprocessable_entity
