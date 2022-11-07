@@ -19,12 +19,31 @@ class User < ApplicationRecord
     return self.role == "owner"
   end
 
-  def login_response 
+  def company_attribute 
+    {
+      "company": {
+        "id": self.company.id,
+        "name": self.company.name
+      }
+    } 
+  end
+
+  def branch_attribute 
+    {
+      "branch": {
+        "id": self.branch.id,
+        "name": self.branch.name
+      }
+    }
+  end
+
+  def user_attribute
     {
       "id": self.id,
       "name": self.name,
       "email": self.email,
-      "role": self.role
+      "role": self.role,
+      "company_id": self.company_id
     }
   end
 
