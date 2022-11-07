@@ -26,13 +26,9 @@ class Order < ApplicationRecord
   end
 
   def reduce_stock 
-    self.items.each do |item| 
-      @products.each do |product|
-        if product.id == item[:product_id]
-          product[:quantity] = product[:quantity] - item[:qty]
-          product.save!(validate: false)
-        end
-      end
+    self.detail_orders.each do |detail_order|
+        detail_order.product.quantity = detail_order.product.quantity - detail_order.qty
+        detail_order.product.save!(validate: false)
     end
   end
 
