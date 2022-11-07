@@ -9,10 +9,43 @@ class Branch < ApplicationRecord
   
   validates :name, :phone, presence: true
 
-  def self.get_all_branch params = {}
-    branches = Branch.includes(:address).where(params)
+  def self.try_query 
+    branches = Branch.joins(
+      "
+      LEFT JOIN addresses ON addresses.id = branches.address_id
+      LEFT JOIN pos ON pos.branch_id = branches.id
+      LEFT JOIN orders ON orders.pos_id = pos.id
+      LEFT JOIN detail_orders ON detail_orders.order_id = orders.id
+      LEFT JOIN products ON products.id = detail_orders.product_id
+      "
+    ).select(
+      "
+      branches.id,
+      branches.name,
+      branches.company_id,
+      branches.phone, 
+      branches.status,
+      addresses.full_address AS addresses,
+      COUNT(orders.id) AS total_orders,
+      SUM(products.price) AS total_price
+      "
+    ).group(
+      "
+      branches.id,
+      branches.name,
+      branches.company_id,
+      branches.phone,
+      branches.status,
+      addresses.full_address
+      "
+    ).where(company_id: 1)
+
     branches.map do |branch|
-      branch.new_response
+      branch.new_response.merge!(
+        address: branch.addresses,
+        total_price: branch.total_price,
+        total_orders: branch.total_orders
+      )
     end
   end
 
@@ -21,7 +54,6 @@ class Branch < ApplicationRecord
       "id": self.id,
       "company_id": self.company_id,
       "name": self.name,
-      "address": self.address.full_address,
       "status": self.status,
       "phone": self.phone
     }
