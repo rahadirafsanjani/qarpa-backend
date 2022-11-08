@@ -9,7 +9,7 @@ class Branch < ApplicationRecord
   
   validates :name, :phone, presence: true
 
-  def self.try_query 
+  def self.get_all_branch params = {} 
     branches = Branch.joins(
       "
       LEFT JOIN addresses ON addresses.id = branches.address_id
@@ -27,7 +27,7 @@ class Branch < ApplicationRecord
       branches.status,
       addresses.full_address AS addresses,
       COUNT(orders.id) AS total_orders,
-      SUM(products.price) AS total_price
+      SUM(products.price) AS total_incomes
       "
     ).group(
       "
@@ -38,13 +38,13 @@ class Branch < ApplicationRecord
       branches.status,
       addresses.full_address
       "
-    ).where(company_id: 1)
+    ).where(params)
 
     branches.map do |branch|
       branch.new_response.merge!(
         address: branch.addresses,
-        total_price: branch.total_price,
-        total_orders: branch.total_orders
+        total_orders: Order.where(pos_id: branch.pos.ids).count,
+        total_incomes: branch.total_incomes.nil? ? 0 : branch.total_incomes
       )
     end
   end

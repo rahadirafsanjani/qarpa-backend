@@ -30,6 +30,6 @@ class Api::V1::Users::UsersController < ApplicationController
   end
 
   def user_params 
-    params.require(:user).permit(:name, :email, :password).merge(company_id: @user.company_id)
+    params.require(:user).permit(:name, :email, :password, :branch_id).merge(company_id: @user.company_id)
   end
 end
