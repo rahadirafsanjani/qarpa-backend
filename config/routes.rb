@@ -71,6 +71,7 @@ Rails.application.routes.draw do
       scope 'attendances' do
       post 'check_in', to: 'attendances#create'
       put 'check_out', to: 'attendances#update'
+      get 'history', to: 'attendances#all_history'
       end
     end
   end
