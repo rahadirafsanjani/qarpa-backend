@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_03_095635) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_06_102255) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -128,6 +128,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_03_095635) do
     t.index ["product_id"], name: "index_inventory_products_on_product_id"
   end
 
+  create_table "item_shippings", force: :cascade do |t|
+    t.integer "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "product_id"
+    t.bigint "shipping_id"
+    t.index ["product_id"], name: "index_item_shippings_on_product_id"
+    t.index ["shipping_id"], name: "index_item_shippings_on_shipping_id"
+  end
+
   create_table "leave_managements", force: :cascade do |t|
     t.string "title"
     t.string "notes"
@@ -183,11 +193,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_03_095635) do
     t.string "quantity_type"
     t.string "category"
     t.datetime "expire"
-    t.string "image"
     t.integer "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "supplier_id"
+    t.bigint "inventory_id"
+    t.index ["inventory_id"], name: "index_products_on_inventory_id"
     t.index ["supplier_id"], name: "index_products_on_supplier_id"
   end
 
@@ -195,9 +206,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_03_095635) do
     t.datetime "assign_at"
     t.bigint "destination_id", null: false
     t.bigint "origin_id", null: false
-    t.string "status"
+    t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "customer_id"
+    t.bigint "branch_id"
+    t.index ["branch_id"], name: "index_shippings_on_branch_id"
+    t.index ["customer_id"], name: "index_shippings_on_customer_id"
     t.index ["destination_id"], name: "index_shippings_on_destination_id"
     t.index ["origin_id"], name: "index_shippings_on_origin_id"
   end
