@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       
       #branches 
       resources :branches, only: %i[ create index show ]
+      get 'owner/branches',to: 'branches#get_for_owner'
       get 'employee/branches', to: 'branches#get_for_employee'
 
       #work order management

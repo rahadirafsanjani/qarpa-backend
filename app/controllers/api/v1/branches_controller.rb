@@ -1,8 +1,13 @@
 class Api::V1::BranchesController < ApplicationController
   before_action :authorize 
-  before_action :user_permission, only: %i[ index create ]
+  before_action :user_permission, only: %i[ get_for_owner create ]
 
   def index 
+    @branches = Branch.where(company_id: @user.company_id)
+    response_to_json("List branch", @branches, :ok)
+  end
+
+  def get_for_owner
     @branches = Branch.get_all_branch(company_id: @user.company_id)
     response_to_json("List branch", @branches, :ok)
   end
