@@ -2,6 +2,7 @@ class Customer < ApplicationRecord
   attr_accessor :full_address
   before_validation :create_address
 
+  has_many :shippings
   has_many :orders
   belongs_to :address
   belongs_to :company

@@ -38,6 +38,10 @@ class Api::V1::ProductsController < ApplicationController
     response_to_json("success", @product, :ok)
   end
 
+  def product_onbranch
+    @product = Product.where()
+  end
+
   private
   def pick_product
     @product = Product.find_by(id: params[:id])
