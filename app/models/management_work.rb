@@ -7,6 +7,17 @@ class ManagementWork < ApplicationRecord
 
   enum :status, { todo: 0, done: 1 }
 
+  def self.task_amount params = {}
+    data = {}
+    task = ManagementWork.group(:status)
+                         .where(user_id: params[:user_id])
+                         .count
+    data[:todo] = task["todo"] || 0
+    data[:done] = task["done"] || 0
+
+    return data
+  end
+
   def self.task_response params = {}
     management_works = ManagementWork.includes(:user).where(params).order('id DESC')
     management_works.map do |work|

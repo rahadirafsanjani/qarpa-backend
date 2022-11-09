@@ -12,6 +12,11 @@ class Api::V1::ManagementWorksController < ApplicationController
     response_to_json("List task", @works, :ok)
   end
 
+  def task_amount
+    @works = ManagementWork.task_amount(user_id: @user.id)
+    response_to_json("Task amount", @works, :ok)
+  end
+
   def create
     @work = ManagementWork.new(management_work_params)
     @work.save ? response_to_json("Task created successfully", @work.new_response, :created) :

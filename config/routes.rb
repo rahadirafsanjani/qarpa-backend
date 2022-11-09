@@ -48,6 +48,7 @@ Rails.application.routes.draw do
       #work order management for employee
       scope 'employee' do 
         get 'management_works', to: 'management_works#get_for_employee'
+        get 'management_works/amount', to: 'management_works#task_amount'
         put 'management_works/:id', to: "management_works#done"
       end
 
