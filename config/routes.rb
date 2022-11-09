@@ -16,9 +16,13 @@ Rails.application.routes.draw do
         post 'password/forgot', to: 'passwords#forgot'
         post 'password/reset', to: 'passwords#reset'
         put 'password/update', to: 'passwords#update'
+        
+        #get current user from session
+        get 'current', to: 'users#current_user'
+
         # another need with user
-        get 'show/:id', to: 'users#show'
         # get 'show'
+        get 'show/:id', to: 'users#show'
         post 'create', to: 'users#create'
         put 'update/:id', to: 'users#update'
         delete 'delete/:id', to: 'users#destroy'
