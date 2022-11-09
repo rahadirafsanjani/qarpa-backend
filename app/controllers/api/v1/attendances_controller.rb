@@ -2,6 +2,11 @@ class Api::V1::AttendancesController < ApplicationController
   before_action :authorize
   before_action :pick_users, only: %i[ update ]
 
+  def all_history
+    @attendances = Attendance.get_all_attendace(user: { company_id: @user.company_id})
+    response_to_json("success", @attendances, :ok)
+  end
+
   def create
     @attendance = Attendance.new(set_attendance.merge(user_id: @user.id))
     if @attendance.save && @attendance.status == false
