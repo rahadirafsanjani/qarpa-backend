@@ -8,6 +8,10 @@ class Api::V1::Users::UsersController < ApplicationController
     @user.save ? response_to_json("New user has been created", @user.user_attribute, :created) : response_error(@user.errors, :unprocessable_entity)
   end
 
+  def current_user 
+    response_to_json("Current user", @user.user_attribute, :ok)
+  end
+
   def show 
     response_to_json("User found", @user.user_attribute, :ok)
   end
