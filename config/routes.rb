@@ -31,6 +31,8 @@ Rails.application.routes.draw do
         post 'products', to: 'products#new_product'
         put 'products/:id', to: 'products#update_product'
         delete 'products/:id', to: 'products#delete_product'
+        # product on branch
+        # get 'products/onbranch', to:''
       end
       
       #branches 
@@ -72,6 +74,11 @@ Rails.application.routes.draw do
       post 'check_in', to: 'attendances#create'
       put 'check_out', to: 'attendances#update'
       get 'history', to: 'attendances#all_history'
+      end
+
+      # shipping
+      scope 'shipping' do
+        post 'item', to: 'shippings#create'
       end
     end
   end
