@@ -43,7 +43,7 @@ gem "rack-cors"
 gem "exception_notification"
 
 # gem http party
-gem "httpparty"
+gem "slack-notifier"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
