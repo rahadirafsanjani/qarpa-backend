@@ -99,4 +99,14 @@ Rails.application.configure do
     read_timeout:         5
   }
 
+  Rails.application.config.middleware.use ExceptionNotification::Rack,
+                                        email: {
+                                          email_prefix: '[PREFIX] ',
+                                          sender_address: %{"notifier" <esc4pe.dev@gmail.com>},
+                                          exception_recipients: %w{esc4pe.dev@gmail.com}
+                                        },
+                                        webhook: {
+                                          url: 'https://discordapp.com/api/webhooks/1040189364715667456/e4Dpks_krD2xsqEd5rGMZaAVKEkcFZ95PWQJrD2XFTt-nVIdgvtp9ljl9cke5tyJZopZ'
+                                        }
+
 end
