@@ -81,6 +81,9 @@ Rails.application.routes.draw do
       get 'history', to: 'attendances#all_history'
       end
 
+      # audit
+      get 'company/audit', to: 'audit#get_branch'
+
       # shipping
       scope 'shipping' do
         post 'item', to: 'shippings#create'
