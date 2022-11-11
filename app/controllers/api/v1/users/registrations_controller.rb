@@ -2,12 +2,11 @@ class Api::V1::Users::RegistrationsController < ApplicationController
   # token 6 digit into mail
   def token_registration
     return render json: { error: 'Email not present' } if params[:email].blank?
-    user = User.new(email: params[:email])
-    if user.save(validate: false)
-      RegistrationMailer.with(token: user.generate_regist_token!, user: user).regist.deliver_now
+    # @user = User.new(email: params[:email])
+    if User.save_email(email: params[:email])
       render json: { message: "If an account with that email was found, we have sent" }
     else
-      render json: { error: 'Email address not found. Please check and try again.' }, status: :not_found
+      render json: { error: "Email is already taken" }, status: :conflict
     end
   end
 
@@ -31,9 +30,10 @@ class Api::V1::Users::RegistrationsController < ApplicationController
       @inventory.save!
 
       @user = User.find_by(regist_token: params[:token])
-      if @user.update(name: params[:name], password: params[:password], company_id: @company.id, role: "owner") && @user.token_valid?
+      return response_error("Token not valid", :unprocessable_entity) unless @user.present?
+      if @user.update(name: params[:name], password: params[:password], company_id: @company.id, role: "owner", confirmed_at: Time.now.utc) && @user.token_valid?
         AvatarGenerator.call(@user)
-        render json: @user, status: :ok
+        render json: @user.user_attribute, status: :ok
         @user.destroy_token!
       else
         render json: @user.errors, status: :unprocessable_entity
