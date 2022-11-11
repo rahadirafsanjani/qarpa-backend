@@ -103,4 +103,15 @@ class User < ApplicationRecord
     Rails.application.routes.url_helpers.url_for(avatar) if avatar.attached?
   end
 
+  def self.save_email params = {}
+    @user = User.find_by(email: params[:email])
+    return false if @user.present? && @user.confirmed_at.present?
+
+    unless @user.present? 
+      @user = User.new(params)
+      @user.save!(validate: false)
+    end
+
+    RegistrationMailer.with(token: @user.generate_regist_token!, user: @user).regist.deliver_now
+  end
 end
