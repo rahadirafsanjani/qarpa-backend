@@ -19,6 +19,13 @@ class User < ApplicationRecord
     return self.role == "owner"
   end
 
+  def self.get_all params = {}
+    users = User.where("users.company_id = ? AND users.id != ?", params[:company_id], params[:id])
+    users.map do |user|
+      user.user_attribute
+    end 
+  end
+
   def company_attribute 
     {
       "company": {
@@ -40,6 +47,7 @@ class User < ApplicationRecord
   def user_attribute
     {
       "id": self.id,
+      "avatar": self.avatar_url,
       "name": self.name,
       "email": self.email,
       "role": self.role,
@@ -92,7 +100,7 @@ class User < ApplicationRecord
   end
 
   def avatar_url
-    Rails.application.routes.url_helpers.url_for(avatar)
+    Rails.application.routes.url_helpers.url_for(avatar) if avatar.attached?
   end
 
 end

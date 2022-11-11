@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 
         # another need with user
         # get 'show'
+        get 'get_all', to: "users#index"
         get 'show/:id', to: 'users#show'
         post 'create', to: 'users#create'
         put 'update/:id', to: 'users#update'
