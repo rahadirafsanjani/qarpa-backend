@@ -84,6 +84,7 @@ Rails.application.routes.draw do
 
       # audit
       get 'company/audit', to: 'audit#get_branch'
+      get 'company/expenses_incomes', to: 'audit#sum_expenses_incomes'
 
       # shipping
       scope 'shipping' do

@@ -1,6 +1,10 @@
 class Api::V1::AuditController < ApplicationController
   before_action :authorize 
   
+  def sum_expenses_incomes 
+    response_to_json("Incomes and expenses", { incomes: 1000000, expenses: 500000 }, :ok)
+  end
+
   def get_branch
     @audits = Audit.filter_by(audit_params)
 
