@@ -25,6 +25,9 @@ class Shipping < ApplicationRecord
     raise ActiveRecord::Rollback unless valid.zero?
   end
 
+  def add_product_branch
+
+  end
   def reduce_stock
     self.items.each do |item|
       @products.each do |product|

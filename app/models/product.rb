@@ -1,6 +1,7 @@
 class Product < ApplicationRecord
   belongs_to :supplier
-  belongs_to :inventory
+  # belongs_to :inventory
+  belongs_to :parent, :polymorphic => true
   has_many :detail_order
   has_many :orders, through: :detail_order
   # image

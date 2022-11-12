@@ -5,7 +5,9 @@ class Branch < ApplicationRecord
   belongs_to :address 
   belongs_to :company
   has_many :pos, class_name: "Pos", foreign_key: "branch_id"
-  has_many :users 
+  has_many :users
+  # polymorpbic
+  has_many :products, as: :parent_id
   
   validates :name, :phone, presence: true
 

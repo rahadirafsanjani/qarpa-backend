@@ -36,7 +36,7 @@ Rails.application.routes.draw do
         put 'products/:id', to: 'products#update_product'
         delete 'products/:id', to: 'products#delete_product'
         # product on branch
-        # get 'products/onbranch', to:''
+        get 'products/onbranch', to:'products#product_on_branch'
       end
       
       #branches 
@@ -87,6 +87,7 @@ Rails.application.routes.draw do
       # shipping
       scope 'shipping' do
         post 'item', to: 'shippings#create'
+        get 'item', to: 'shippings#show'
       end
     end
   end
