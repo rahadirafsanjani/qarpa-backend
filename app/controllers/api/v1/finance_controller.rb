@@ -2,7 +2,15 @@ class Api::V1::FinanceController < ApplicationController
   before_action :authorize
 
   def index 
-    response_to_json("Finance", {incomes: 1000000, transaction: 50, product: 100, expenses: 500000}, :ok)
+    @reports = nil
+    
+    if @user.branch_id.present? && finance_params[:branch_id].nil?
+      @reports = Finance.get_report(finance_params.merge(branch_id: @user.branch_id))
+    else
+      @reports = Finance.get_report(finance_params)
+    end
+
+    response_to_json("Finance", @reports, :ok)
   end
 
   private 
