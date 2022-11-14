@@ -1,7 +1,7 @@
 class Api::V1::ProductsController < ApplicationController
-  include ActiveStorage::SetCurrent
+  # include ActiveStorage::SetCurrent
   before_action :authorize
-  before_action :new_product_from_supplier, :set_inventory_env, only: %i[ new_product ]
+  before_action :new_product_from_supplier, :set_inventory_env, :set_branch_env, only: %i[ new_product accepted_branch_product  ]
   before_action :pick_product, only: %i[ update_product delete_product ]
 
   def new_product
@@ -11,6 +11,18 @@ class Api::V1::ProductsController < ApplicationController
       response_to_json("Product created", @product.new_response, :ok)
     else
       response_error(@product.errors, :unprocessable_entity)
+    end
+  end
+
+  def accepted_branch_product
+    @shipping = Shipping.where(status: 2)
+    @convert_product = ItemShipping.where(shipping_id: params[:id])
+    @convert_product.map do | convert |
+      @product = Product.find_by(id: convert.product_id)
+      converted = @branch.products.new(@product)
+      if converted.save && converted.update(quantity: convert.quantity)
+        render json: converted
+      end
     end
   end
 
@@ -37,10 +49,6 @@ class Api::V1::ProductsController < ApplicationController
     response_to_json("success", @product, :ok)
   end
 
-  def product_on_branch
-    @product = Product.where()
-  end
-
   private
   def pick_product
     @product = Product.find_by(id: params[:id])
@@ -56,5 +64,12 @@ class Api::V1::ProductsController < ApplicationController
   end
   def set_inventory_env
     @inventory = Inventory.find_by(company_id: @user.company_id)
+  end
+  def set_branch_env
+    @branch = Branch.find_by(id: params[:branch_id])
+  end
+
+  def get_item_shipping
+    @item_shipping = ItemShipping.find_by(:id )
   end
 end

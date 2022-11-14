@@ -1,4 +1,5 @@
 class Product < ApplicationRecord
+
   belongs_to :supplier
   # belongs_to :inventory
   belongs_to :parent, :polymorphic => true
@@ -6,7 +7,7 @@ class Product < ApplicationRecord
   has_many :orders, through: :detail_order
   # image
   has_one_attached :image, :dependent => :destroy
-  validate :acceptable_image
+  # validate :acceptable_image
   def image_url
     Rails.application.routes.url_helpers.url_for(image) if image.attached?
   end
@@ -34,6 +35,8 @@ class Product < ApplicationRecord
       }
     }
   end
+
+
 
 
   private
