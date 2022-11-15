@@ -61,7 +61,8 @@ class User < ApplicationRecord
       "name": self.name,
       "email": self.email,
       "role": self.role,
-      "company_id": self.company_id
+      "company_id": self.company_id,
+      "branch_id": self.branch_id
     }
   end
 
