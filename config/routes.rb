@@ -20,6 +20,8 @@ Rails.application.routes.draw do
         #get current user from session
         get 'current', to: 'users#current_user'
 
+        get 'dropdown', to: 'users#dropdown_employee'
+
         # another need with user
         # get 'show'
         get 'get_all', to: "users#index"

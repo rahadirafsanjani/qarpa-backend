@@ -26,6 +26,16 @@ class User < ApplicationRecord
     end 
   end
 
+  def self.get_dropdown_employee params = {}
+    users = User.where("users.company_id = ? AND users.id != ?", params[:company_id], params[:id])
+    users.map do |user|
+      {
+        "id": user.id,
+        "value": user.name
+      }
+    end
+  end
+
   def company_attribute 
     {
       "company": {
