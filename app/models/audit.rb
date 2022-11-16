@@ -36,6 +36,6 @@ class Audit < ApplicationRecord
   end
 
   def self.date_formater date 
-    date.strftime("%A, %d %B %Y") if date.present?
+    date.strftime("%d-%M-%Y") if date.present?
   end
 end
