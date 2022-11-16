@@ -6,9 +6,8 @@ class Branch < ApplicationRecord
   belongs_to :company
   has_many :pos, class_name: "Pos", foreign_key: "branch_id"
   has_many :users
-  # polymorpbic
-  has_many :products, as: :parent_id
-  
+  has_many :products, as: :parent
+
   validates :name, :phone, presence: true
 
   def self.get_all_branch params = {} 

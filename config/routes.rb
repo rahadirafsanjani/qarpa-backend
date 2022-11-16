@@ -39,7 +39,8 @@ Rails.application.routes.draw do
         put 'products/:id', to: 'products#update_product'
         delete 'products/:id', to: 'products#delete_product'
         # product on branch
-        get 'products/onbranch', to:'products#product_on_branch'
+        # get 'products/onbranch', to:'products#product_on_branch'
+        post 'products/onbranch/:id', to: 'products#accepted_branch_product'
       end
       
       #branches 
@@ -92,7 +93,9 @@ Rails.application.routes.draw do
 
       # shipping
       scope 'shipping' do
-        post 'item', to: 'shippings#create'
+        post 'customer', to: 'shippings#create'
+        post 'branch', to: 'shippings#create'
+        put 'delivered_success/:id', to: 'shippings#delivered_success'
         get 'item', to: 'shippings#show'
       end
     end
