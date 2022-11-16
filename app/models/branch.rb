@@ -10,6 +10,16 @@ class Branch < ApplicationRecord
 
   validates :name, :phone, presence: true
 
+  def self.get_dropdown params = {}
+    branches = Branch.where(params)
+    branches.map do |branch|
+      {
+        "id": branch.id,
+        "name": branch.name
+      }
+    end
+  end
+
   def self.get_all_branch params = {} 
     branches = Branch.joins(
       "
