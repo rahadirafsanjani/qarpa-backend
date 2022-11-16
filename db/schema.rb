@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_06_102255) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_13_085330) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -193,11 +193,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_06_102255) do
     t.string "quantity_type"
     t.string "category"
     t.datetime "expire"
-    t.string "image"
     t.integer "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "supplier_id"
+    t.bigint "inventory_id"
+    t.string "parent_type"
+    t.bigint "parent_id"
+    t.index ["inventory_id"], name: "index_products_on_inventory_id"
+    t.index ["parent_type", "parent_id"], name: "index_products_on_parent"
     t.index ["supplier_id"], name: "index_products_on_supplier_id"
   end
 
@@ -205,11 +209,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_06_102255) do
     t.datetime "assign_at"
     t.bigint "destination_id", null: false
     t.bigint "origin_id", null: false
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "customer_id"
-    t.bigint "branch_id"
+    t.integer "customer_id"
+    t.integer "branch_id"
     t.index ["branch_id"], name: "index_shippings_on_branch_id"
     t.index ["customer_id"], name: "index_shippings_on_customer_id"
     t.index ["destination_id"], name: "index_shippings_on_destination_id"
@@ -220,6 +224,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_06_102255) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "company_id"
+    t.index ["company_id"], name: "index_suppliers_on_company_id"
   end
 
   create_table "users", force: :cascade do |t|
