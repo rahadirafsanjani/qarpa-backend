@@ -1,18 +1,22 @@
 class Api::V1::ProductsController < ApplicationController
-  include ActiveStorage::SetCurrent
+  # include ActiveStorage::SetCurrent
   before_action :authorize
-  before_action :new_product_from_supplier, only: %i[ new_product ]
+  before_action :new_product_from_supplier, :set_inventory_env, :set_branch_env, only: %i[ new_product accepted_branch_product  ]
   before_action :pick_product, only: %i[ update_product delete_product ]
 
   def new_product
-    @inventory = Inventory.find_by(company_id: @user.company_id)
-    @product = Product.new(set_product.merge(supplier_id: @supplier.id)
-                                      .merge(inventory_id: @inventory.id))
+    @product = @inventory.products.new(set_product.merge(supplier_id: @supplier.id)
+                                                  .merge(inventory_id: @inventory.id))
     if @product.save
       response_to_json("Product created", @product.new_response, :ok)
     else
-      response_error("product cant be add to, maybe there was problem", :unprocessable_entity)
+      response_error(@product.errors, :unprocessable_entity)
     end
+  end
+
+  def accepted_branch_product
+    @products = Product.insert_product_delivered(id: params[:id])
+    response_to_json("List product", @products, :ok)
   end
 
   def delete_product
@@ -33,13 +37,9 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def show_suplai
-    @product = Product.where(inventory_id: set_company_env)
+    @product = Product.where(inventory_id: set_company_env.id)
                       .get_all_products
     response_to_json("success", @product, :ok)
-  end
-
-  def product_onbranch
-    @product = Product.where()
   end
 
   private
@@ -54,5 +54,27 @@ class Api::V1::ProductsController < ApplicationController
   end
   def set_company_env
     Inventory.find_by(company_id: @user.company_id)
+  end
+  def set_inventory_env
+    @inventory = Inventory.find_by(company_id: @user.company_id)
+  end
+  def set_branch_env
+    @branch = Branch.find_by(id: params[:branch_id])
+  end
+  def get_item_shipping
+    @item_shipping = ItemShipping.find_by(:id )
+  end
+  def convert_product(id)
+    # params.permit(items:[:product_id, :quantity])
+    @shipping = Shipping.where(status: 2)
+    @convert_product = ItemShipping.where(shipping_id: id)
+    @convert_product.map do |item|
+      name = item.name
+      quantity_type = item.quantity_type
+      category = item.category
+      expire = item.expire
+      price = item.price
+      image = item.image
+    end
   end
 end

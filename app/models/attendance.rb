@@ -2,7 +2,7 @@ class Attendance < ApplicationRecord
   belongs_to :user
 
   def self.get_all_attendace params = {}
-    attendances = Attendance.includes(:user).where(params)
+    attendances = Attendance.includes(:user).where(params).where(status: nil)
     attendances.map do | attendance |
       attendance.history_response
     end
