@@ -39,12 +39,12 @@ class Finance < ApplicationRecord
     data[:incomes] = 0
     data[:total_products] = 0
     data[:total_transaction] = 0
+    data[:expenses] = 1000000
 
     reports.each do |report|
       data[:incomes] = data[:incomes] + report.incomes
       data[:total_products] = data[:total_products] + report.total_products
       data[:total_transaction] = data[:total_transaction] + Order.where(pos_id: report.pos.ids).count
-      data[:expenses] = 1000000
     end
 
     data
