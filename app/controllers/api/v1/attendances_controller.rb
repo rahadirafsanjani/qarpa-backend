@@ -3,6 +3,11 @@ class Api::V1::AttendancesController < ApplicationController
   before_action :get_attendance, only: %i[ show ]
   before_action :pick_users, only: %i[ update ]
 
+  def employee_history 
+    @attendances = Attendance.get_all_attendace(user_id: @user.id, status: nil)
+    response_to_json("History attendances", @attendances, :ok)
+  end
+
   def all_history
     @attendances = Attendance.get_all_attendace(user: { company_id: @user.company_id})
     response_to_json("success", @attendances, :ok)

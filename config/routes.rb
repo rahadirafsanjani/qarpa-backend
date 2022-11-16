@@ -85,6 +85,7 @@ Rails.application.routes.draw do
         get 'history', to: 'attendances#all_history'
         get 'show/:id', to: 'attendances#show'
       end
+      get 'employee/attendances/history', to: 'attendances#employee_history'
 
       # audit
       get 'company/audit', to: 'audit#get_branch'
