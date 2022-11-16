@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-
+  attr_accessor :items
   belongs_to :supplier
   # belongs_to :inventory
   belongs_to :parent, :polymorphic => true
@@ -10,6 +10,44 @@ class Product < ApplicationRecord
   # validate :acceptable_image
   def image_url
     Rails.application.routes.url_helpers.url_for(image) if image.attached?
+  end
+
+  def self.insert_product_delivered params = {}
+    shipping = Shipping.find_by(id: params[:id])
+    product_id = []
+    item_shippings = ItemShipping.where(shipping_id: params[:id])
+    item_shippings.each do |item_shipping|
+      product_id << item_shipping.product_id
+    end
+
+    products = Product.where(id: product_id)
+    insert_value = []
+    item_shippings.each do |item_shipping|
+      products.each do |product|
+        if product.id == item_shipping.product_id
+          insert_value << {
+             "name": product.name,
+             "quantity": product.quantity,
+             "quantity_type": product.quantity_type,
+             "category": product.category,
+             "expire": product.expire,
+             "price": product.price,
+             "supplier_id": product.supplier_id,
+             "parent_id": product.parent.id,
+             "parent_type": product.parent_type
+           }
+        end
+      end
+    end
+
+    branch = Branch.find_by(id: shipping.branch_id)
+    insert_value.each do |value|
+      branch.products.find_or_create_by(value)
+      item_shippings.each do |item_shipping|
+        total = value[:quantity].to_i + item_shipping.quantity
+        branch.products.update(quantity: total)
+      end
+    end
   end
 
   def self.get_all_products params = {}
@@ -35,9 +73,6 @@ class Product < ApplicationRecord
       }
     }
   end
-
-
-
 
   private
   def acceptable_image

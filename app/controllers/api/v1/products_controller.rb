@@ -15,15 +15,8 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def accepted_branch_product
-    @shipping = Shipping.where(status: 2)
-    @convert_product = ItemShipping.where(shipping_id: params[:id])
-    @convert_product.map do | convert |
-      @product = Product.find_by(id: convert.product_id)
-      converted = @branch.products.new(@product)
-      if converted.save && converted.update(quantity: convert.quantity)
-        render json: converted
-      end
-    end
+    @products = Product.insert_product_delivered(id: params[:id])
+    response_to_json("List product", @products, :ok)
   end
 
   def delete_product
@@ -68,8 +61,20 @@ class Api::V1::ProductsController < ApplicationController
   def set_branch_env
     @branch = Branch.find_by(id: params[:branch_id])
   end
-
   def get_item_shipping
     @item_shipping = ItemShipping.find_by(:id )
+  end
+  def convert_product(id)
+    # params.permit(items:[:product_id, :quantity])
+    @shipping = Shipping.where(status: 2)
+    @convert_product = ItemShipping.where(shipping_id: id)
+    @convert_product.map do |item|
+      name = item.name
+      quantity_type = item.quantity_type
+      category = item.category
+      expire = item.expire
+      price = item.price
+      image = item.image
+    end
   end
 end
