@@ -193,14 +193,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_085330) do
     t.string "quantity_type"
     t.string "category"
     t.datetime "expire"
+    t.string "image"
     t.integer "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "supplier_id"
-    t.bigint "inventory_id"
     t.string "parent_type"
     t.bigint "parent_id"
-    t.index ["inventory_id"], name: "index_products_on_inventory_id"
     t.index ["parent_type", "parent_id"], name: "index_products_on_parent"
     t.index ["supplier_id"], name: "index_products_on_supplier_id"
   end

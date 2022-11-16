@@ -83,7 +83,7 @@ Rails.application.routes.draw do
         post 'check_in', to: 'attendances#create'
         put 'check_out', to: 'attendances#update'
         get 'history', to: 'attendances#all_history'
-        get 'show/:id', to: 'attendances#show'
+        get 'show/', to: 'attendances#show'
       end
       get 'employee/attendances/history', to: 'attendances#employee_history'
 
