@@ -31,6 +31,6 @@ class Attendance < ApplicationRecord
   end
 
   def date_formater date 
-    date.strftime("%d-%M-%Y %H:%M") if date.present?
+    date.strftime("%d-%m-%Y %H:%M") if date.present?
   end
 end
