@@ -8,6 +8,14 @@ class Attendance < ApplicationRecord
     end
   end
 
+  def show_attribute
+    {
+      "id": self.id,
+      "status": self.status,
+      "checkin_at": self.check_in
+    }
+  end
+
   def history_response
     {
       "id": self.id,

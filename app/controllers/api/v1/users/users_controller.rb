@@ -2,6 +2,16 @@ class Api::V1::Users::UsersController < ApplicationController
   before_action :authorize
   before_action :set_user, only: %i[ show update destroy ]
 
+  def index 
+    @users = User.get_all(id: @user.id, company_id: @user.company_id)
+    response_to_json("List user", @users, :ok)
+  end
+
+  def dropdown_employee 
+    @users = User.get_dropdown_employee(id: @user.id, company_id: @user.company_id)
+    response_to_json("List user", @users, :ok)
+  end
+
   def create 
     @user = User.new(user_params.merge(role: 'employee', confirmed_at: Time.now.utc))
     AvatarGenerator.call(@user)

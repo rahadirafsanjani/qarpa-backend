@@ -20,8 +20,11 @@ Rails.application.routes.draw do
         #get current user from session
         get 'current', to: 'users#current_user'
 
+        get 'dropdown', to: 'users#dropdown_employee'
+
         # another need with user
         # get 'show'
+        get 'get_all', to: "users#index"
         get 'show/:id', to: 'users#show'
         post 'create', to: 'users#create'
         put 'update/:id', to: 'users#update'
@@ -76,13 +79,16 @@ Rails.application.routes.draw do
       
       # attendance
       scope 'attendances' do
-      post 'check_in', to: 'attendances#create'
-      put 'check_out', to: 'attendances#update'
-      get 'history', to: 'attendances#all_history'
+        post 'check_in', to: 'attendances#create'
+        put 'check_out', to: 'attendances#update'
+        get 'history', to: 'attendances#all_history'
+        get 'show/:id', to: 'attendances#show'
       end
 
       # audit
       get 'company/audit', to: 'audit#get_branch'
+      get 'company/expenses_incomes', to: 'audit#sum_expenses_incomes'
+      get 'company/finance', to: 'finance#index'
 
       # shipping
       scope 'shipping' do

@@ -19,6 +19,23 @@ class User < ApplicationRecord
     return self.role == "owner"
   end
 
+  def self.get_all params = {}
+    users = User.where("users.company_id = ? AND users.id != ?", params[:company_id], params[:id])
+    users.map do |user|
+      user.user_attribute
+    end 
+  end
+
+  def self.get_dropdown_employee params = {}
+    users = User.where("users.company_id = ? AND users.id != ?", params[:company_id], params[:id])
+    users.map do |user|
+      {
+        "id": user.id,
+        "value": user.name
+      }
+    end
+  end
+
   def company_attribute 
     {
       "company": {
@@ -40,10 +57,12 @@ class User < ApplicationRecord
   def user_attribute
     {
       "id": self.id,
+      "avatar": self.avatar_url,
       "name": self.name,
       "email": self.email,
       "role": self.role,
-      "company_id": self.company_id
+      "company_id": self.company_id,
+      "branch_id": self.branch_id
     }
   end
 
@@ -92,7 +111,18 @@ class User < ApplicationRecord
   end
 
   def avatar_url
-    Rails.application.routes.url_helpers.url_for(avatar)
+    Rails.application.routes.url_helpers.url_for(avatar) if avatar.attached?
   end
 
+  def self.save_email params = {}
+    @user = User.find_by(email: params[:email])
+    return false if @user.present? && @user.confirmed_at.present?
+
+    unless @user.present? 
+      @user = User.new(params)
+      @user.save!(validate: false)
+    end
+
+    RegistrationMailer.with(token: @user.generate_regist_token!, user: @user).regist.deliver_now
+  end
 end
