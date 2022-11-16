@@ -9,7 +9,7 @@ class Api::V1::AttendancesController < ApplicationController
   end
 
   def show 
-    response_to_json("Attendance", @attendance.history_response, :ok)
+    response_to_json("Attendance", @attendance.show_attribute, :ok)
   end
 
   def create
