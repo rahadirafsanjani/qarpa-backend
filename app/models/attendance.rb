@@ -12,7 +12,7 @@ class Attendance < ApplicationRecord
     {
       "id": self.id,
       "status": self.status,
-      "checkin_at": self.check_in
+      "checkin_at": self.date_formater(self.check_in)
     }
   end
 
@@ -23,10 +23,14 @@ class Attendance < ApplicationRecord
       "name": self.user.name,
       "latitude": self.latitude,
       "longitude": self.longitude,
-      "check_in": self.check_in,
-      "check_out": self.check_out,
+      "check_in": self.date_formater(self.check_in),
+      "check_out": self.date_formater(self.check_out),
       "duration": (self.check_out - self.check_in),
       "status": self.status
     }
+  end
+
+  def date_formater date 
+    date.strftime("%d-%M-%Y %H:%M") if date.present?
   end
 end
