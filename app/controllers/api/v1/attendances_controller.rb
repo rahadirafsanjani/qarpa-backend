@@ -1,6 +1,5 @@
 class Api::V1::AttendancesController < ApplicationController
   before_action :authorize
-  before_action :get_attendance, only: %i[ show ]
   before_action :pick_users, only: %i[ update ]
 
   def employee_history 
@@ -14,7 +13,12 @@ class Api::V1::AttendancesController < ApplicationController
   end
 
   def show 
-    response_to_json("Attendance", @attendance.show_attribute, :ok)
+    @attendance = Attendance.find_by(user_id: @user.id, status: true)
+    if @attendance.present?
+      response_to_json("Attendance", @attendance.show_attribute, :ok)
+    else
+      response_error("Attendance not found", :not_found)
+    end
   end
 
   def create
@@ -37,11 +41,6 @@ class Api::V1::AttendancesController < ApplicationController
   end
 
   private
-
-  def get_attendance 
-    @attendance = Attendance.find_by(id: params[:id]) 
-    response_error("Attendance not found", :not_found) unless @attendance.present?
-  end
 
   def pick_users
     @attendance = Attendance.find_by(user_id: @user.id, status: true)
