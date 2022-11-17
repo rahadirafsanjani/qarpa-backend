@@ -34,13 +34,14 @@ Rails.application.routes.draw do
       scope 'inventory' do
         # create product
         get 'products/suplai', to: "products#show_suplai"
-        get 'products/stock', to: "products#show_stock"
         post 'products', to: 'products#new_product'
         put 'products/:id', to: 'products#update_product'
         delete 'products/:id', to: 'products#delete_product'
         # product on branch
-        # get 'products/onbranch', to:'products#product_on_branch'
-        post 'products/onbranch/:id', to: 'products#accepted_branch_product'
+        post 'products/acc_product/:id', to: 'products#accepted_branch_product'
+        get 'products/onbranch/:id', to: 'products#show_product_on_branch'
+        post 'products/onbranch/:id', to: 'products#add_product_ready_to_sell'
+        put 'products/editproduct/:id', to: 'products#edit_product_on_branch'
       end
       
       #branches 
