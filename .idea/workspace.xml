@@ -4,8 +4,9 @@
     <list default="true" id="e61c6396-0375-4481-80a0-fd50e30cd293" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/products_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/products_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/attendance.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/attendance.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/inventory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/inventory.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/product.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/product.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +19,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/activemodel-7.0.4/lib/active_model/attribute_methods.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/app/controllers/api/v1/users/registrations_controller.rb" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/models/product.rb" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -72,6 +74,8 @@
       <workItem from="1668488185859" duration="13763000" />
       <workItem from="1668520548386" duration="299000" />
       <workItem from="1668567066163" duration="6447000" />
+      <workItem from="1668590726469" duration="22185000" />
+      <workItem from="1668660256358" duration="24369000" />
     </task>
     <servers />
   </component>
