@@ -1,12 +1,13 @@
 class Api::V1::ProductsController < ApplicationController
-  # include ActiveStorage::SetCurrent
   before_action :authorize
-  before_action :new_product_from_supplier, :set_inventory_env, :set_branch_env, only: %i[ new_product accepted_branch_product  ]
-  before_action :pick_product, only: %i[ update_product delete_product ]
+  before_action :set_inventory_env, :new_product_from_supplier, only: %i[ new_product ]
+  before_action :set_branch_env, :set_inventory_env, only: %i[  add_product_ready_to_sell show_product_on_branch edit_product_on_branch ]
+  before_action :pick_product, only: %i[ update_product edit_product_on_branch delete_product ]
+  before_action :set_inventory_env, :set_branch_env, only: %i[ accepted_branch_product  ]
 
   def new_product
-    @product = @inventory.products.new(set_product.merge(supplier_id: @supplier.id)
-                                                  .merge(inventory_id: @inventory.id))
+    # @product = @inventory.products.new(set_product.merge(supplier_id: @supplier.id))
+    @product = Product.new(set_product.merge(supplier_id: @supplier.id).merge(parent: Inventory.find_by(company_id: @user.company_id)))
     if @product.save
       response_to_json("Product created", @product.new_response, :ok)
     else
@@ -37,9 +38,30 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def show_suplai
-    @product = Product.where(inventory_id: set_company_env.id)
+    @product = Product.get_all_products(parent_type: "Inventory")
+    response_to_json("success", @product, :ok)
+  end
+
+  # only for branch
+  def add_product_ready_to_sell
+    # @product = @branch.products.new(set_product)
+    @product = Product.new(set_product.merge(parent: Branch.find_by(id: params[:id])))
+    if @product.save
+      response_to_json("succes", @product, :ok)
+    end
+  end
+
+  def show_product_on_branch
+    @product = Product.where(parent: params[:id])
+                      .where(parent_type: "Branch")
                       .get_all_products
     response_to_json("success", @product, :ok)
+  end
+
+  def edit_product_on_branch
+    if @product.update(set_product)
+      response_to_json("success", @product, :ok)
+    end
   end
 
   private
@@ -47,34 +69,15 @@ class Api::V1::ProductsController < ApplicationController
     @product = Product.find_by(id: params[:id])
   end
   def set_product
-    params.permit(:id, :name, :quantity, :quantity_type, :category, :expire, :price, :image)
+    params.permit(:name, :quantity, :quantity_type, :category, :expire, :price, :image)
   end
   def new_product_from_supplier
     @supplier = Supplier.find_or_create_by(name: params[:name_supplier])
-  end
-  def set_company_env
-    Inventory.find_by(company_id: @user.company_id)
   end
   def set_inventory_env
     @inventory = Inventory.find_by(company_id: @user.company_id)
   end
   def set_branch_env
-    @branch = Branch.find_by(id: params[:branch_id])
-  end
-  def get_item_shipping
-    @item_shipping = ItemShipping.find_by(:id )
-  end
-  def convert_product(id)
-    # params.permit(items:[:product_id, :quantity])
-    @shipping = Shipping.where(status: 2)
-    @convert_product = ItemShipping.where(shipping_id: id)
-    @convert_product.map do |item|
-      name = item.name
-      quantity_type = item.quantity_type
-      category = item.category
-      expire = item.expire
-      price = item.price
-      image = item.image
-    end
+    @branch = Branch.find_by(id: params[:id])
   end
 end
