@@ -41,7 +41,7 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
-  def show_suplai
+  def get_all_products
     @product = Product.get_all_products(parent_type: "Inventory")
     response_to_json("success", @product, :ok)
   end

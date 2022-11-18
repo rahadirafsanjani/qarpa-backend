@@ -34,7 +34,7 @@ Rails.application.routes.draw do
       scope 'inventory' do
         get "products/:id", to: "products#show_product"
         # create product
-        get 'products/suplai', to: "products#show_suplai"
+        get 'products', to: "products#get_all_products"
         post 'products', to: 'products#new_product'
         put 'products/:id', to: 'products#update_product'
         delete 'products/:id', to: 'products#delete_product'
@@ -49,7 +49,10 @@ Rails.application.routes.draw do
       resources :branches, only: %i[ create index show ]
       get 'owner/branches',to: 'branches#get_for_owner'
       get 'employee/branches', to: 'branches#get_for_employee'
+
+      # dropdown routes
       get 'dropdown/branches', to: 'branches#dropdown'
+      get "dropdown/suppliers", to: 'suppliers#dropdown'
 
       #work order management
       resources :management_works, except: %i[ destroy ]
