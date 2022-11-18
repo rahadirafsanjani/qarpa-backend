@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       end
 
       scope 'inventory' do
+        get "products/:id", to: "products#show_product"
         # create product
         get 'products/suplai', to: "products#show_suplai"
         post 'products', to: 'products#new_product'
