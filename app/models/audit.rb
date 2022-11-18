@@ -16,7 +16,7 @@ class Audit < ApplicationRecord
       beginning_of_day = date.beginning_of_day
       end_of_day = date.end_of_day
       
-      conditions.merge!(:created_at => beginning_of_day..end_of_day) if params[:date].present?
+      conditions.merge!(:created_at => beginning_of_day..end_of_day)
     end
     
     audits = Pos.includes(:branch)
@@ -36,6 +36,6 @@ class Audit < ApplicationRecord
   end
 
   def self.date_formater date 
-    date.strftime("%d-%M-%Y") if date.present?
+    date.strftime("%d-%m-%Y") if date.present?
   end
 end

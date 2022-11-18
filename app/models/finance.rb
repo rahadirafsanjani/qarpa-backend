@@ -54,7 +54,7 @@ class Finance < ApplicationRecord
     data[:total_transaction] = 0
 
     transactions.each do |transaction|
-      data[:total_transaction] = data[:total_transaction] + transaction.total_transaction
+      data[:total_transaction] = data[:total_transaction] + (transaction.total_transaction || 0)
     end
 
     data

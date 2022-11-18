@@ -2,7 +2,7 @@ class Api::V1::ProductsController < ApplicationController
   before_action :authorize
   before_action :set_inventory_env, :new_product_from_supplier, only: %i[ new_product ]
   before_action :set_branch_env, :set_inventory_env, only: %i[  add_product_ready_to_sell show_product_on_branch edit_product_on_branch ]
-  before_action :pick_product, only: %i[ update_product edit_product_on_branch delete_product ]
+  before_action :pick_product, only: %i[ update_product edit_product_on_branch delete_product show_product ]
   before_action :set_inventory_env, :set_branch_env, only: %i[ accepted_branch_product  ]
 
   def new_product
@@ -13,6 +13,10 @@ class Api::V1::ProductsController < ApplicationController
     else
       response_error(@product.errors, :unprocessable_entity)
     end
+  end
+
+  def show_product
+    response_to_json("Product found", @product.product_attribute, :ok)
   end
 
   def accepted_branch_product
@@ -65,18 +69,24 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   private
+
   def pick_product
     @product = Product.find_by(id: params[:id])
+    response_error("Product not found", :not_found) unless @product.present?
   end
+
   def set_product
     params.permit(:name, :quantity, :quantity_type, :category, :expire, :price, :image)
   end
+
   def new_product_from_supplier
     @supplier = Supplier.find_or_create_by(name: params[:name_supplier])
   end
+
   def set_inventory_env
     @inventory = Inventory.find_by(company_id: @user.company_id)
   end
+
   def set_branch_env
     @branch = Branch.find_by(id: params[:id])
   end
