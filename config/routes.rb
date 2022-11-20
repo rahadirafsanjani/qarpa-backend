@@ -50,6 +50,9 @@ Rails.application.routes.draw do
       get 'owner/branches',to: 'branches#get_for_owner'
       get 'employee/branches', to: 'branches#get_for_employee'
 
+      # suppliers 
+      resources :suppliers, only: %i[ create update destroy ]
+
       # dropdown routes
       get 'dropdown/branches', to: 'branches#dropdown'
       get "dropdown/suppliers", to: 'suppliers#dropdown'
