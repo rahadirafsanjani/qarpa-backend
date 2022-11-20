@@ -108,6 +108,7 @@ Rails.application.routes.draw do
 
       # category 
       get "categories", to: "categories#index"
+      post "categories", to: "categories#create"
     end
   end
 end
