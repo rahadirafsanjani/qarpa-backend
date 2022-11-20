@@ -36,7 +36,6 @@ class Order < ApplicationRecord
 
   def get_products 
     @products = ProductShared.where(id: get_product_id)
-    binding.pry
   end
 
   def get_product_id 

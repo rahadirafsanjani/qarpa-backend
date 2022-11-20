@@ -22,42 +22,10 @@ class Branch < ApplicationRecord
   end
 
   def self.get_all_branch params = {} 
-    branches = Branch.joins(
-      "
-      LEFT JOIN addresses ON addresses.id = branches.address_id
-      LEFT JOIN pos ON pos.branch_id = branches.id
-      LEFT JOIN orders ON orders.pos_id = pos.id
-      LEFT JOIN detail_orders ON detail_orders.order_id = orders.id
-      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id
-      "
-    ).select(
-      "
-      branches.id,
-      branches.name,
-      branches.company_id,
-      branches.phone, 
-      branches.status,
-      addresses.full_address AS addresses,
-      COUNT(orders.id) AS total_orders,
-      SUM(product_shareds.price) AS total_incomes
-      "
-    ).group(
-      "
-      branches.id,
-      branches.name,
-      branches.company_id,
-      branches.phone,
-      branches.status,
-      addresses.full_address
-      "
-    ).where(params)
-
+    branches = Branch.includes(:address).where(params)
+    
     branches.map do |branch|
-      branch.new_response.merge!(
-        address: branch.addresses,
-        total_orders: Order.where(pos_id: branch.pos.ids).count,
-        total_incomes: branch.total_incomes.nil? ? 0 : branch.total_incomes
-      )
+      branch.new_response
     end
   end
 
@@ -67,7 +35,8 @@ class Branch < ApplicationRecord
       "company_id": self.company_id,
       "name": self.name,
       "status": self.status,
-      "phone": self.phone
+      "phone": self.phone,
+      "address": self.address.full_address
     }
   end
 
