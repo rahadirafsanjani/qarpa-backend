@@ -9,6 +9,28 @@ class Product < ApplicationRecord
   # image
   has_one_attached :image, :dependent => :destroy
 
+  def self.units 
+    [
+      {
+        "name": "Satuan"
+      },{
+        "name": "Kardus"
+      }
+    ]
+  end
+
+  def self.condition_products 
+    [
+      {
+        "name": "Bagus",
+      },{
+        "name": "Rusak"
+      },{
+        "name": "Kadaluarsa"
+      }
+    ]
+  end
+
   # validate :acceptable_image
   def image_url
     Rails.application.routes.url_helpers.url_for(image) if image.attached?

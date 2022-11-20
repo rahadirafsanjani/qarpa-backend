@@ -6,6 +6,16 @@ class Api::V1::ProductsController < ApplicationController
   before_action :set_inventory_env, :set_branch_env, only: %i[ accepted_branch_product  ]
 
 
+  def units 
+    @units = Product.units 
+    response_to_json("List units", @units, :ok)
+  end
+
+  def conditions 
+    @conditions = Product.condition_products
+    response_to_json("List conditions", @conditions, :ok)
+  end 
+
   def show_product
     response_to_json("Product found", @product.product_attribute, :ok)
   end
