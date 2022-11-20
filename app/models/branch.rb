@@ -28,7 +28,7 @@ class Branch < ApplicationRecord
       LEFT JOIN pos ON pos.branch_id = branches.id
       LEFT JOIN orders ON orders.pos_id = pos.id
       LEFT JOIN detail_orders ON detail_orders.order_id = orders.id
-      LEFT JOIN products ON products.id = detail_orders.product_id
+      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id
       "
     ).select(
       "
@@ -39,7 +39,7 @@ class Branch < ApplicationRecord
       branches.status,
       addresses.full_address AS addresses,
       COUNT(orders.id) AS total_orders,
-      SUM(products.price) AS total_incomes
+      SUM(product_shareds.price) AS total_incomes
       "
     ).group(
       "

@@ -4,7 +4,7 @@ class Order < ApplicationRecord
   before_save :get_products, :validate_stock_products
 
   has_many :detail_orders
-  has_many :product, through: :detail_orders
+  has_many :product_shareds, through: :detail_orders
   belongs_to :pos
   belongs_to :customer
 
