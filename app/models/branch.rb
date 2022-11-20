@@ -7,7 +7,7 @@ class Branch < ApplicationRecord
   has_many :pos, class_name: "Pos", foreign_key: "branch_id"
   has_many :users
   has_many :shippings
-  has_many :products, as: :parent
+  has_many :product_shareds, as: :parent
 
   validates :name, :phone, presence: true
 
