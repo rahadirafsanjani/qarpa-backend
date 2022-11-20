@@ -49,7 +49,10 @@ Rails.application.routes.draw do
       resources :branches, only: %i[ create index show ]
       get 'owner/branches',to: 'branches#get_for_owner'
       get 'employee/branches', to: 'branches#get_for_employee'
+
+      # dropdown routes
       get 'dropdown/branches', to: 'branches#dropdown'
+      get "dropdown/suppliers", to: 'suppliers#dropdown'
 
       #work order management
       resources :management_works, except: %i[ destroy ]

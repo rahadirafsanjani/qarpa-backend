@@ -167,6 +167,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_19_130317) do
     t.bigint "customer_id"
     t.bigint "pos_id"
     t.integer "discount"
+    t.integer "payment"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["pos_id"], name: "index_orders_on_pos_id"
   end
@@ -186,6 +187,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_19_130317) do
 
   create_table "product_shareds", force: :cascade do |t|
     t.integer "qty"
+    t.integer "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "product_id"
@@ -200,6 +202,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_19_130317) do
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "quantity_type"
+    t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "category_id"

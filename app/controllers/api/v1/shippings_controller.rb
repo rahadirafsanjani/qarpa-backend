@@ -2,7 +2,7 @@ class Api::V1::ShippingsController < ApplicationController
   before_action :authorize, :current_company
 
   def create
-    @shipping = Shipping.new(shipping_params.merge(assign_at: Time.now.utc).merge(status: 1))
+    @shipping = Shipping.new(shipping_params.merge(assign_at: Time.now).merge(status: 1))
     @shipping.save ? response_to_json("succes", @shipping, :ok) : response_error(@shipping.errors, :unprocessable_entity)
   end
 

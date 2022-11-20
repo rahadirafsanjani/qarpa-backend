@@ -8,6 +8,8 @@ class Order < ApplicationRecord
   belongs_to :pos
   belongs_to :customer
 
+  enum :payment, { cash: 0, transfer: 1 }
+
   private 
 
   def validate_stock_products
