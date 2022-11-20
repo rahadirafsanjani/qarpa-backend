@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_13_085330) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_19_130317) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -82,6 +82,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_085330) do
     t.index ["company_id"], name: "index_branches_on_company_id"
   end
 
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "companies", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -117,15 +123,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_085330) do
     t.bigint "address_id"
     t.index ["address_id"], name: "index_inventories_on_address_id"
     t.index ["company_id"], name: "index_inventories_on_company_id"
-  end
-
-  create_table "inventory_products", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "inventory_id"
-    t.bigint "product_id"
-    t.index ["inventory_id"], name: "index_inventory_products_on_inventory_id"
-    t.index ["product_id"], name: "index_inventory_products_on_product_id"
   end
 
   create_table "item_shippings", force: :cascade do |t|
@@ -187,21 +184,26 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_085330) do
     t.index ["user_id"], name: "index_pos_on_user_id"
   end
 
-  create_table "products", force: :cascade do |t|
-    t.string "name"
-    t.integer "quantity"
-    t.string "quantity_type"
-    t.string "category"
-    t.datetime "expire"
-    t.string "image"
-    t.integer "price"
+  create_table "product_shareds", force: :cascade do |t|
+    t.integer "qty"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "product_id"
     t.bigint "supplier_id"
     t.string "parent_type"
     t.bigint "parent_id"
-    t.index ["parent_type", "parent_id"], name: "index_products_on_parent"
-    t.index ["supplier_id"], name: "index_products_on_supplier_id"
+    t.index ["parent_type", "parent_id"], name: "index_product_shareds_on_parent"
+    t.index ["product_id"], name: "index_product_shareds_on_product_id"
+    t.index ["supplier_id"], name: "index_product_shareds_on_supplier_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "name"
+    t.string "quantity_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "category_id"
+    t.index ["category_id"], name: "index_products_on_category_id"
   end
 
   create_table "shippings", force: :cascade do |t|
