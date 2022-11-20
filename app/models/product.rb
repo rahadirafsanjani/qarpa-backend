@@ -8,10 +8,20 @@ class Product < ApplicationRecord
 
   # image
   has_one_attached :image, :dependent => :destroy
-
   # validate :acceptable_image
+
+  after_save :product_shareds_inventory
+
   def image_url
     Rails.application.routes.url_helpers.url_for(image) if image.attached?
+  end
+
+  def product_shareds_inventory params = {}
+    Product_shared.create(supplier_id: @supplier.id,
+                          product_id: @product.id,
+                          price: params[:price],
+                          qty: params[:quantity],
+                          parent: Inventory.find_by(company_id: @user.company_id))
   end
 
   def self.insert_product_delivered params = {}

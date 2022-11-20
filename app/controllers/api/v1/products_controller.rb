@@ -1,12 +1,22 @@
 class Api::V1::ProductsController < ApplicationController
   before_action :authorize
+  before_action :set_inventory_env, only: %i[ new_product ]
 
-
+  def new_product
+    category_id = Category.find_by(id: params[:category])
+    @product = Product.new(set_product_from_supplier.merge(category_id))
+  end
 
 
   private
   def set_product_from_supplier
-    params.permit(:name, :qty, :qty_type, :category, :expire, :price, :image)
+    params.permit(:name, :expire, :image, :quantity_type)
+  end
+  def set_product_shared
+    params.permit(:quantity, :price)
+  end
+  def set_category
+    params.permit(:category)
   end
   def set_product_on_branch
     params.permit(:name, :qty, :expire, :price, :image)
