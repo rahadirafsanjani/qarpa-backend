@@ -105,6 +105,9 @@ Rails.application.routes.draw do
         put 'delivered_success/:id', to: 'shippings#delivered_success'
         get 'item', to: 'shippings#show'
       end
+
+      # category 
+      get "categories", to: "categories#index"
     end
   end
 end
