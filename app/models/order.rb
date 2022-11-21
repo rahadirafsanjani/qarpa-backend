@@ -4,7 +4,7 @@ class Order < ApplicationRecord
   before_save :get_products, :validate_stock_products
 
   has_many :detail_orders
-  has_many :product, through: :detail_orders
+  has_many :product_shareds, through: :detail_orders
   belongs_to :pos
   belongs_to :customer
 
@@ -17,8 +17,8 @@ class Order < ApplicationRecord
 
     self.items.each do |item|
       @products.each do |product|
-        if product.id == item[:product_id] && product.quantity < item[:qty]
-          errors.add(:qty, "#{product.name} not enough stock")
+        if product.id == item[:product_shared_id] && product.qty < item[:qty]
+          errors.add(:qty, "#{product.product.name} not enough stock")
           valid = valid + 1
         end
       end 
@@ -29,22 +29,20 @@ class Order < ApplicationRecord
 
   def reduce_stock 
     self.detail_orders.each do |detail_order|
-        detail_order.product.quantity = detail_order.product.quantity - detail_order.qty
-        detail_order.product.save!(validate: false)
+        detail_order.product_shared.qty = detail_order.product_shared.qty - detail_order.qty
+        detail_order.product_shared.save!(validate: false)
     end
   end
 
   def get_products 
-    @products = Product.where(id: get_product_id)
+    @products = ProductShared.where(id: get_product_id)
   end
 
   def get_product_id 
-    return self.items.map do |item|
-      item[:product_id]
-    end
+    return self.items.map { |item| item[:product_shared_id] }
   end
 
   def create_detail_orders
-    self.detail_orders.insert_all(self.items)
+    self.detail_orders.create(self.items)
   end
 end

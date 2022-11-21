@@ -5,15 +5,16 @@ class Api::V1::ProductsController < ApplicationController
   before_action :pick_product, only: %i[ update_product edit_product_on_branch delete_product show_product ]
   before_action :set_inventory_env, :set_branch_env, only: %i[ accepted_branch_product  ]
 
-  def new_product
-    # @product = @inventory.products.new(set_product.merge(supplier_id: @supplier.id))
-    @product = Product.new(set_product.merge(supplier_id: @supplier.id).merge(parent: Inventory.find_by(company_id: @user.company_id)))
-    if @product.save
-      response_to_json("Product created", @product.new_response, :ok)
-    else
-      response_error(@product.errors, :unprocessable_entity)
-    end
+
+  def units 
+    @units = Product.units 
+    response_to_json("List units", @units, :ok)
   end
+
+  def conditions 
+    @conditions = Product.condition_products
+    response_to_json("List conditions", @conditions, :ok)
+  end 
 
   def show_product
     response_to_json("Product found", @product.product_attribute, :ok)
@@ -41,7 +42,7 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
-  def show_suplai
+  def get_all_products
     @product = Product.get_all_products(parent_type: "Inventory")
     response_to_json("success", @product, :ok)
   end
@@ -82,7 +83,6 @@ class Api::V1::ProductsController < ApplicationController
   def new_product_from_supplier
     @supplier = Supplier.find_or_create_by(name: params[:name_supplier])
   end
-
   def set_inventory_env
     @inventory = Inventory.find_by(company_id: @user.company_id)
   end
