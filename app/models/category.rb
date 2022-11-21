@@ -6,7 +6,7 @@ class Category < ApplicationRecord
     @categories.map do |category|
       {
         "id": category.id,
-        "name": category.name
+        "value": category.name
       }
     end
   end
