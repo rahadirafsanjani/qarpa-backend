@@ -1,5 +1,58 @@
 class Audit < ApplicationRecord
 
+  def self.expenses_incomes params = {}
+    branch_id = Branch.where(company_id: params[:company_id]).ids
+    expenses = Shipping.joins(
+      "
+      LEFT JOIN item_shippings ON item_shippings.shipping_id = shippings.id
+      LEFT JOIN product_shareds ON product_shareds.id = item_shippings.product_shared_id
+      "
+    ).select(
+      "
+      shippings.id,
+      (item_shippings.quantity * product_shareds.price) AS expenses 
+      "
+    ).group(
+      "
+      shippings.id,
+      item_shippings.quantity,
+      product_shareds.price
+      "
+    ).where(branch_id: branch_id)
+
+    incomes = Pos.joins(
+      "
+      LEFT JOIN orders ON orders.pos_id = pos.id
+      LEFT JOIN detail_orders ON detail_orders.order_id = orders.id
+      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id
+      "
+    ).select(
+      "
+      pos.id,
+      (detail_orders.qty * product_shareds.price) AS incomes
+      "
+    ).group(
+      "
+      pos.id,
+      detail_orders.qty,
+      product_shareds.price
+      "
+    ).where(branch_id: branch_id)
+
+    data = {}
+    data[:incomes] = 0
+    data[:expenses] = 0
+
+    incomes.each do |income|
+      data[:incomes] = data[:incomes] = (income.incomes || 0)
+    end
+    expenses.each do |expense|
+      data[:expenses] = data[:expenses] + (expense.expenses || 0)
+    end
+
+    data
+  end
+
   def self.filter_by params = {}
     return false unless params[:branch_id].present?
     
