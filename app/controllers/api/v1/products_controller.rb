@@ -1,92 +1,70 @@
 class Api::V1::ProductsController < ApplicationController
   before_action :authorize
-  before_action :set_inventory_env, :new_product_from_supplier, only: %i[ new_product ]
-  before_action :set_branch_env, :set_inventory_env, only: %i[  add_product_ready_to_sell show_product_on_branch edit_product_on_branch ]
-  before_action :pick_product, only: %i[ update_product edit_product_on_branch delete_product show_product ]
-  before_action :set_inventory_env, :set_branch_env, only: %i[ accepted_branch_product  ]
+  before_action :set_product, only: %i[ update_product show_product_by_id delete_product]
+  before_action :get_inventory, only: %i[ new_product index update_product delete_product show_product_by_id ]
+  before_action :pick_product_parent, only: %i[ update_product_from_branch ]
 
-
-  def units 
-    @units = Product.units 
-    response_to_json("List units", @units, :ok)
-  end
-
-  def conditions 
-    @conditions = Product.condition_products
-    response_to_json("List conditions", @conditions, :ok)
-  end 
-
-  def show_product
-    response_to_json("Product found", @product.product_attribute, :ok)
-  end
-
-  def accepted_branch_product
-    @products = Product.insert_product_delivered(id: params[:id])
-    response_to_json("List product", @products, :ok)
-  end
-
-  def delete_product
-    @product = Product.find_by(id: params[:id])
-    if @product.destroy
-      render json: { message: "product was deleted succesfuly" }
+  # Inventory Scope
+  def new_product
+    @product = Product.new(set_product_from_supplier)
+    if @product.save
+      render json: @product
     else
-      response_error("product cant be delete to, maybe there was problem", :unprocessable_entity)
+      render json: @product.errors
     end
+  end
+  def index
+    @product = Product.show_all_product(inventory_id: @inventory.id)
+    render json: @product
+  end
+  def show_product_by_id
+    render json: @product
   end
 
   def update_product
-    if @product.update(set_product)
-      response_to_json("Product created", @product.new_response, :ok)
-    else
-      response_error("product cant be update to, maybe there was problem", :unprocessable_entity)
+    @product.update(set_product_from_supplier)
+    render json: @product
+  end
+
+  def delete_product
+    if @product.delete
+      render json: @product
     end
   end
 
-  def get_all_products
-    @product = Product.get_all_products(parent_type: "Inventory")
-    response_to_json("success", @product, :ok)
+  # Branch/POS Scope
+  def get_product_from_branch
+    @products = ProductShared.get_product_branch(branch_id: params[:id])
+    @products ? response_to_json("List product", @products, :ok) :
+      response_error("something went wrong", :unprocessable_entity)
   end
 
-  # only for branch
-  def add_product_ready_to_sell
-    # @product = @branch.products.new(set_product)
-    @product = Product.new(set_product.merge(parent: Branch.find_by(id: params[:id])))
-    if @product.save
-      response_to_json("succes", @product, :ok)
-    end
+  def create_product_from_branch
+    @product = ProductShared.create_from_branch(set_product_from_supplier.merge(id: params[:id]))
+    @product ? response_to_json("New product has been created", @product, :ok) :
+      response_error("Something went wrong", :unprocessable_entity)
   end
 
-  def show_product_on_branch
-    @product = Product.where(parent: params[:id])
-                      .where(parent_type: "Branch")
-                      .get_all_products
-    response_to_json("success", @product, :ok)
-  end
 
-  def edit_product_on_branch
-    if @product.update(set_product)
-      response_to_json("success", @product, :ok)
-    end
-  end
 
   private
+  def set_product_from_supplier
+    params.permit(:name, :image, :quantity_type, :qty, :price, :expire, :category_id, :name_supplier).merge(company_id: @user.company_id)
+  end
 
-  def pick_product
+  def set_product_from_branch
+    params.permit(:name, :image, :price, :qty, :category_id, :expire)
+  end
+  def set_product
     @product = Product.find_by(id: params[:id])
     response_error("Product not found", :not_found) unless @product.present?
   end
-
-  def set_product
-    params.permit(:name, :quantity, :quantity_type, :category, :expire, :price, :image)
+  def pick_product_parent
+    @product_shared = ProductShared.find_by(id: params[:id])
   end
-
-  def new_product_from_supplier
-    @supplier = Supplier.find_or_create_by(name: params[:name_supplier])
-  end
-  def set_inventory_env
+  def get_inventory
     @inventory = Inventory.find_by(company_id: @user.company_id)
   end
-
   def set_branch_env
     @branch = Branch.find_by(id: params[:id])
   end
