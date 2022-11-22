@@ -41,28 +41,20 @@ class Product < ApplicationRecord
   end
 
   def self.show_all_product params = {}
-    @product = ProductShared.where(parent_type: "Inventory", parent_id: params[:inventory_id])
-    product = []
-    product_id = []
-    insert_value = []
-    @product.map do | item |
-      product_id << {
-        id:  item.product_id
+    @product = []
+    @inventory = Inventory.find_by(id: params[:inventory_id])
+    @inventory.product_shareds.each do |product_shared|
+      @product << {
+        "id": product_shared.id,
+        "name": product_shared.product.name,
+        "qty": product_shared.qty,
+        "price": product_shared.price,
+        "category": product_shared.product.category.name,
+        "image": product_shared.product.image_url 
       }
     end
-    product_id.map do | item |
-      products = Product.where(id: item[:id])
-      products.each do | product |
-        insert_value << {
-          id: product.id,
-          name: product.name,
-          category: product.category.name,
-          image: product.image_url
-        }
 
-      end
-    end
-    return insert_value
+    @product
   end
 
   def product_shareds_inventory params = {}
