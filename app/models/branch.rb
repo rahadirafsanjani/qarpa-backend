@@ -24,14 +24,9 @@ class Branch < ApplicationRecord
   def self.get_all_branch params = {} 
     branches = Branch.includes(:address).where(params)
     branches.map do |branch|
-      {
-        "id": branch.id,
-        "company_id": branch.company_id,
-        "status": branch.status,
-        "phone": branch.phone,
-        "address": branch.address.full_address,
+      branch.new_response.merge!(
         "pos_id": branch.pos.map { |p| p.id if p.close_at.nil? }.compact
-      }
+      )
     end
   end
 
