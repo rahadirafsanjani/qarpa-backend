@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       
       #branches 
       resources :branches, only: %i[ create index show ]
+      get "branches/pos/:id", to: "branches#show_pos"
       get 'owner/branches',to: 'branches#get_for_owner'
       get 'employee/branches', to: 'branches#get_for_employee'
 

@@ -12,9 +12,9 @@ class Product < ApplicationRecord
   def self.units 
     [
       {
-        "name": "Satuan"
+        "value": "Satuan"
       },{
-        "name": "Kardus"
+        "value": "Kardus"
       }
     ]
   end
@@ -22,11 +22,11 @@ class Product < ApplicationRecord
   def self.condition_products 
     [
       {
-        "name": "Bagus",
+        "value": "Bagus",
       },{
-        "name": "Rusak"
+        "value": "Rusak"
       },{
-        "name": "Kadaluarsa"
+        "value": "Kadaluarsa"
       }
     ]
   end
