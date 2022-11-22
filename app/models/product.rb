@@ -1,8 +1,9 @@
 class Product < ApplicationRecord
-  attr_accessor :items
-  belongs_to :supplier, :optional => true
+  attr_accessor :qty, :price, :expire, :company_id, :name_supplier
+
+  belongs_to :supplier, optional: true
   belongs_to :category
-  belongs_to :product_shared
+  has_many :product_shareds
   has_many :detail_order
   has_many :orders, through: :detail_order
 
@@ -10,28 +11,61 @@ class Product < ApplicationRecord
   has_one_attached :image, :dependent => :destroy
   # validate :acceptable_image
 
-  after_save :product_shareds_inventory
+  after_create_commit :product_shareds_inventory
 
   def image_url
     Rails.application.routes.url_helpers.url_for(image) if image.attached?
   end
 
-  def product_shareds_inventory params = {}
-    Product_shared.create(supplier_id: @supplier.id,
-                          product_id: @product.id,
-                          price: params[:price],
-                          qty: params[:quantity],
-                          parent: Inventory.find_by(company_id: @user.company_id))
+  def self.show_all_product params = {}
+    @product = ProductShared.where(parent_type: "Inventory", parent_id: params[:inventory_id])
+    product = []
+    product_id = []
+    insert_value = []
+    @product.map do | item |
+      product_id << {
+        id:  item.product_id
+      }
+    end
+    product_id.map do | item |
+      products = Product.where(id: item[:id])
+      products.each do | product |
+        insert_value << {
+          id: product.id,
+          name: product.name,
+          category: product.category.name,
+          image: product.image_url
+        }
+
+      end
+    end
+    return insert_value
   end
 
-  def self.insert_product_delivered params = {}
-    shipping = Shipping.find_by(id: params[:id])
-    item_shippings = ItemShipping.where(shipping_id: shipping.id)
-    item_shippings.each do |item_shipping|
-      product_id << item_shipping.product_id
-      products = Product.where(id: product_id)
-      product_updated
+  def product_shareds_inventory params = {}
+    @supplier = Supplier.find_or_create_by(name: self.name_supplier)
+    @inventory = Inventory.find_by(company_id: self.company_id)
+    new_product_shareds = {
+      product_id: self.id,
+      expire: self.expire,
+      price: self.price,
+      qty: self.qty,
+      supplier_id: @supplier.id,
+    }
+    if new_product_shareds[:product_id].present?
+      ProductShared.insert(new_product_shareds.merge(parent_id: @inventory.id, parent_type: "Inventory"))
     end
+  end
+
+  def self.update_product_branch params = {}
+    @product_shared = ProductShared.find_by(id: self.id)
+    update_value = {
+      name: self.name,
+      image: self.image
+    }
+    product = Product.find_by(id: @product_shared.product_id)
+    @product = product.update(update_value)
+    return @product
   end
 
   def self.get_all_products params = {}

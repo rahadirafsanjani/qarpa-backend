@@ -1,6 +1,6 @@
 class Supplier < ApplicationRecord
   has_many :products, through: :product_shared
-  has_many :product_shared
+  has_many :product_shareds
 
   def self.dropdown
     @suppliers = Supplier.all
