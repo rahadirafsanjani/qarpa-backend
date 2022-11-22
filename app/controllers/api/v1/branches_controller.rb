@@ -28,6 +28,12 @@ class Api::V1::BranchesController < ApplicationController
                      response_error("Branch not found", :not_found)
   end
 
+  def show_pos 
+    @pos = Pos.find_by(id: params[:id])
+    @pos.present? ? response_to_json("Show pos", @pos.new_response, :ok) :
+                  response_error("Pos not found", :not_found)
+  end
+
   def create 
     @branch = Branch.new(branch_params)
     
