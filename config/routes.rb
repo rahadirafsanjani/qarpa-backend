@@ -33,16 +33,16 @@ Rails.application.routes.draw do
 
       scope 'inventory' do
         # product
-        get "products/:id", to: "products#show_product"
-        get 'products/suplai', to: "products#show_suplai"
+        get "products/:id", to: "products#show_product_by_id"
+        get 'products', to: "products#index"
         post 'products', to: 'products#new_product'
         put 'products/:id', to: 'products#update_product'
         delete 'products/:id', to: 'products#delete_product'
         # product on branch
         post 'products/acc_product/:id', to: 'products#accepted_branch_product'
-        get 'products/onbranch/:id', to: 'products#show_product_on_branch'
-        post 'products/onbranch/:id', to: 'products#add_product_ready_to_sell'
-        put 'products/editproduct/:id', to: 'products#edit_product_on_branch'
+        get 'products/onbranch/:id', to: 'products#get_product_from_branch'
+        post 'products/onbranch/:id', to: 'products#create_product_from_branch'
+        put 'products/editproduct/:id', to: 'products#update_product_from_branch'
       end
       
       #branches 
