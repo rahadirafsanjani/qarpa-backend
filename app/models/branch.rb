@@ -16,7 +16,7 @@ class Branch < ApplicationRecord
     branches.map do |branch|
       {
         "id": branch.id,
-        "name": branch.name
+        "value": branch.name
       }
     end
   end
