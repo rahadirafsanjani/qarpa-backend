@@ -1,18 +1,10 @@
 class Finance < ApplicationRecord
 
   def self.get_report params = {}
-    @begining_of_day = ""
-    @end_of_day = ""
+    date = params[:date].present? ? params[:date].to_date : Time.now
 
-    if params[:date].present?
-      date = params[:date].to_date 
-      @begining_of_day = date.beginning_of_day
-      @end_of_day = date.end_of_day
-    else
-      date = Time.now
-      @begining_of_day = date.beginning_of_day
-      @end_of_day = date.end_of_day
-    end
+    @begining_of_day = date.beginning_of_day
+    @end_of_day = date.end_of_day
     
     data = {}
     data.merge!(
@@ -39,7 +31,7 @@ class Finance < ApplicationRecord
       )
     )
 
-    return data
+    data
   end
 
   def self.get_total_transactions params = {}
@@ -92,13 +84,13 @@ class Finance < ApplicationRecord
       "
       detail_orders.id,
       SUM(detail_orders.qty) AS total_products,
-      (detail_orders.qty * product_shareds.price) AS incomes
+      (detail_orders.qty * product_shareds.selling_price) AS incomes
       "
     ).group(
       "
       detail_orders.id,
       detail_orders.qty,
-      product_shareds.price
+      product_shareds.selling_price
       "
     ).where(pos_id: pos_id)
 
@@ -130,14 +122,14 @@ class Finance < ApplicationRecord
       "
       item_shippings.id,
       item_shippings.quantity, 
-      product_shareds.price,
-      (item_shippings.quantity * product_shareds.price) AS total
+      product_shareds.purchase_price,
+      (item_shippings.quantity * product_shareds.purchase_price) AS total
       "
     ).group(
       "
       item_shippings.id,
       item_shippings.quantity,
-      product_shareds.price
+      product_shareds.purchase_price
       "
     ).where(conditions)
     
