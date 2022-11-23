@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-  attr_accessor :qty, :price, :expire, :company_id, :name_supplier
+  attr_accessor :qty, :purchase_price, :selling_price, :expire, :company_id, :name_supplier
 
   belongs_to :supplier, optional: true
   belongs_to :category
@@ -9,6 +9,7 @@ class Product < ApplicationRecord
 
   # image
   has_one_attached :image, :dependent => :destroy
+  after_update_commit :update_product_shared
 
   def self.units 
     [
@@ -48,7 +49,7 @@ class Product < ApplicationRecord
         "id": product_shared.id,
         "name": product_shared.product.name,
         "qty": product_shared.qty,
-        "price": product_shared.price,
+        "selling_price": product_shared.selling_price,
         "category": product_shared.product.category.name,
         "image": product_shared.product.image_url 
       }
@@ -63,7 +64,8 @@ class Product < ApplicationRecord
     new_product_shareds = {
       product_id: self.id,
       expire: self.expire,
-      price: self.price,
+      purchase_price: self.purchase_price,
+      selling_price: self.selling_price,
       qty: self.qty,
       supplier_id: @supplier.id,
     }
@@ -72,15 +74,16 @@ class Product < ApplicationRecord
     end
   end
 
-  def self.update_product_branch params = {}
+  def update_product_shared
     @product_shared = ProductShared.find_by(id: self.id)
-    update_value = {
-      name: self.name,
-      image: self.image
+    update_product_shareds = {
+      product_id: self.id,
+      expire: self.expire,
+      purchase_price: self.purchase_price,
+      selling_price: self.selling_price,
+      qty: self.qty,
     }
-    product = Product.find_by(id: @product_shared.product_id)
-    @product = product.update(update_value)
-    return @product
+    @product_shared.update(update_product_shareds)
   end
 
   def self.get_all_products params = {}
@@ -105,7 +108,8 @@ class Product < ApplicationRecord
       "quantity_type": self.quantity_type,
       "category.rb": self.category,
       "expire": self.expire,
-      "price": self.price,
+      "selling_price": self.selling_price,
+      "purchase_price": self.purchase_price,
       "image": self.image_url
     }
   end

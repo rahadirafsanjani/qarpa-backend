@@ -39,22 +39,11 @@ class Api::V1::ProductsController < ApplicationController
       response_error("something went wrong", :unprocessable_entity)
   end
 
-  def create_product_from_branch
-    @product = ProductShared.create_from_branch(set_product_from_supplier.merge(id: params[:id]))
-    @product ? response_to_json("New product has been created", @product, :ok) :
-      response_error("Something went wrong", :unprocessable_entity)
-  end
-
-
-
   private
   def set_product_from_supplier
-    params.permit(:name, :image, :quantity_type, :qty, :price, :expire, :category_id, :name_supplier).merge(company_id: @user.company_id)
+    params.permit(:name, :image, :quantity_type, :qty, :selling_price, :purchase_price, :expire, :category_id, :name_supplier).merge(company_id: @user.company_id)
   end
 
-  def set_product_from_branch
-    params.permit(:name, :image, :price, :qty, :category_id, :expire)
-  end
   def set_product
     @product = Product.find_by(id: params[:id])
     response_error("Product not found", :not_found) unless @product.present?
