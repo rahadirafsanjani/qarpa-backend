@@ -2,7 +2,8 @@ class Api::V1::AuditController < ApplicationController
   before_action :authorize 
   
   def sum_expenses_incomes 
-    response_to_json("Incomes and expenses", { incomes: 1000000, expenses: 500000 }, :ok)
+    @sum = Audit.expenses_incomes(company_id: @user.company_id)
+    response_to_json("Incomes and expenses", @sum, :ok)
   end
 
   def get_branch
