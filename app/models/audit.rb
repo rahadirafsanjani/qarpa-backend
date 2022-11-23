@@ -10,13 +10,13 @@ class Audit < ApplicationRecord
     ).select(
       "
       shippings.id,
-      (item_shippings.quantity * product_shareds.price) AS expenses 
+      (item_shippings.quantity * product_shareds.purchase_price) AS expenses 
       "
     ).group(
       "
       shippings.id,
       item_shippings.quantity,
-      product_shareds.price
+      product_shareds.purchase_price
       "
     ).where(branch_id: branch_id)
 
@@ -29,13 +29,13 @@ class Audit < ApplicationRecord
     ).select(
       "
       pos.id,
-      (detail_orders.qty * product_shareds.price) AS incomes
+      (detail_orders.qty * product_shareds.selling_price) AS incomes
       "
     ).group(
       "
       pos.id,
       detail_orders.qty,
-      product_shareds.price
+      product_shareds.selling_price
       "
     ).where(branch_id: branch_id)
 
