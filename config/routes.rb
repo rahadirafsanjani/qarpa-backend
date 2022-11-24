@@ -115,6 +115,10 @@ Rails.application.routes.draw do
       # category 
       get "categories", to: "categories#index"
       post "categories", to: "categories#create"
+
+      # address
+      get "addresses", to: "addresses#index"
+      get "addresses/:id", to: "addresses#show_by_id"
     end
   end
 end
