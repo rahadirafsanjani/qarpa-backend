@@ -40,7 +40,7 @@ Rails.application.routes.draw do
         delete 'products/:id', to: 'products#delete_product'
         # product on branch
         post 'products/acc_product/:id', to: 'products#accepted_branch_product'
-        get 'products/onbranch/:id', to: 'products#get_product_from_branch'
+        get 'products/onbranch/:id', to: 'products#get_product_branch'
         post 'products/onbranch/:id', to: 'products#create_product_from_branch'
         put 'products/editproduct/:id', to: 'products#update_product_from_branch'
       end
