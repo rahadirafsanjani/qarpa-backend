@@ -1,27 +1,41 @@
 class ApplicationController < ActionController::API
-  SECRET_KEY = Rails.application.credentials.jwt.secret
-  def encode_token(payload)
-    payload[:exp] = Time.now.to_i + 1 * 3600
-    JWT.encode(payload, SECRET_KEY)
+  ACCESS_SECRET_KEY = Rails.application.credentials.jwt.access_secret
+
+  def encode_token(payload, secret)
+    JWT.encode(payload, secret)
   end
 
-  def decode_token
-    auth_header = request.headers['Authorization']
-
-    if auth_header 
-      token = auth_header.split(' ')[1]
+  def decode_token(token_params = "", secret)
+    if token_params 
+      token = token_params.split(' ')[1]
       begin
-        JWT.decode(token, SECRET_KEY)
+        JWT.decode(token, secret)
       rescue JWT::DecodeError
         nil
       end
     end
   end
 
+  def get_id_from_refresh_token(token = "", secret)
+    user_id = nil
+    
+    begin
+      decoded_token = JWT.decode(token, secret)
+    rescue JWT::DecodeError
+      nil
+    end
+    
+    user_id = decoded_token[0]["user_id"] if decoded_token
+
+    return user_id
+  end
+
   def authorized_user 
-    decoded_token = decode_token()
+    auth_header = request.headers['Authorization']
+
+    decoded_token = decode_token(auth_header, ACCESS_SECRET_KEY)
     if decoded_token 
-      user_id = decoded_token[0]['user_id']
+      user_id = decoded_token[0]["user_id"]
       @user = User.find_by(id: user_id)
     end
   end
