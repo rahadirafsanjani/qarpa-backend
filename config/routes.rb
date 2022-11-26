@@ -12,6 +12,7 @@ Rails.application.routes.draw do
         put 'auth/signup/registration', to: 'registrations#registration'
         # login
         post 'auth/signin', to: 'sessions#login'
+        post "auth/refresh_token", to: "sessions#refresh_token"
         #forgot
         post 'password/forgot', to: 'passwords#forgot'
         post 'password/reset', to: 'passwords#reset'
