@@ -53,35 +53,64 @@ class Audit < ApplicationRecord
     data
   end
 
-  def self.filter_by params = {}
-    return false unless params[:branch_id].present?
-    
-    conditions = {
-      "branches": { 
-        "id": params[:branch_id],
-        "company_id": params[:company_id]    
-      }
-    }
+  def self.get_reports params = {}
+    date = params[:date].to_date 
 
-    if params[:date].present? 
-      date = params[:date].to_date
-      
-      beginning_of_day = date.beginning_of_day
-      end_of_day = date.end_of_day
-      
-      conditions.merge!(:created_at => beginning_of_day..end_of_day)
-    end
-    
-    audits = Pos.includes(:branch)
-                 .where(conditions)
-    audits.map do |audit|
-      {
-        "id": audit.branch_id,
-        "date": date_formater(audit.open_at),
-        "open_at": time_formater(audit.open_at),
-        "close_at": time_formater(audit.close_at)
+    @beginning_of_day = date.beginning_of_day
+    @end_of_day = date.end_of_day
+
+    data = {}
+    data.merge!(
+      branch: get_branch_incomes(
+        company_id: params[:company_id],
+        date: @beginning_of_day..@end_of_day
+      )
+    )
+  end
+
+  def self.get_branch_incomes params = {} 
+    data = []
+    conditions = {}
+    conditions.merge!(:company_id => params[:company_id])
+    conditions.merge!(:pos => {
+      open_at: params[:date]
+    })
+
+    branches = Branch.joins(
+      "
+      LEFT JOIN pos ON pos.branch_id = branches.id
+      LEFT JOIN orders ON orders.pos_id = pos.id
+      LEFT JOIN detail_orders ON detail_orders.order_id = orders.id 
+      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id
+      "
+    ).select(
+      "
+      branches.id,
+      pos.open_at,
+      pos.close_at,
+      (SELECT users.name FROM users WHERE users.id = pos.user_id) AS user,
+      SUM(detail_orders.qty) AS total_products,
+      SUM(detail_orders.qty * product_shareds.selling_price) AS total_incomes
+      "
+    ).group(
+      "branches.id",
+      "pos.open_at", 
+      "pos.close_at",
+      "pos.user_id"
+    ).where(conditions)
+
+    branches.each do |branch|
+      data << {
+        "branch_id": branch.id,
+        "user": branch.user,
+        "open_at": branch.open_at,
+        "close_at": branch.close_at,
+        "total_products": branch.total_products,
+        "total_incomes": branch.total_incomes
       }
     end
+
+    return data
   end
 
   def self.time_formater time 
