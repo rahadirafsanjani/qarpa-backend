@@ -13,7 +13,7 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def index
-    @product = Product.show_all_product(branch_id: @user.branch_id)
+    @product = ProductShared.all
     render json: @product
   end
 

@@ -38,23 +38,6 @@ class Product < ApplicationRecord
     ]
   end
 
-  def self.show_all_product params = {}
-    @product = []
-    @branch = Branch.find_by(id: params[:branch_id])
-    @branch.product_shareds.each do |product_shared|
-      @product << {
-        "id": product_shared.id,
-        "name": product_shared.product.name,
-        "qty": product_shared.qty,
-        "selling_price": product_shared.selling_price,
-        "category": product_shared.product.category.name,
-        "image": product_shared.product.image_url 
-      }
-    end
-
-    @product
-  end
-
   def product_shareds_branch params = {}
     @branch = Branch.find_by(id: self.branch_id)
     @supplier = Supplier.find_or_create_by(name: self.name_supplier)
@@ -67,7 +50,7 @@ class Product < ApplicationRecord
       supplier_id: @supplier.id,
     }
     if new_product_shareds[:product_id].present?
-      ProductShared.insert(new_product_shareds.merge(parent_id: @branch.id, parent_type: "Branch"))
+      ProductShared.insert(new_product_shareds.merge(branch_id: @branch.id))
     end
   end
 
