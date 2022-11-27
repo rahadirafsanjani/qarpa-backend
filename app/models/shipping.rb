@@ -49,7 +49,6 @@ class Shipping < ApplicationRecord
     end
   end
 
-
   def save_shipping_item
     self.item_shippings.insert_all(self.items)
   end

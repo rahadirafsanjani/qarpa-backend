@@ -18,7 +18,7 @@ class ProductShared < ApplicationRecord
       "name": self.product.name || nil,
       "quantity": self.qty,
       "quantity_type": self.product.quantity_type || nil,
-      "category.rb": self.product.category || nil,
+      "category.rb": self.product.category.name || nil,
       "expire": self.expire,
       "selling_price": self.selling_price,
       "image": self.product.image_url || nil

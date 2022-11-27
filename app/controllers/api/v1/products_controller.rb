@@ -1,10 +1,8 @@
 class Api::V1::ProductsController < ApplicationController
   before_action :authorize
-  before_action :set_product, only: %i[ update_product show_product_by_id delete_product]
-  before_action :get_inventory, only: %i[ new_product index update_product delete_product show_product_by_id ]
+  before_action :set_product, only: %i[ update_product delete_product]
   before_action :pick_product_parent, only: %i[ update_product_from_branch ]
 
-  # Inventory Scope
   def new_product
     @product = Product.new(set_product_from_supplier)
     if @product.save
@@ -13,12 +11,15 @@ class Api::V1::ProductsController < ApplicationController
       render json: @product.errors
     end
   end
+
   def index
-    @product = Product.show_all_product(inventory_id: @inventory.id)
+    @product = Product.show_all_product(branch_id: @user.branch_id)
     render json: @product
   end
+
   def show_product_by_id
-    render json: @product
+    @product_shared = ProductShared.find_by(id: params[:id])
+    render json: @product_shared
   end
 
   def update_product
@@ -32,8 +33,7 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
-  # Branch/POS Scope
-  def get_product_from_branch
+  def get_product_branch
     @products = ProductShared.get_product_branch(branch_id: params[:id])
     @products ? response_to_json("List product", @products, :ok) :
       response_error("something went wrong", :unprocessable_entity)
@@ -41,7 +41,7 @@ class Api::V1::ProductsController < ApplicationController
 
   private
   def set_product_from_supplier
-    params.permit(:name, :image, :quantity_type, :qty, :selling_price, :purchase_price, :expire, :category_id, :name_supplier).merge(company_id: @user.company_id)
+    params.permit(:name, :image, :quantity_type, :qty, :selling_price, :purchase_price, :expire, :category_id, :name_supplier, :branch_id)
   end
 
   def set_product
@@ -50,9 +50,6 @@ class Api::V1::ProductsController < ApplicationController
   end
   def pick_product_parent
     @product_shared = ProductShared.find_by(id: params[:id])
-  end
-  def get_inventory
-    @inventory = Inventory.find_by(company_id: @user.company_id)
   end
   def set_branch_env
     @branch = Branch.find_by(id: params[:id])
