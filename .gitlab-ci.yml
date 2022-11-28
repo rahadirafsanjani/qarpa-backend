@@ -6,7 +6,9 @@ default:
     - curl -L https://fly.io/install.sh | sh
 
 deploy:
+  variables: 
+    FLY_AUTH_TOKEN: $FLY_AUTH_TOKEN
   script:
-    - /root/.fly/bin/flyctl deploy qarpa-dev-backend -t $FLY_API_TOKEN
+    - /root/.fly/bin/flyctl deploy
   only: 
     - development
