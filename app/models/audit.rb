@@ -1,6 +1,11 @@
 class Audit < ApplicationRecord
 
   def self.expenses_incomes params = {}
+    date = Time.now 
+
+    @beginning_of_week = date.beginning_of_week
+    @end_of_week = date.end_of_week
+
     branch_id = Branch.where(company_id: params[:company_id]).ids
     expenses = Shipping.joins(
       "
@@ -18,7 +23,7 @@ class Audit < ApplicationRecord
       item_shippings.quantity,
       product_shareds.purchase_price
       "
-    ).where(branch_id: branch_id)
+    ).where(branch_id: branch_id, assign_at: @beginning_of_week..@end_of_week)
 
     incomes = Pos.joins(
       "
@@ -37,14 +42,14 @@ class Audit < ApplicationRecord
       detail_orders.qty,
       product_shareds.selling_price
       "
-    ).where(branch_id: branch_id)
+    ).where(branch_id: branch_id, created_at: @beginning_of_week..@end_of_week)
 
     data = {}
     data[:incomes] = 0
     data[:expenses] = 0
 
     incomes.each do |income|
-      data[:incomes] = data[:incomes] = (income.incomes || 0)
+      data[:incomes] = data[:incomes] + (income.incomes || 0)
     end
     expenses.each do |expense|
       data[:expenses] = data[:expenses] + (expense.expenses || 0)

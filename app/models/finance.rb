@@ -18,7 +18,7 @@ class Finance < ApplicationRecord
       get_expenses(
         branch_id: params[:branch_id],
         company_id: params[:company_id],
-        date: @begining_of_day..@end_of_day
+        date: @beginning_of_day..@end_of_day
       )
     )
   end
@@ -67,7 +67,7 @@ class Finance < ApplicationRecord
   def self.get_expenses params = {}
     conditions = {}
     conditions.merge!(:branch_id => params[:branch_id]) if params[:branch_id].present?
-    conditions.merge!(:branches => {:company_id => params[:date]})
+    conditions.merge!(:branches => {:company_id => params[:company_id]})
     conditions.merge!(:assign_at => params[:date])
 
     expenses = Shipping.joins(
