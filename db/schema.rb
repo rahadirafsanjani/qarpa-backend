@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_23_091401) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_27_021749) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -116,15 +116,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_23_091401) do
     t.index ["product_shared_id"], name: "index_detail_orders_on_product_shared_id"
   end
 
-  create_table "inventories", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "company_id"
-    t.bigint "address_id"
-    t.index ["address_id"], name: "index_inventories_on_address_id"
-    t.index ["company_id"], name: "index_inventories_on_company_id"
-  end
-
   create_table "item_shippings", force: :cascade do |t|
     t.integer "quantity"
     t.datetime "created_at", null: false
@@ -192,11 +183,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_23_091401) do
     t.datetime "updated_at", null: false
     t.bigint "product_id"
     t.bigint "supplier_id"
-    t.string "parent_type"
-    t.bigint "parent_id"
     t.date "expire"
     t.integer "purchase_price"
-    t.index ["parent_type", "parent_id"], name: "index_product_shareds_on_parent"
+    t.bigint "branch_id"
+    t.index ["branch_id"], name: "index_product_shareds_on_branch_id"
     t.index ["product_id"], name: "index_product_shareds_on_product_id"
     t.index ["supplier_id"], name: "index_product_shareds_on_supplier_id"
   end
@@ -204,7 +194,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_23_091401) do
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "quantity_type"
-    t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "category_id"
