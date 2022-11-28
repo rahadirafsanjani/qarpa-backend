@@ -82,19 +82,19 @@ Rails.application.configure do
   end
 
   Rails.application.routes.default_url_options = {
-    host: 'qarpa-dev-backend.herokuapp.com'
+    host: 'qarpa-dev-backend.fly.dev'
   }
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.action_mailer.default_url_options = {host: 'qarpa-dev-backend.herokuapp.com', protocol: 'https'}
+  config.action_mailer.default_url_options = {host: 'qarpa-dev-backend.fly.dev', protocol: 'https'}
   config.action_mailer.perform_deliveries = true
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address:              'smtp.gmail.com',
     port:                 587,
-    domain:               'qarpa-dev-backend.herokuapp.com',
+    domain:               'qarpa-dev-backend.fly.dev',
     user_name: "rahadirafsanjani072@gmail.com",
     password: "pykfpcuzgydxqaqm",
     authentication:       'plain',
