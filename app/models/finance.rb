@@ -16,8 +16,8 @@ class Finance < ApplicationRecord
     )
     data.merge!(
       get_expenses(
-        company_id: params[:company_id],
         branch_id: params[:branch_id],
+        company_id: params[:company_id],
         date: @begining_of_day..@end_of_day
       )
     )
