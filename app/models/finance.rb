@@ -1,28 +1,19 @@
 class Finance < ApplicationRecord
 
-  def self.get_report params = {}
-    date = params[:date].present? ? params[:date].to_date : Time.now
-
-    @begining_of_day = date.beginning_of_day
-    @end_of_day = date.end_of_day
+  def self.get_reports params = {}
+    date = params[:date].present? ? params[:date].to_date : Time.now 
     
+    @beginning_of_day = date.beginning_of_day
+    @end_of_day = date.end_of_day 
+
     data = {}
     data.merge!(
-      get_total_transactions(
-        company_id: params[:company_id], 
+      get_incomes(
         branch_id: params[:branch_id],
-        date: @begining_of_day..@end_of_day
-      )
-    )
-    
-    data.merge!(
-      get_incomes_total_products(
         company_id: params[:company_id],
-        branch_id: params[:branch_id], 
-        date: @begining_of_day..@end_of_day
+        date: @beginning_of_day..@end_of_day
       )
     )
-
     data.merge!(
       get_expenses(
         company_id: params[:company_id],
@@ -30,80 +21,47 @@ class Finance < ApplicationRecord
         date: @begining_of_day..@end_of_day
       )
     )
-
-    data
   end
 
-  def self.get_total_transactions params = {}
+  def self.get_incomes params = {}
     conditions = {}
-    conditions.merge!(:company_id => params[:company_id])
-    conditions.merge!(:pos => {:created_at => params[:date]})
     conditions.merge!(:id => params[:branch_id]) if params[:branch_id].present?
+    conditions.merge!(:branches => { :company_id => params[:company_id] })
+    conditions.merge!(:pos => { :created_at => params[:date] })
 
-    transactions = Branch.joins(
+    reports = Branch.joins(
       "
-      LEFT JOIN pos ON pos.branch_id = branches.id
+      LEFT JOIN pos ON pos.branch_id = branches.id 
       LEFT JOIN orders ON orders.pos_id = pos.id
+      LEFT JOIN detail_orders ON detail_orders.order_id = orders.id 
+      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id 
       "
     ).select(
       "
       branches.id,
-      COUNT(orders.id) AS total_transaction
+      SUM(detail_orders.qty) AS total_products,
+      SUM(detail_orders.qty * product_shareds.selling_price) AS incomes,
+      (SELECT COUNT(orders.id) FROM orders WHERE orders.pos_id = pos.id) AS total_transactions
       "
     ).group(
       "
+      pos.id,
       branches.id
       "
     ).where(conditions)
 
-    
     data = {}
-    data[:total_transaction] = 0
-
-    transactions.each do |transaction|
-      data[:total_transaction] = data[:total_transaction] + (transaction.total_transaction || 0)
-    end
-
-    return data
-  end
-
-  def self.get_incomes_total_products params = {}
-    conditions = {}
-    conditions.merge!(:branch_id => params[:branch_id]) if params[:branch_id].present?
-    conditions.merge!(:branch => {:company_id => params[:company_id]})
-    conditions.merge!(:created_at => params[:date])
-
-    pos_id = Pos.includes(:branch).where(conditions).pluck(:id)
-    
-    reports = Order.joins(
-      "
-      LEFT JOIN detail_orders ON detail_orders.order_id = orders.id 
-      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id  
-      "
-    ).select(
-      "
-      detail_orders.id,
-      SUM(detail_orders.qty) AS total_products,
-      (detail_orders.qty * product_shareds.selling_price) AS incomes
-      "
-    ).group(
-      "
-      detail_orders.id,
-      detail_orders.qty,
-      product_shareds.selling_price
-      "
-    ).where(pos_id: pos_id)
-
-    data = {}
+    data[:total_transactions] = 0
     data[:incomes] = 0
     data[:total_products] = 0
 
     reports.each do |report|
-      data[:incomes] = data[:incomes] + (report.incomes || 0)
-      data[:total_products] = data[:total_products] + (report.total_products || 0)
+      data[:incomes] += (report[:incomes] || 0)
+      data[:total_products] += (report[:total_products] || 0)
+      data[:total_transactions] += (report[:total_transactions] || 0)
     end
 
-    return data
+    data
   end
 
   def self.get_expenses params = {}
