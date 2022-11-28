@@ -12,6 +12,14 @@ class ProductShared < ApplicationRecord
       product_shared.product_attribute
     end
   end
+
+  def self.sum_qty params = {}
+    @product_shared = ProductShared.find_by(supplier_id: params[:supplier_id], branch_id: params[:branch_id], product_id: params[:product_id])
+    sum = @product_shared.qty + params[:new_qty].to_i
+
+    ProductShared.update(qty: sum)
+  end
+
   def product_attribute
     {
       "id": self.id,

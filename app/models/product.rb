@@ -57,7 +57,6 @@ class Product < ApplicationRecord
   def update_product_shared
     @product_shared = ProductShared.find_by(product_id: self.id, parent_id: self.branch_id)
     update_product_shareds = {
-      # product_id: self.id,
       expire: self.expire,
       purchase_price: self.purchase_price,
       selling_price: self.selling_price,
