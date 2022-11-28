@@ -194,6 +194,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_27_021749) do
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "quantity_type"
+    t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "category_id"
