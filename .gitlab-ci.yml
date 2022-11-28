@@ -6,9 +6,7 @@ default:
     - curl -L https://fly.io/install.sh | sh
 
 deploy:
-  variables:
-    FLY_API_TOKEN: $FLY_API_TOKEN
   script:
-    - /root/.fly/bin/flyctl deploy
+    - /root/.fly/bin/flyctl deploy -t $FLY_API_TOKEN
   only: 
     - development
