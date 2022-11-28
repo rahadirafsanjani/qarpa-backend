@@ -8,3 +8,5 @@ default:
 deploy:
   script:
     - /root/.fly/bin/flyctl deploy
+  only: 
+    - development
