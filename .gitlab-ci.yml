@@ -7,6 +7,6 @@ default:
 
 deploy:
   script:
-    - /root/.fly/bin/flyctl deploy -t $FLY_API_TOKEN
+    - /root/.fly/bin/flyctl deploy qarpa-dev-backend -t $FLY_API_TOKEN
   only: 
     - development
