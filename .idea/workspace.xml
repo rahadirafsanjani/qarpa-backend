@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e61c6396-0375-4481-80a0-fd50e30cd293" name="Changes" comment="">
+    <list default="true" id="e61c6396-0375-4481-80a0-fd50e30cd293" name="Changes" comment="resolve conlfict">
+      <change beforePath="$PROJECT_DIR$/.idea/qarpa-backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/qarpa-backend.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/products_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/products_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/product.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/product.rb" afterDir="false" />
@@ -25,8 +26,16 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
+                    <option name="branchName" value="feature-inventory/refactor-product-shared-2" />
+                    <option name="lastUsedInstant" value="1669609748" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature-inventory/config-product-with-new-schema" />
+                    <option name="lastUsedInstant" value="1669381652" />
+                  </RecentBranch>
+                  <RecentBranch>
                     <option name="branchName" value="development" />
-                    <option name="lastUsedInstant" value="1669105362" />
+                    <option name="lastUsedInstant" value="1669265804" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feature-inventory/big-changes-product-func-column" />
@@ -43,6 +52,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/activemodel-7.0.4/lib/active_model/attribute_methods.rb" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/controllers/api/v1/products_controller.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/app/controllers/api/v1/users/registrations_controller.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/app/models/product.rb" root0="SKIP_INSPECTION" />
   </component>
@@ -57,7 +67,7 @@
       <option value="200" />
       <option value="300" />
     </hideBySeverity>
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
     <option name="sortBySeverity" value="false" />
   </component>
   <component name="ProjectId" id="2GXju13sLNQVzTM7gCipMQJiNNs" />
@@ -65,18 +75,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenDatabaseViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/rahadirafsanjani/Main/Work/Qatros/qarpa/qarpa-backend&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ruby.rails.projectView.checked&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;discord-application&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenDatabaseViewOnStart": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/rahadirafsanjani/Main/Work/Qatros",
+    "nodejs_package_manager_path": "npm",
+    "ruby.rails.projectView.checked": "true",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.ruby.settings.RubyActiveModuleSdkConfigurable"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -110,6 +120,12 @@
       <workItem from="1669089405190" duration="5267000" />
       <workItem from="1669102672074" duration="1899000" />
       <workItem from="1669207243567" duration="1457000" />
+      <workItem from="1669265671808" duration="2384000" />
+      <workItem from="1669271779131" duration="1638000" />
+      <workItem from="1669289983966" duration="693000" />
+      <workItem from="1669381249217" duration="9921000" />
+      <workItem from="1669518521404" duration="316000" />
+      <workItem from="1669616981910" duration="15273000" />
     </task>
     <servers />
   </component>

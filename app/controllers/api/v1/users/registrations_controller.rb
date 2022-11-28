@@ -26,8 +26,6 @@ class Api::V1::Users::RegistrationsController < ApplicationController
       @company.save!
       @address = Address.new(full_address: params[:full_address])
       @address.save!
-      @inventory = Inventory.new(company_id: @company.id, address_id: @address.id)
-      @inventory.save!
 
       @user = User.find_by(regist_token: params[:token])
       return response_error("Token not valid", :unprocessable_entity) unless @user.present?

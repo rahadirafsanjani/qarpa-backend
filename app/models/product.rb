@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-  attr_accessor :qty, :purchase_price, :selling_price, :expire, :company_id, :name_supplier
+  attr_accessor :qty, :purchase_price, :selling_price, :expire, :company_id, :name_supplier, :branch_id
 
   belongs_to :supplier, optional: true
   belongs_to :category
@@ -10,6 +10,11 @@ class Product < ApplicationRecord
   # image
   has_one_attached :image, :dependent => :destroy
   after_update_commit :update_product_shared
+  after_create_commit :product_shareds_branch
+
+  def image_url
+    Rails.application.routes.url_helpers.url_for(image) if image.attached?
+  end
 
   def self.units 
     [
@@ -33,34 +38,9 @@ class Product < ApplicationRecord
     ]
   end
 
-  # validate :acceptable_image
-
-  after_create_commit :product_shareds_inventory
-
-  def image_url
-    Rails.application.routes.url_helpers.url_for(image) if image.attached?
-  end
-
-  def self.show_all_product params = {}
-    @product = []
-    @inventory = Inventory.find_by(id: params[:inventory_id])
-    @inventory.product_shareds.each do |product_shared|
-      @product << {
-        "id": product_shared.id,
-        "name": product_shared.product.name,
-        "qty": product_shared.qty,
-        "selling_price": product_shared.selling_price,
-        "category": product_shared.product.category.name,
-        "image": product_shared.product.image_url 
-      }
-    end
-
-    @product
-  end
-
-  def product_shareds_inventory params = {}
+  def product_shareds_branch params = {}
+    @branch = Branch.find_by(id: self.branch_id)
     @supplier = Supplier.find_or_create_by(name: self.name_supplier)
-    @inventory = Inventory.find_by(company_id: self.company_id)
     new_product_shareds = {
       product_id: self.id,
       expire: self.expire,
@@ -70,14 +50,13 @@ class Product < ApplicationRecord
       supplier_id: @supplier.id,
     }
     if new_product_shareds[:product_id].present?
-      ProductShared.insert(new_product_shareds.merge(parent_id: @inventory.id, parent_type: "Inventory"))
+      ProductShared.insert(new_product_shareds.merge(branch_id: @branch.id))
     end
   end
 
   def update_product_shared
-    @product_shared = ProductShared.find_by(id: self.id)
+    @product_shared = ProductShared.find_by(product_id: self.id, parent_id: self.branch_id)
     update_product_shareds = {
-      product_id: self.id,
       expire: self.expire,
       purchase_price: self.purchase_price,
       selling_price: self.selling_price,
