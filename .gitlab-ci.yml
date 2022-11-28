@@ -2,7 +2,7 @@ default:
   image: ruby:3.1.2
   before_script:
     - apt-get update -qq && apt-get install -y curl
-    - apt-get install libmagickwand-dev -y
+    - apt-get install imagemagick -y
     - curl -L https://fly.io/install.sh | sh
 
 deploy:
