@@ -2,8 +2,6 @@ default:
   image: ruby:3.1.2
   before_script:
     - apt-get update -qq && apt-get install -y curl
-    - apt-get install imagemagick -y
-    - apt-get install graphicsmagick-imagemagick-compat -y
     - curl -L https://fly.io/install.sh | sh
 
 deploy:
