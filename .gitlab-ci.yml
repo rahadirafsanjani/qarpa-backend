@@ -1,12 +1,12 @@
-default:
+staging:
+  stage: deploy
   image: ruby:3.1.2
-  before_script:
+  variables:
+    FLY_API_TOKEN: $FLY_API_TOKEN
+  script:
     - apt-get update -qq && apt-get install -y curl
     - apt-get install libmagickwand-dev -y
     - curl -L https://fly.io/install.sh | sh
-
-deploy:
-  script:
     - /root/.fly/bin/flyctl deploy
   only: 
     - development
