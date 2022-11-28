@@ -2,11 +2,13 @@ default:
   image: ruby:3.1.2
   before_script:
     - apt-get update -qq && apt-get install -y curl
-    - apt-get install libmagickwand-dev -y
+    - apt-get install imagemagick --fix-missing
     - curl -L https://fly.io/install.sh | sh
 
 deploy:
+  variables: 
+    FLY_AUTH_TOKEN: $FLY_AUTH_TOKEN
   script:
-    - /root/.fly/bin/flyctl deploy -t $FLY_API_TOKEN
+    - /root/.fly/bin/flyctl deploy
   only: 
     - development
