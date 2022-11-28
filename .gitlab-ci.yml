@@ -1,9 +1,11 @@
-staging :
-  stage: deploy
+default:
+  image: golang:1.13
+  before_script:
+    - apt-get update -qq && apt-get install -y curl
+    - curl -L https://fly.io/install.sh | sh
+
+deploy:
   script:
-    - gem install dpl
-    - dpl --provider=heroku --app=$APP_NAME --api-key=$HEROKU_API_KEY
-    - curl https://cli-assets.heroku.com/install.sh | sh
-    - heroku run rails db:migrate --exit-code --app $APP_NAME
-  only :
-  - development
+    - flyctl deploy
+  only: 
+    - development

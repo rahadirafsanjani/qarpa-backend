@@ -101,7 +101,7 @@ Rails.application.routes.draw do
       get 'employee/attendances/history', to: 'attendances#employee_history'
 
       # audit
-      get 'company/audit', to: 'audit#get_branch'
+      get "company/reports", to: "audit#reports"
       get 'company/expenses_incomes', to: 'audit#sum_expenses_incomes'
       get 'company/finance', to: 'finance#index'
 
