@@ -4,11 +4,11 @@ class Api::V1::Users::SessionsController < ApplicationController
 
   def login 
     @user = User.find_by(email: user_params[:email])
-    token_payload = { user_id: @user.id }
-
+    
     if @user && @user.authenticate(user_params[:password])
-      access_token = encode_token(token_payload.merge(exp: Time.now.to_i + 1 * 3600), ACCESS_SECRET_KEY)
-      refresh_token = encode_token(token_payload.merge(exp: Time.now.to_i + 7 * 3600), REFRESH_SECRET_KEY)
+      token_payload = { user_id: @user.id }
+      access_token = encode_token(token_payload.merge(exp: Time.now.to_i + 30 * 60), ACCESS_SECRET_KEY)
+      refresh_token = encode_token(token_payload.merge(exp: Time.now.to_i + 24 * 60 * 60), REFRESH_SECRET_KEY)
 
       render json: { 
         access_token: access_token,
