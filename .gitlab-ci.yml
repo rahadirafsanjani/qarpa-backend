@@ -7,7 +7,7 @@ default:
 
 deploy:
   variables: 
-    FLY_AUTH_TOKEN: $FLY_AUTH_TOKEN
+    FLY_API_TOKEN: $FLY_API_TOKEN
   script:
     - /root/.fly/bin/flyctl deploy
   only: 
