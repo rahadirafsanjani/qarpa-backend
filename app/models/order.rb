@@ -8,9 +8,25 @@ class Order < ApplicationRecord
   belongs_to :pos
   belongs_to :customer
 
+  validate :validate_params
+  validates :payment, presence: true
+
   enum :payment, { cash: 0, transfer: 1 }
 
   private 
+
+  def validate_params params = {}
+    errors.add(:item, "Item cannot be empty") if self.items.blank?
+
+    if self.items.present?
+      self.items.each do |item|
+        errors.add(:qty, "Quantity cannot be empty") unless item[:qty].present?
+        errors.add(:product_shared_id, "Product shared id cannot be empty") unless item[:product_shared_id].present?
+      end
+    end
+
+    raise ActiveRecord::Rollback if errors.present?
+  end
 
   def validate_stock_products
     valid = 0
