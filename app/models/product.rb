@@ -9,7 +9,7 @@ class Product < ApplicationRecord
 
   # image
   has_one_attached :image, :dependent => :destroy
-  after_create_commit :product_shareds_branch
+  after_create_commit :product_shareds_branch, :add_through_report
 
   def image_url
     Rails.application.routes.url_helpers.url_for(image) if image.attached?
@@ -51,6 +51,15 @@ class Product < ApplicationRecord
     if new_product_shareds[:product_id].present?
       ProductShared.insert(new_product_shareds.merge(branch_id: @branch.id))
     end
+  end
+
+  def add_through_report
+    report = {
+      name: self.name,
+      qty: self.qty,
+      purchase_price: self.purchase_price
+    }
+    @report = ProductReport.insert(report)
   end
 
   def self.get_all_products params = {}

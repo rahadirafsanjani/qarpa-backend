@@ -42,13 +42,22 @@ class ProductShared < ApplicationRecord
     @product_shared.product_attribute
   end
 
+  def self.add_through_report params = {}
+    report = {
+      name: params[:name],
+      qty: params[:qty],
+      purchase_price: params[:purchase_price]
+    }
+    @report = ProductReport.insert(report)
+  end
+
   def product_attribute
     {
       "id": self.id,
       "name": self.product.name || nil,
       "qty": self.qty,
       "quantity_type": self.product.quantity_type || nil,
-      "category": self.product.category.name || nil,
+      "category": self.product.category.id || nil,
       "expire": self.expire,
       "selling_price": self.selling_price,
       "image": self.product.image_url || nil

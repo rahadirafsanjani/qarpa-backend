@@ -8,8 +8,9 @@ class Api::V1::ProductsController < ApplicationController
       @test.save
       render json: @test
     elsif @product.present?
-      @supplier = ProductShared.find_by(supplier_id: params[:supplier_id], branch_id: params[:branch_id], product_id: @product.id)
-      @product_shared = ProductShared.sum_qty(new_qty: params[:qty], supplier_id: params[:supplier_id], name: params[:name], branch_id: params[:branch_id])
+      @product = Product.find_by(name: params[:name], category_id: params[:category_id])
+      @product_shared = ProductShared.sum_qty(new_qty: params[:qty], supplier_id: params[:supplier_id], name: params[:name], branch_id: params[:branch_id], product_id: @product.id)
+      @update_report = ProductShared.add_through_report(name: params[:name], qty: params[:qty], purchase_price: params[:purchase_price])
       render json: @product_shared
     else
       render json: "something went wrong"
@@ -45,11 +46,11 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def delete_product
-    # if @user.role.downcase == "owner"
-    #   @product = ProductShared.find_by(id: params[:id])
-    #   @product.delete
-    #   response_to_json("success", @product, :ok)
-    # end
+    if @user.role.downcase == "owner"
+      @product = ProductShared.find_by(id: params[:id])
+      @product.delete
+      response_to_json("success", @product, :ok)
+    end
   end
   
   def unit_dropdown
