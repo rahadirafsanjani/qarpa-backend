@@ -57,7 +57,8 @@ class Product < ApplicationRecord
     report = {
       name: self.name,
       qty: self.qty,
-      purchase_price: self.purchase_price
+      purchase_price: self.purchase_price,
+      company_id: self.company_id
     }
     @report = ProductReport.insert(report)
   end
