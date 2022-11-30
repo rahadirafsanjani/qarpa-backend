@@ -57,7 +57,7 @@ Rails.application.routes.draw do
 
       # dropdown routes
       get "dropdown/units/products", to: "products#unit_dropdown"
-      get "dropdown/conditions/products", to: "products#condition_dropdwon"
+      get "dropdown/conditions/products", to: "products#condition_dropdown"
       get 'dropdown/branches', to: 'branches#dropdown'
       get "dropdown/suppliers", to: 'suppliers#dropdown'
 
