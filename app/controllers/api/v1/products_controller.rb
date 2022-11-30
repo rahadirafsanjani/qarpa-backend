@@ -51,8 +51,19 @@ class Api::V1::ProductsController < ApplicationController
     #   response_to_json("success", @product, :ok)
     # end
   end
+  
+  def unit_dropdown
+    @units = Product.units
+    response_to_json("Dropdown units", @units, :ok)
+  end
+
+  def condition_dropdown 
+    @conditions = Product.condition_products
+    response_to_json("Dropdown conditions product", @conditions, :ok)
+  end
 
   private
+  
   def set_product_from_supplier
     params.permit(:name, :image, :quantity_type, :qty, :selling_price, :purchase_price, :expire, :category_id, :supplier_id, :branch_id)
   end
