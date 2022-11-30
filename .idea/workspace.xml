@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e61c6396-0375-4481-80a0-fd50e30cd293" name="Changes" comment="resolve conlfict">
-      <change afterPath="$PROJECT_DIR$/app/models/product_report.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/products_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/products_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/company.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/company.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/product.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/product.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/product_shared.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/product_shared.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
@@ -128,6 +126,7 @@
       <workItem from="1669381249217" duration="9921000" />
       <workItem from="1669518521404" duration="316000" />
       <workItem from="1669616981910" duration="15273000" />
+      <workItem from="1669804838666" duration="1292000" />
     </task>
     <servers />
   </component>
