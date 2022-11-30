@@ -6,6 +6,18 @@ class ProductShared < ApplicationRecord
   belongs_to :product
   belongs_to :supplier, optional: true
 
+  def self.get_index
+    @product_shared = ProductShared.all
+    @product_shared.map do | product |
+      product.product_attribute
+    end
+  end
+
+  def self.get_by_id params = {}
+    @product_shared = ProductShared.find_by(id: params[:id])
+    @product_shared.product_attribute
+  end
+
   def self.get_product_branch params = {}
     @branch = Branch.find_by(id: params[:branch_id])
     @branch.product_shareds.map do |product_shared|
@@ -20,13 +32,23 @@ class ProductShared < ApplicationRecord
     ProductShared.update(qty: sum)
   end
 
+  def self.update_product params = {}
+    @product_shared = ProductShared.find_by(id: params[:product_shared_id])
+    @product_shared.update(qty: params[:qty],
+                           selling_price: params[:selling_price],
+                           branch_id: params[:branch_id])
+    @product = Product.find_by(id: @product_shared.product_id)
+    @product.update(name: params[:name], category_id: params[:category_id])
+    @product_shared.product_attribute
+  end
+
   def product_attribute
     {
       "id": self.id,
       "name": self.product.name || nil,
       "qty": self.qty,
       "quantity_type": self.product.quantity_type || nil,
-      "category.rb": self.product.category.name || nil,
+      "category": self.product.category.name || nil,
       "expire": self.expire,
       "selling_price": self.selling_price,
       "image": self.product.image_url || nil
