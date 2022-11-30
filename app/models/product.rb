@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-  attr_accessor :qty, :purchase_price, :selling_price, :expire, :company_id, :name_supplier, :branch_id
+  attr_accessor :qty, :purchase_price, :selling_price, :expire, :company_id, :supplier_id, :branch_id
 
   belongs_to :supplier, optional: true
   belongs_to :category
@@ -9,7 +9,6 @@ class Product < ApplicationRecord
 
   # image
   has_one_attached :image, :dependent => :destroy
-  after_update_commit :update_product_shared
   after_create_commit :product_shareds_branch
 
   def image_url
@@ -40,7 +39,7 @@ class Product < ApplicationRecord
 
   def product_shareds_branch params = {}
     @branch = Branch.find_by(id: self.branch_id)
-    @supplier = Supplier.find_or_create_by(name: self.name_supplier)
+    @supplier = Supplier.find_by(id: self.supplier_id)
     new_product_shareds = {
       product_id: self.id,
       expire: self.expire,
@@ -52,17 +51,6 @@ class Product < ApplicationRecord
     if new_product_shareds[:product_id].present?
       ProductShared.insert(new_product_shareds.merge(branch_id: @branch.id))
     end
-  end
-
-  def update_product_shared
-    @product_shared = ProductShared.find_by(product_id: self.id, parent_id: self.branch_id)
-    update_product_shareds = {
-      expire: self.expire,
-      purchase_price: self.purchase_price,
-      selling_price: self.selling_price,
-      qty: self.qty,
-    }
-    @product_shared.update(update_product_shareds)
   end
 
   def self.get_all_products params = {}
@@ -83,9 +71,9 @@ class Product < ApplicationRecord
     {
       "id": self.id,
       "name": self.name,
-      "quantity": self.quantity,
+      "qty": self.quantity,
       "quantity_type": self.quantity_type,
-      "category.rb": self.category,
+      "category": self.category,
       "expire": self.expire,
       "selling_price": self.selling_price,
       "purchase_price": self.purchase_price,
