@@ -71,7 +71,7 @@ class Product < ApplicationRecord
     {
       "id": self.id,
       "name": self.name,
-      "quantity": self.quantity,
+      "qty": self.quantity,
       "quantity_type": self.quantity_type,
       "category": self.category,
       "expire": self.expire,
