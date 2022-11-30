@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_27_021749) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_30_070604) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -92,6 +92,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_27_021749) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "product_report_id"
+    t.index ["product_report_id"], name: "index_companies_on_product_report_id"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -176,6 +178,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_27_021749) do
     t.index ["user_id"], name: "index_pos_on_user_id"
   end
 
+  create_table "product_reports", force: :cascade do |t|
+    t.string "name"
+    t.integer "purchase_price"
+    t.integer "qty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "product_shareds", force: :cascade do |t|
     t.integer "qty"
     t.integer "selling_price"
@@ -194,7 +204,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_27_021749) do
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "quantity_type"
-    t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "category_id"
