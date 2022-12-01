@@ -12,32 +12,32 @@ class Shipping < ApplicationRecord
 
   enum status: { prepared: 0, delivering: 1, delivered: 2 }
 
-  def validate_stock_products
-    valid = 0
+  # def validate_stock_products
+  #   valid = 0
+  #
+  #   self.items.each do |item|
+  #     @products.each do |product|
+  #       if product.id == item[:product_id] && product.quantity < item[:quantity]
+  #         errors.add(:quantity, "#{product.name} not enough stock")
+  #         valid = valid + 1
+  #       end
+  #     end
+  #   end
+  #
+  #   raise ActiveRecord::Rollback unless valid.zero?
+  # end
 
-    self.items.each do |item|
-      @products.each do |product|
-        if product.id == item[:product_id] && product.quantity < item[:quantity]
-          errors.add(:quantity, "#{product.name} not enough stock")
-          valid = valid + 1
-        end
-      end
-    end
 
-    raise ActiveRecord::Rollback unless valid.zero?
-  end
-
-
-  def reduce_stock
-    self.items.each do |item|
-      @products.each do |product|
-        if product.id == item[:product_id]
-          product[:quantity] = product[:quantity] - item[:quantity]
-          product.save!(validate: false)
-        end
-      end
-    end
-  end
+  # def reduce_stock
+  #   self.items.each do |item|
+  #     @products.each do |product|
+  #       if product.id == item[:product_id]
+  #         product[:quantity] = product[:quantity] - item[:quantity]
+  #         product.save!(validate: false)
+  #       end
+  #     end
+  #   end
+  # end
 
   def get_products
     @products = Product.where(id: get_product_id)
@@ -49,7 +49,7 @@ class Shipping < ApplicationRecord
     end
   end
 
-  def save_shipping_item
-    self.item_shippings.insert_all(self.items)
-  end
+  # def save_shipping_item
+  #   self.item_shippings.insert_all(self.items)
+  # end
 end
