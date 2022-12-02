@@ -78,16 +78,12 @@ class Finance < ApplicationRecord
       "
     ).select(
       "
-      item_shippings.id,
-      item_shippings.quantity, 
-      product_shareds.purchase_price,
-      (item_shippings.quantity * product_shareds.purchase_price) AS total
+      branches.id,
+      SUM(item_shippings.quantity * product_shareds.purchase_price) AS total
       "
     ).group(
       "
-      item_shippings.id,
-      item_shippings.quantity,
-      product_shareds.purchase_price
+      branches.id
       "
     ).where(conditions)
     
