@@ -2,6 +2,7 @@ class Order < ApplicationRecord
   attr_accessor :items
   after_save :create_detail_orders, :reduce_stock
   before_save :get_products, :validate_stock_products
+  before_validation :set_default 
 
   has_many :detail_orders
   has_many :product_shareds, through: :detail_orders
@@ -14,6 +15,10 @@ class Order < ApplicationRecord
   enum :payment, { cash: 0, transfer: 1 }
 
   private 
+
+  def set_default 
+    self.customer_id = 0 unless self.customer_id.present?
+  end
 
   def validate_params params = {}
     errors.add(:item, "Item cannot be empty") if self.items.blank?
