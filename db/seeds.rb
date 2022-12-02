@@ -7,3 +7,8 @@
 #   Character.create(name: "Luke", movie: movies.first)
 categories = [{name: "minuman"}, {name: "makanan"}, {name: "furniture"}, {name: "otomotif"}]
 Category.create(categories)
+
+customer = Customer.new
+customer.id = 0 
+customer.name = "guest"
+customer.save!(validate: false)
