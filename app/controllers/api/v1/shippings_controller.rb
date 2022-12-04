@@ -14,7 +14,7 @@ class Api::V1::ShippingsController < ApplicationController
 
   private
   def shipping_params
-    params.permit(:destination_id, :origin_id, items:[:product_id, :quantity])
+    params.permit(:destination_id, :origin_id, items:[:product_shared_id, :qty])
   end
 
   def current_company

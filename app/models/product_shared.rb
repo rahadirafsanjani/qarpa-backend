@@ -61,7 +61,8 @@ class ProductShared < ApplicationRecord
       "category": self.product.category.id || nil,
       "expire": self.expire,
       "selling_price": self.selling_price,
-      "image": self.product.image_url || nil
+      "image": self.product.image_url || nil,
+      "branch_id": self.branch_id
     }
   end
 end

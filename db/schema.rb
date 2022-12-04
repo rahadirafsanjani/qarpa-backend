@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_30_104121) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_04_150441) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -117,7 +117,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_30_104121) do
   end
 
   create_table "item_shippings", force: :cascade do |t|
-    t.integer "quantity"
+    t.integer "qty"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "shipping_id"
@@ -204,7 +204,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_30_104121) do
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "quantity_type"
-    t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "category_id"
@@ -218,10 +217,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_30_104121) do
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "customer_id"
     t.integer "branch_id"
     t.index ["branch_id"], name: "index_shippings_on_branch_id"
-    t.index ["customer_id"], name: "index_shippings_on_customer_id"
     t.index ["destination_id"], name: "index_shippings_on_destination_id"
     t.index ["origin_id"], name: "index_shippings_on_origin_id"
   end
