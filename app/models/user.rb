@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :orders
   has_many :management_works
   has_many :leave_managements
+  has_many :sessions
   belongs_to :company
   belongs_to :branch, optional: true
   has_one_attached :avatar
