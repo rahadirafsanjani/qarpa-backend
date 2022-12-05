@@ -27,9 +27,15 @@ class ProductShared < ApplicationRecord
 
   def self.sum_qty params = {}
     @product_shared = ProductShared.find_by(supplier_id: params[:supplier_id], branch_id: params[:branch_id], product_id: params[:product_id])
-    sum = @product_shared.qty + params[:new_qty].to_i
-
-    ProductShared.update(qty: sum)
+    if @product_shared.blank?
+      @product_shared = ProductShared.create(qty: params[:new_qty], selling_price: params[:selling_price],
+                        purchase_price: params[:purchase_price], expire: params[:expire],
+                        branch_id: params[:branch_id], supplier_id: params[:supplier_id], product_id: params[:product_id])
+    else
+      sum = @product_shared.qty + params[:new_qty].to_i
+      @product_shared.update(qty: sum)
+    end
+    return @product_shared
   end
 
   def self.update_product params = {}
