@@ -108,7 +108,6 @@ Rails.application.routes.draw do
       # shipping
       scope 'shipping' do
         post 'branch', to: 'shippings#create'
-        put 'delivered_success/:id', to: 'shippings#delivered_success'
         get 'item', to: 'shippings#show'
       end
 

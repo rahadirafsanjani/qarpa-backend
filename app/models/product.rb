@@ -72,8 +72,8 @@ class Product < ApplicationRecord
 
   def supplier_attribute
     {
-      "id": self.supplier.id,
-      "name": self.supplier.name
+      "id": self.supplier.id || nil,
+      "name": self.supplier.name || nil
     }
   end
 
