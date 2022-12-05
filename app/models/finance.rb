@@ -79,7 +79,7 @@ class Finance < ApplicationRecord
     ).select(
       "
       branches.id,
-      SUM(item_shippings.quantity * product_shareds.purchase_price) AS total
+      SUM(item_shippings.qty * product_shareds.purchase_price) AS total
       "
     ).group(
       "
