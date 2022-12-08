@@ -1,7 +1,7 @@
 class ManagementWork < ApplicationRecord
   belongs_to :user
 
-  before_validation :validate_date_params
+  before_validation :validate_date_params, :validate_user_id
   validates :task, :description, presence: true
   validate :date_validation
 
@@ -40,6 +40,11 @@ class ManagementWork < ApplicationRecord
   end
 
   private 
+
+  def validate_user_id 
+    user = User.find_by(id: self.user_id, company_id: self.company_id)
+    errors.add(:user_id, "User id not valid") if user.blank?
+  end
 
   def validate_date_params 
     errors.add(:start_at, "Start at cannot be blank") if self.start_at.blank?
