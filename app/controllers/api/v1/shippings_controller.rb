@@ -14,7 +14,7 @@ class Api::V1::ShippingsController < ApplicationController
 
   def history
     @history = Shipping.shipping_history
-    render json: @history
+    response_to_json("Success", @history, :ok)
   end
 
   private

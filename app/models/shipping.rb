@@ -63,20 +63,26 @@ class Shipping < ApplicationRecord
     @report = []
     @report_product = ProductReport.all
     @report_shipping = Shipping.all
-    attribute_product = {
-      "id": @report_product.id,
-      "name": @report_product.name,
-      "date": @report_product.created_at,
-      "type": "Supplier"
-    }
-    attribute_shipping = {
-      "id": @report_shipping.id,
-      "branch_delivered": @report_shipping.destination_id,
-      "date": @report_shipping.created_at,
-      "type": "Shipping"
-    }
-    @report << attribute_product
-    @report << attribute_shipping
+    @report_shipping.map do | shipping |
+      attribute_shipping = {
+        "id": shipping.id,
+        # "name": shipping.name,
+        "branch_delivered": shipping.destination_id,
+        "date": shipping.created_at.to_date,
+        "type": "Shipping"
+      }
+      @report << attribute_shipping
+    end
+    @report_product.map do | product |
+      attribute_product = {
+        "id": product.id,
+        "name": product.name,
+        "date": product.created_at.to_date,
+        "type": "Supplier"
+      }
+      @report << attribute_product
+    end
+    binding.pry
     return @report
   end
   
