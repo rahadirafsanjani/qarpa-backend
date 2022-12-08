@@ -109,6 +109,7 @@ Rails.application.routes.draw do
       scope 'shipping' do
         post 'branch', to: 'shippings#create'
         get 'item', to: 'shippings#show'
+        get 'history', to: 'shippings#history'
       end
 
       # category 
