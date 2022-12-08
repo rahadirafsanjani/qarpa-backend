@@ -46,19 +46,20 @@ class Product < ApplicationRecord
       purchase_price: self.purchase_price,
       selling_price: self.selling_price,
       qty: self.qty,
-      supplier_id: @supplier.id,
+      supplier_id: @supplier.id || nil
     }
     if new_product_shareds[:product_id].present?
       ProductShared.insert(new_product_shareds.merge(branch_id: @branch.id))
     end
   end
 
-  def add_through_report
+  def add_through_report params = {}
+    find_company = Company.find_by(params[:branch_id])
     report = {
       name: self.name,
       qty: self.qty,
       purchase_price: self.purchase_price,
-      company_id: self.company_id
+      company_id: find_company
     }
     @report = ProductReport.insert(report)
   end

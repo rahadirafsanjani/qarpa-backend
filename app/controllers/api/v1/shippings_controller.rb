@@ -12,6 +12,11 @@ class Api::V1::ShippingsController < ApplicationController
     response_to_json("success", @shipping, :ok)
   end
 
+  def history
+    @history = Shipping.shipping_history
+    render json: @history
+  end
+
   private
   def shipping_params
     params.permit(:destination_id, :origin_id, items:[:product_shared_id, :qty])
