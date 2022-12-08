@@ -183,7 +183,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_08_012224) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "company_id"
+    t.bigint "supplier_id"
     t.index ["company_id"], name: "index_product_reports_on_company_id"
+    t.index ["supplier_id"], name: "index_product_reports_on_supplier_id"
   end
 
   create_table "product_shareds", force: :cascade do |t|

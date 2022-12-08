@@ -64,25 +64,27 @@ class Shipping < ApplicationRecord
     @report_product = ProductReport.all
     @report_shipping = Shipping.all
     @report_shipping.map do | shipping |
+      branch_name = Branch.find_by(id: shipping.destination_id)
       attribute_shipping = {
         "id": shipping.id,
-        # "name": shipping.name,
-        "branch_delivered": shipping.destination_id,
+        "branch_name": branch_name.name,
         "date": shipping.created_at.to_date,
-        "type": "Shipping"
+        "type": "barang terkirim"
       }
       @report << attribute_shipping
     end
     @report_product.map do | product |
-      attribute_product = {
-        "id": product.id,
-        "name": product.name,
-        "date": product.created_at.to_date,
-        "type": "Supplier"
-      }
-      @report << attribute_product
-    end
-    binding.pry
+      supplier_name = Supplier.find_by(id: product.supplier_id)
+        if supplier_name.present?
+          attribute_product = {
+            "id": product.id,
+            "supplier_name": supplier_name.name,
+            "date": product.created_at.to_date,
+            "type": "barang diterima"
+          }
+          @report << attribute_product
+        end
+      end
     return @report
   end
   
