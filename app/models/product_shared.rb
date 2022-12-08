@@ -53,7 +53,8 @@ class ProductShared < ApplicationRecord
       name: params[:name],
       qty: params[:qty],
       purchase_price: params[:purchase_price],
-      company_id: params[:company_id]
+      company_id: params[:company_id],
+      supplier_id: params[:supplier_id]
     }
     @report = ProductReport.insert(report)
   end

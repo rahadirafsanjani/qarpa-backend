@@ -40,43 +40,54 @@ class Shipping < ApplicationRecord
     self.items.map do | item |
     @product_from.each do | product |
       @product_shared_to = ProductShared.find_by(product_id: product.product_id, branch_id: self.destination_id)
-      # binding.pry
-      if @product_shared_to.blank?
-        new_product = {
-          qty: item[:qty],
-          product_id: product.product_id,
-          branch_id: self.destination_id,
-          selling_price: product.selling_price,
-          supplier_id: product.supplier_id,
-          expire: product.expire,
-          purchase_price: product.purchase_price
-        }
-        ProductShared.insert(new_product)
-      else
-        @product_shared_to.qty += item[:qty]
-        @product_shared_to.save!(validate: false)
+        if @product_shared_to.blank?
+          new_product = {
+            qty: item[:qty],
+            product_id: product.product_id,
+            branch_id: self.destination_id,
+            selling_price: product.selling_price,
+            supplier_id: product.supplier_id,
+            expire: product.expire,
+            purchase_price: product.purchase_price
+          }
+          ProductShared.insert(new_product)
+          else
+          @product_shared_to.qty += item[:qty]
+          @product_shared_to.save!(validate: false)
+        end
       end
     end
+  end
+
+  def self.shipping_history
+    @report = []
+    @report_product = ProductReport.all
+    @report_shipping = Shipping.all
+    @report_shipping.map do | shipping |
+      branch_name = Branch.find_by(id: shipping.destination_id)
+      attribute_shipping = {
+        "id": shipping.id,
+        "branch_name": branch_name.name,
+        "date": shipping.created_at.to_date,
+        "type": "barang terkirim"
+      }
+      @report << attribute_shipping
     end
-    end
-
-
-  #   def create_new_product_destination
-  #     new_product = []
-  #     self.items.each do | item |
-  #     get_product = ProductShared.where(id: item[:product_shared_id])
-  #       get_product.each do | product |
-  #         new_product << {
-  #           product_id: product.product_id,
-  #           qty: item[:qty],
-  #           branch_id: self.destination_id
-  #         }
-  #       end
-  #     end
-  #     binding.pry
-  #     ProductShared.insert_all(new_product)
-  # end
-
+    @report_product.map do | product |
+      supplier_name = Supplier.find_by(id: product.supplier_id)
+        if supplier_name.present?
+          attribute_product = {
+            "id": product.id,
+            "supplier_name": supplier_name.name,
+            "date": product.created_at.to_date,
+            "type": "barang diterima"
+          }
+          @report << attribute_product
+        end
+      end
+    return @report
+  end
+  
   def get_products_form
     @product_from = ProductShared.where(id: get_product_shared_id)
   end

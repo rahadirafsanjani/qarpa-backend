@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-  attr_accessor :qty, :purchase_price, :selling_price, :expire, :company_id, :supplier_id, :branch_id
+  attr_accessor :qty, :purchase_price, :selling_price, :expire, :supplier_id, :branch_id
 
   belongs_to :supplier, optional: true
   belongs_to :category
@@ -39,26 +39,28 @@ class Product < ApplicationRecord
 
   def product_shareds_branch params = {}
     @branch = Branch.find_by(id: self.branch_id)
-    @supplier = Supplier.find_by(id: self.supplier_id)
+    # @supplier = Supplier.find_by(id: self.supplier_id)
     new_product_shareds = {
       product_id: self.id,
       expire: self.expire,
       purchase_price: self.purchase_price,
       selling_price: self.selling_price,
       qty: self.qty,
-      supplier_id: @supplier.id,
+      supplier_id: self.supplier_id || nil
     }
     if new_product_shareds[:product_id].present?
       ProductShared.insert(new_product_shareds.merge(branch_id: @branch.id))
     end
   end
 
-  def add_through_report
+  def add_through_report params = {}
+    find_company = Company.find_by(params[:branch_id])
     report = {
       name: self.name,
       qty: self.qty,
       purchase_price: self.purchase_price,
-      company_id: self.company_id
+      company_id: find_company,
+      supplier_id: self.supplier_id
     }
     @report = ProductReport.insert(report)
   end

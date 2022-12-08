@@ -19,7 +19,7 @@ class Api::V1::CustomersController < ApplicationController
                                         response_error(@customer.errors, :unprocessable_entity) 
   end
 
-  def show 
+  def show
     response_to_json("Customer found", @customer.new_response, :ok)
   end
 
