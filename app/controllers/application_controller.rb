@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  ACCESS_SECRET_KEY = Rails.application.credentials.jwt.access_secret
+  ACCESS_SECRET_KEY = ENV["JWT_ACCESS_SECRET"]
 
   def encode_token(payload, secret)
     JWT.encode(payload, secret)
