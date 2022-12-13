@@ -4,7 +4,6 @@ class Supplier < ApplicationRecord
 
   has_many :products, through: :product_shared
   has_many :product_shareds
-  has_many :product_reports
 
   belongs_to :address
 
