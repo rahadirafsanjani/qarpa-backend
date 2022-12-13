@@ -1,6 +1,6 @@
 class Api::V1::Users::SessionsController < ApplicationController
-  ACCESS_SECRET_KEY = Rails.application.credentials.jwt.access_secret
-  REFRESH_SECRET_KEY = Rails.application.credentials.jwt.refresh_secret
+  ACCESS_SECRET_KEY = ENV["JWT_ACCESS_SECRET"]
+  REFRESH_SECRET_KEY = ENV["JWT_REFRESH_SECRET"]
 
   def login 
     @user = User.find_by(email: user_params[:email])
