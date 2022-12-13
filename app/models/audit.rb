@@ -8,23 +8,23 @@ class Audit < ApplicationRecord
 
     conditions = {}
     conditions.merge!(company_id: params[:company_id])
-    conditions.merge!(pos: {created_at: @beginning_of_week..@end_of_week})
+    conditions.merge!(pos: { created_at: @beginning_of_week..@end_of_week })
 
     reports = Branch.joins(
       "
       LEFT JOIN pos ON pos.branch_id = branches.id
       LEFT JOIN orders ON orders.pos_id = pos.id
       LEFT JOIN detail_orders ON detail_orders.order_id = orders.id
-      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id
+      LEFT JOIN products_branches ON products_branches.id = detail_orders.products_branch_id
       "
     ).select(
       "
-      SUM(detail_orders.qty * product_shareds.selling_price) AS total_incomes,
-      (SELECT SUM(product_reports.qty * product_reports.purchase_price) FROM product_reports WHERE product_reports.company_id = branches.company_id) AS total_expenses
+      SUM(detail_orders.qty * products_branches.selling_price) AS total_incomes,
+      (SELECT SUM(products_branches.purchase_price * products_quantities.qty) FROM products_quantities WHERE products_branches.id = products_quantities.products_branch_id AND products_quantities.qty_type = 0) AS total_expenses
       "
     ).group(
       "
-      branches.company_id
+      products_branches.id
       "
     ).where(conditions)
 
@@ -88,7 +88,7 @@ class Audit < ApplicationRecord
       LEFT JOIN pos ON pos.branch_id = branches.id
       LEFT JOIN orders ON orders.pos_id = pos.id
       LEFT JOIN detail_orders ON detail_orders.order_id = orders.id 
-      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id
+      LEFT JOIN products_branches ON products_branches.id = detail_orders.products_branch_id
       "
     ).select(
       "
@@ -98,7 +98,7 @@ class Audit < ApplicationRecord
       pos.close_at,
       (SELECT users.name FROM users WHERE users.id = pos.user_id) AS user,
       SUM(detail_orders.qty) AS total_products,
-      SUM(detail_orders.qty * product_shareds.selling_price) AS total_incomes
+      SUM(detail_orders.qty * products_branches.selling_price) AS total_incomes
       "
     ).group(
       "
@@ -132,12 +132,17 @@ class Audit < ApplicationRecord
 
     conditions = {}
     conditions.merge!(:company_id => params[:company_id])
-    conditions.merge!(:created_at => params[:date])
+    conditions.merge!(:products_quantities => { :created_at => params[:date], :qty_type => 0})
 
-    expenses = ProductReport.select(
+    expenses = Branch.joins(
       "
-      SUM(product_reports.qty) AS total_products,
-      SUM(product_reports.qty * product_reports.purchase_price) AS expenses
+      LEFT JOIN products_branches ON products_branches.branch_id = branches.id 
+      LEFT JOIN products_quantities ON products_quantities.products_branch_id = products_branches.id
+      "
+    ).select(
+      "
+      SUM(products_quantities.qty) AS total_products,
+      SUM(products_branches.purchase_price * products_quantities.qty) AS expenses
       "
     ).where(conditions)
 
@@ -146,15 +151,20 @@ class Audit < ApplicationRecord
       data[:total_purchased_products] = data[:total_purchased_products] + (expense.total_products || 0)
     end
 
+
+
     data
   end
 
   def self.get_total_shippings params = {}
-    shippings = Branch.includes(:shippings)
-                      .where(
-                        :shippings => { :assign_at => params[:date]},
-                        :company_id => params[:company_id]
-                      ).count
+    shippings = Branch.joins(
+      "
+      LEFT JOIN shippings ON shippings.destination_id = branches.id
+      "
+    ).where(
+      :shippings => { :assign_at => params[:date] },
+      :company_id => params[:company_id]
+    ).count
 
     shippings
   end
