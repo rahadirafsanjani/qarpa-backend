@@ -5,7 +5,7 @@ class Order < ApplicationRecord
   before_validation :set_default 
 
   has_many :detail_orders
-  has_many :products_branches, through: :detail_orders
+  has_many :products_branch, through: :detail_orders
   belongs_to :pos
   belongs_to :customer
 
@@ -26,7 +26,7 @@ class Order < ApplicationRecord
     if self.items.present?
       self.items.each do |item|
         errors.add(:qty, "Quantity cannot be empty") unless item[:qty].present?
-        errors.add(:product_shared_id, "Product shared id cannot be empty") unless item[:product_shared_id].present?
+        errors.add(:products_branch_id, "Product branch id cannot be empty") unless item[:products_branch_id].present?
       end
     end
 
@@ -35,9 +35,9 @@ class Order < ApplicationRecord
 
   def validate_stock_products 
     self.items.each do |item|
-      product = ProductShared.find_by(id: item[:product_shared_id])
+      product = ProductsBranch.find_by(id: item[:products_branch_id])
       stock = ProductsQuantity.group(:qty_type)
-                      .where(product_shared_id: item[:product_shared_id])
+                      .where(products_branch_id: item[:products_branch_id])
                       .sum(:qty)
       
       total_stock = (stock['inbound'] || 0) - (stock['outbound'] || 0)
@@ -50,7 +50,7 @@ class Order < ApplicationRecord
   def reduce_stock 
     self.detail_orders.each do |detail_order|
         ProductsQuantity.create(
-          product_shared_id: detail_order.product_shared_id, 
+          products_branch_id: detail_order.products_branch_id, 
           qty: detail_order.qty, qty_type: 1
         )
     end

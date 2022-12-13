@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema[7.0].define(version: 2022_12_13_131206) do
-=======
-ActiveRecord::Schema[7.0].define(version: 2022_12_13_133612) do
->>>>>>> 38bb34cb8d506f65bee385d7bb16c6bcc0fec9f3
+ActiveRecord::Schema[7.0].define(version: 2022_12_13_163318) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -115,9 +111,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_133612) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "order_id"
-    t.bigint "products_branches_id"
+    t.bigint "products_branch_id"
     t.index ["order_id"], name: "index_detail_orders_on_order_id"
-    t.index ["products_branches_id"], name: "index_detail_orders_on_products_branches_id"
+    t.index ["products_branch_id"], name: "index_detail_orders_on_products_branch_id"
   end
 
   create_table "item_shippings", force: :cascade do |t|
@@ -205,10 +201,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_133612) do
   create_table "products_quantities", force: :cascade do |t|
     t.integer "qty"
     t.integer "qty_type"
-    t.bigint "product_shared_id", null: false
+    t.bigint "products_branch_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_shared_id"], name: "index_products_quantities_on_product_shared_id"
+    t.index ["products_branch_id"], name: "index_products_quantities_on_products_branch_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -261,11 +257,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_133612) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-<<<<<<< HEAD
-  add_foreign_key "products_quantities", "product_shareds"
-=======
-  add_foreign_key "products_quantities", "products_branches", column: "products_branches_id"
->>>>>>> 38bb34cb8d506f65bee385d7bb16c6bcc0fec9f3
+  add_foreign_key "products_quantities", "products_branches"
   add_foreign_key "shippings", "addresses", column: "destination_id"
   add_foreign_key "shippings", "addresses", column: "origin_id"
 end
