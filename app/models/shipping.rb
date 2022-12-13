@@ -9,8 +9,6 @@ class Shipping < ApplicationRecord
   belongs_to :destination, class_name: "Address", foreign_key: "destination_id"
   belongs_to :branch, optional: true
 
-  enum status: { prepared: 0, delivered: 1 }
-
   def validate_stock_products
     valid = 0
     self.items.each do |item|
