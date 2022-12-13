@@ -9,7 +9,7 @@ class Product < ApplicationRecord
 
   # image
   has_one_attached :image, :dependent => :destroy
-  after_create_commit :product_shareds_branch, :add_through_report
+  after_create_commit :products_branches_create
 
   def image_url
     Rails.application.routes.url_helpers.url_for(image) if image.attached?
@@ -37,34 +37,21 @@ class Product < ApplicationRecord
     ]
   end
 
-  def product_shareds_branch params = {}
+  def products_branches_create
     @branch = Branch.find_by(id: self.branch_id)
-    # @supplier = Supplier.find_by(id: self.supplier_id)
-    new_product_shareds = {
+    new_product = {
       product_id: self.id,
-      expire: self.expire,
       purchase_price: self.purchase_price,
       selling_price: self.selling_price,
-      qty: self.qty,
       supplier_id: self.supplier_id || nil
     }
-    if new_product_shareds[:product_id].present?
-      ProductsBranch.insert(new_product_shareds.merge(branch_id: @branch.id))
+    if new_product[:product_id].present?
+      @qty = ProductsBranch.create(new_product.merge(branch_id: @branch.id))
+      ProductsBranch.qty_create(qty: self.qty, products_branches_id: @qty.id)
     end
   end
 
-  def add_through_report
-    branch_name = Branch.find_by(id: self.branch_id)
-    company = Company.find_by(id: branch_name.company_id)
-    report = {
-      name: self.name,
-      qty: self.qty,
-      purchase_price: self.purchase_price,
-      company_id: company.id,
-      supplier_id: self.supplier_id,
-      branch_id: self.branch_id
-    }
-    @report = ProductReport.insert(report)
+  def qty_create
   end
 
   def self.get_all_products params = {}

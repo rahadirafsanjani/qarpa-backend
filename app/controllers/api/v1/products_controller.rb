@@ -4,9 +4,9 @@ class Api::V1::ProductsController < ApplicationController
   def new_product
     @product = Product.find_by(name: params[:name])
     if @product.blank?
-      @test = Product.new(set_product_from_supplier)
-      @test.save
-      render json: @test
+      @create = Product.new(set_product_from_supplier)
+      @create.save
+      response_to_json( "success", @create, :ok)
     elsif @product.present?
       @product = Product.find_by(name: params[:name], category_id: params[:category_id])
       @product_shared = ProductsBranch.sum_qty(new_qty: params[:qty], supplier_id: params[:supplier_id], name: params[:name], branch_id: params[:branch_id], product_id: @product.id, selling_price: params[:selling_price], purchase_price: params[:purchase_price])
@@ -66,6 +66,6 @@ class Api::V1::ProductsController < ApplicationController
   private
   
   def set_product_from_supplier
-    params.permit(:name, :image, :quantity_type, :qty, :selling_price, :purchase_price, :expire, :category_id, :supplier_id, :branch_id)
+    params.permit(:name, :image, :quantity_type, :qty, :selling_price, :purchase_price, :category_id, :supplier_id, :branch_id)
   end
 end

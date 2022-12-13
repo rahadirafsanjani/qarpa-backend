@@ -1,10 +1,22 @@
 class ProductsBranch < ApplicationRecord
   has_many :detail_orders
   has_many :orders, through: :detail_orders
+  has_many :products_quantities
 
   belongs_to :branch
   belongs_to :product
   belongs_to :supplier, optional: true
+
+
+  def self.qty_create params = {}
+    new_product_qty = {
+      qty: params[:qty],
+      type: 0
+    }
+    if new_product_qty.present?
+      ProductsQuantity.insert(new_product_qty.merge(products_branches_id: params[:products_branches_id]))
+    end
+  end
 
   def self.get_index
     @product_shared = ProductsBranch.all
