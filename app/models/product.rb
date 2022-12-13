@@ -53,14 +53,16 @@ class Product < ApplicationRecord
     end
   end
 
-  def add_through_report params = {}
-    find_company = Company.find_by(params[:branch_id])
+  def add_through_report
+    branch_name = Branch.find_by(id: self.branch_id)
+    company = Company.find_by(id: branch_name.company_id)
     report = {
       name: self.name,
       qty: self.qty,
       purchase_price: self.purchase_price,
-      company_id: find_company,
-      supplier_id: self.supplier_id
+      company_id: company.id,
+      supplier_id: self.supplier_id,
+      branch_id: self.branch_id
     }
     @report = ProductReport.insert(report)
   end
