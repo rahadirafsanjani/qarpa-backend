@@ -5,7 +5,7 @@ class Order < ApplicationRecord
   before_validation :set_default 
 
   has_many :detail_orders
-  has_many :product_shareds, through: :detail_orders
+  has_many :products_branches, through: :detail_orders
   belongs_to :pos
   belongs_to :customer
 
@@ -56,7 +56,7 @@ class Order < ApplicationRecord
   end
 
   def get_products 
-    @products = ProductShared.where(id: get_product_id)
+    @products = ProductsBranch.where(id: get_product_id)
   end
 
   def get_product_id 

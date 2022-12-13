@@ -3,7 +3,7 @@ class Supplier < ApplicationRecord
   before_validation :create_address
 
   has_many :products, through: :product_shared
-  has_many :product_shareds
+  has_many :products_branches
 
   belongs_to :address
 

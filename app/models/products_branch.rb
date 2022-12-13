@@ -1,4 +1,4 @@
-class ProductShared < ApplicationRecord
+class ProductsBranch < ApplicationRecord
   has_many :detail_orders
   has_many :orders, through: :detail_orders
 
@@ -7,30 +7,30 @@ class ProductShared < ApplicationRecord
   belongs_to :supplier, optional: true
 
   def self.get_index
-    @product_shared = ProductShared.all
+    @product_shared = ProductsBranch.all
     @product_shared.map do | product |
       product.product_attribute
     end
   end
 
   def self.get_by_id params = {}
-    @product_shared = ProductShared.find_by(id: params[:id])
+    @product_shared = ProductsBranch.find_by(id: params[:id])
     @product_shared.product_attribute
   end
 
   def self.get_product_branch params = {}
     @branch = Branch.find_by(id: params[:branch_id])
-    @branch.product_shareds.map do |product_shared|
+    @branch.products_branches.map do |product_shared|
       product_shared.product_attribute
     end
   end
 
   def self.sum_qty params = {}
-    @product_shared = ProductShared.find_by(supplier_id: params[:supplier_id], branch_id: params[:branch_id], product_id: params[:product_id])
+    @product_shared = ProductsBranch.find_by(supplier_id: params[:supplier_id], branch_id: params[:branch_id], product_id: params[:product_id])
     if @product_shared.blank?
-      @product_shared = ProductShared.create(qty: params[:new_qty], selling_price: params[:selling_price],
-                        purchase_price: params[:purchase_price], expire: params[:expire],
-                        branch_id: params[:branch_id], supplier_id: params[:supplier_id], product_id: params[:product_id])
+      @product_shared = ProductsBranch.create(qty: params[:new_qty], selling_price: params[:selling_price],
+                                             purchase_price: params[:purchase_price], expire: params[:expire],
+                                             branch_id: params[:branch_id], supplier_id: params[:supplier_id], product_id: params[:product_id])
     else
       sum = @product_shared.qty + params[:new_qty].to_i
       @product_shared.update(qty: sum)
@@ -39,7 +39,7 @@ class ProductShared < ApplicationRecord
   end
 
   def self.update_product params = {}
-    @product_shared = ProductShared.find_by(id: params[:product_shared_id])
+    @product_shared = ProductsBranch.find_by(id: params[:product_shared_id])
     @product_shared.update(qty: params[:qty],
                            selling_price: params[:selling_price],
                            branch_id: params[:branch_id])

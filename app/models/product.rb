@@ -3,7 +3,7 @@ class Product < ApplicationRecord
 
   belongs_to :supplier, optional: true
   belongs_to :category
-  has_many :product_shareds
+  has_many :products_branches
   has_many :detail_order
   has_many :orders, through: :detail_order
 
@@ -49,7 +49,7 @@ class Product < ApplicationRecord
       supplier_id: self.supplier_id || nil
     }
     if new_product_shareds[:product_id].present?
-      ProductShared.insert(new_product_shareds.merge(branch_id: @branch.id))
+      ProductsBranch.insert(new_product_shareds.merge(branch_id: @branch.id))
     end
   end
 

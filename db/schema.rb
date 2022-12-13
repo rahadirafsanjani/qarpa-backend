@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_13_131107) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -111,9 +111,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "order_id"
-    t.bigint "product_shared_id"
+    t.bigint "products_branches_id"
     t.index ["order_id"], name: "index_detail_orders_on_order_id"
-    t.index ["product_shared_id"], name: "index_detail_orders_on_product_shared_id"
+    t.index ["products_branches_id"], name: "index_detail_orders_on_products_branches_id"
   end
 
   create_table "item_shippings", force: :cascade do |t|
@@ -121,8 +121,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "shipping_id"
-    t.bigint "product_shared_id"
-    t.index ["product_shared_id"], name: "index_item_shippings_on_product_shared_id"
+    t.bigint "products_branches_id"
+    t.index ["products_branches_id"], name: "index_item_shippings_on_products_branches_id"
     t.index ["shipping_id"], name: "index_item_shippings_on_shipping_id"
   end
 
@@ -176,20 +176,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
     t.index ["user_id"], name: "index_pos_on_user_id"
   end
 
-  create_table "product_shareds", force: :cascade do |t|
-    t.integer "selling_price"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "product_id"
-    t.bigint "supplier_id"
-    t.date "expire"
-    t.integer "purchase_price"
-    t.bigint "branch_id"
-    t.index ["branch_id"], name: "index_product_shareds_on_branch_id"
-    t.index ["product_id"], name: "index_product_shareds_on_product_id"
-    t.index ["supplier_id"], name: "index_product_shareds_on_supplier_id"
-  end
-
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "quantity_type"
@@ -199,13 +185,27 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
+  create_table "products_branches", force: :cascade do |t|
+    t.integer "selling_price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "product_id"
+    t.bigint "supplier_id"
+    t.date "expire"
+    t.integer "purchase_price"
+    t.bigint "branch_id"
+    t.index ["branch_id"], name: "index_products_branches_on_branch_id"
+    t.index ["product_id"], name: "index_products_branches_on_product_id"
+    t.index ["supplier_id"], name: "index_products_branches_on_supplier_id"
+  end
+
   create_table "products_quantities", force: :cascade do |t|
     t.integer "qty"
     t.integer "type"
-    t.bigint "product_shareds_id", null: false
+    t.bigint "products_branches_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_shareds_id"], name: "index_products_quantities_on_product_shareds_id"
+    t.index ["products_branches_id"], name: "index_products_quantities_on_products_branches_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -261,7 +261,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "products_quantities", "product_shareds", column: "product_shareds_id"
+  add_foreign_key "products_quantities", "products_branches", column: "products_branches_id"
   add_foreign_key "shippings", "addresses", column: "destination_id"
   add_foreign_key "shippings", "addresses", column: "origin_id"
 end
