@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_13_131206) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -201,11 +201,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
 
   create_table "products_quantities", force: :cascade do |t|
     t.integer "qty"
-    t.integer "type"
-    t.bigint "product_shareds_id", null: false
+    t.integer "qty_type"
+    t.bigint "product_shared_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_shareds_id"], name: "index_products_quantities_on_product_shareds_id"
+    t.index ["product_shared_id"], name: "index_products_quantities_on_product_shared_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -261,7 +261,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_13_111721) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "products_quantities", "product_shareds", column: "product_shareds_id"
+  add_foreign_key "products_quantities", "product_shareds"
   add_foreign_key "shippings", "addresses", column: "destination_id"
   add_foreign_key "shippings", "addresses", column: "origin_id"
 end

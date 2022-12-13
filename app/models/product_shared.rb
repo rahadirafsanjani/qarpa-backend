@@ -1,6 +1,7 @@
 class ProductShared < ApplicationRecord
   has_many :detail_orders
   has_many :orders, through: :detail_orders
+  has_many :products_quantities
 
   belongs_to :branch
   belongs_to :product

@@ -1,7 +1,7 @@
 class Order < ApplicationRecord
   attr_accessor :items
   after_save :create_detail_orders, :reduce_stock
-  before_save :get_products, :validate_stock_products
+  before_save :validate_stock_products
   before_validation :set_default 
 
   has_many :detail_orders
@@ -33,34 +33,27 @@ class Order < ApplicationRecord
     raise ActiveRecord::Rollback if errors.present?
   end
 
-  def validate_stock_products
-    valid = 0
-
+  def validate_stock_products 
     self.items.each do |item|
-      @products.each do |product|
-        if product.id == item[:product_shared_id] && product.qty < item[:qty]
-          errors.add(:qty, "#{product.product.name} not enough stock")
-          valid = valid + 1
-        end
-      end 
+      product = ProductShared.find_by(id: item[:product_shared_id])
+      stock = ProductsQuantity.group(:qty_type)
+                      .where(product_shared_id: item[:product_shared_id])
+                      .sum(:qty)
+      
+      total_stock = (stock['inbound'] || 0) - (stock['outbound'] || 0)
+      errors.add(:qty, "#{product.product.name} not enough stock") if item[:qty] > total_stock
     end
-
-    raise ActiveRecord::Rollback unless valid.zero?
+    
+    raise ActiveRecord::Rollback if errors.present?
   end
 
   def reduce_stock 
     self.detail_orders.each do |detail_order|
-        detail_order.product_shared.qty = detail_order.product_shared.qty - detail_order.qty
-        detail_order.product_shared.save!(validate: false)
+        ProductsQuantity.create(
+          product_shared_id: detail_order.product_shared_id, 
+          qty: detail_order.qty, qty_type: 1
+        )
     end
-  end
-
-  def get_products 
-    @products = ProductShared.where(id: get_product_id)
-  end
-
-  def get_product_id 
-    return self.items.map { |item| item[:product_shared_id] }
   end
 
   def create_detail_orders
