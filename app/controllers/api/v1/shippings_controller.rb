@@ -12,8 +12,13 @@ class Api::V1::ShippingsController < ApplicationController
     response_to_json("success", @shipping, :ok)
   end
 
-  def history
+  def history_all
     @history = Shipping.shipping_history
+    response_to_json("Success", @history, :ok)
+  end
+
+  def history_branch
+    @history = Shipping.shipping_history_branch(branch_id: @user.branch_id)
     response_to_json("Success", @history, :ok)
   end
 

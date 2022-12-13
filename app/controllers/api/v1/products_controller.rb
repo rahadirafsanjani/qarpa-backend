@@ -10,7 +10,7 @@ class Api::V1::ProductsController < ApplicationController
     elsif @product.present?
       @product = Product.find_by(name: params[:name], category_id: params[:category_id])
       @product_shared = ProductShared.sum_qty(new_qty: params[:qty], supplier_id: params[:supplier_id], name: params[:name], branch_id: params[:branch_id], product_id: @product.id, selling_price: params[:selling_price], purchase_price: params[:purchase_price])
-      @update_report = ProductShared.add_through_report(name: params[:name], qty: params[:qty], purchase_price: params[:purchase_price], company_id: @user.company_id, supplier_id: params[:supplier_id])
+      @update_report = ProductShared.add_through_report(name: params[:name], qty: params[:qty], purchase_price: params[:purchase_price], company_id: @user.company_id, supplier_id: params[:supplier_id], branch_id: params[:branch_id])
       render json: @product_shared
     else
       render json: "something went wrong"

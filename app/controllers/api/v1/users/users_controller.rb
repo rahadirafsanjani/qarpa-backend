@@ -1,6 +1,6 @@
 class Api::V1::Users::UsersController < ApplicationController
   before_action :authorize
-  before_action :set_user, only: %i[ show update destroy ]
+  before_action :set_user, only: %i[ show destroy ]
 
   def index 
     @users = User.get_all(id: @user.id, company_id: @user.company_id)
@@ -26,13 +26,12 @@ class Api::V1::Users::UsersController < ApplicationController
     response_to_json("User found", @user.user_attribute, :ok)
   end
 
-  def update 
-    @user.update(user_params) ? response_to_json("User has been updated", :ok) : response_error(@user.errors, :unprocessable_entity)
+  def update_avatar
+    @user.update_attribute(:avatar, params[:avatar]) ? response_to_json("User has been updated", @user.user_attribute, :ok) : response_error(@user.errors, :unprocessable_entity)
   end
 
   def destroy 
     @user.destroy
-
     response_to_json("User has been deleted", @user.user_attribute, :ok)
   end
 
@@ -44,6 +43,6 @@ class Api::V1::Users::UsersController < ApplicationController
   end
 
   def user_params 
-    params.require(:user).permit(:name, :email, :password, :branch_id).merge(company_id: @user.company_id)
+    params.require(:user).permit(:name, :email, :password, :branch_id, :avatar).merge(company_id: @user.company_id)
   end
 end
