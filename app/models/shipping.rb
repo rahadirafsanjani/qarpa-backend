@@ -9,8 +9,6 @@ class Shipping < ApplicationRecord
   belongs_to :destination, class_name: "Address", foreign_key: "destination_id"
   belongs_to :branch, optional: true
 
-  enum status: { prepared: 0, delivered: 1 }
-
   def validate_stock_products
     valid = 0
     self.items.each do |item|
@@ -38,8 +36,8 @@ class Shipping < ApplicationRecord
 
   def validate_product_destination
     self.items.each do |item|
-      product = ProductShared.find_by(id: item[:product_shared_id])
-      destination_product = ProductShared.find_by(product_id: product.product_id, branch_id: self.destination_id)
+      product = ProductsBranch.find_by(id: item[:product_shared_id])
+      destination_product = ProductsBranch.find_by(product_id: product.product_id, branch_id: self.destination_id)
       if destination_product.blank?
         new_product = {
           qty: item[:qty],
@@ -50,7 +48,7 @@ class Shipping < ApplicationRecord
           expire: product.expire,
           purchase_price: product.purchase_price
         }
-        ProductShared.insert(new_product)
+        ProductsBranch.insert(new_product)
       else
         if product.id == item[:product_shared_id]
           destination_product.qty = destination_product.qty + item[:qty]
@@ -120,7 +118,7 @@ class Shipping < ApplicationRecord
 
 
   def get_products_form
-    @product_from = ProductShared.where(id: get_product_shared_id)
+    @product_from = ProductsBranch.where(id: get_product_shared_id)
   end
 
   def get_product_shared_id
