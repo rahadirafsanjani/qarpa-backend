@@ -1,5 +1,6 @@
 class Api::V1::ProductsController < ApplicationController
   before_action :authorize
+  before_action :user_permission, only: %i[ delete_product ]
 
   def new_product
     @product = Product.find_by(name: params[:name])
@@ -26,7 +27,7 @@ class Api::V1::ProductsController < ApplicationController
   def show_product_by_id
     @product_shareds = ProductsBranch.find_by(id: params[:id])
     @product_shareds.present? ? response_to_json("Product found", @product_shareds.new_product_attribute, :ok) : 
-                              response_error("Product not found", :not_found)
+                                response_error("Product not found", :not_found)
   end
 
   def get_product_branch
@@ -46,11 +47,9 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def delete_product
-    if @user.role.downcase == "owner"
-      @product = ProductsBranch.find_by(id: params[:id])
-      @product.delete
-      response_to_json("success", @product, :ok)
-    end
+    @product = ProductsBranch.find_by(id: params[:id])
+    @product.present? ? response_to_json("Product has been deleted", @product.destroy, :ok) :
+                        response_error("Product not found", :not_found)
   end
   
   def unit_dropdown
