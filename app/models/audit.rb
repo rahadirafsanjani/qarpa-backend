@@ -6,11 +6,7 @@ class Audit < ApplicationRecord
     @beginning_of_week = date.beginning_of_week
     @end_of_week = date.end_of_week
 
-    conditions = {}
-    conditions.merge!(company_id: params[:company_id])
-    conditions.merge!(pos: { created_at: @beginning_of_week..@end_of_week })
-
-    reports = Branch.joins(
+    incomes = Branch.joins(
       "
       LEFT JOIN pos ON pos.branch_id = branches.id
       LEFT JOIN orders ON orders.pos_id = pos.id
@@ -19,22 +15,42 @@ class Audit < ApplicationRecord
       "
     ).select(
       "
-      SUM(detail_orders.qty * products_branches.selling_price) AS total_incomes,
-      (SELECT SUM(products_branches.purchase_price * products_quantities.qty) FROM products_quantities WHERE products_branches.id = products_quantities.products_branch_id AND products_quantities.qty_type = 0) AS total_expenses
+      SUM(detail_orders.qty * products_branches.selling_price) AS total_incomes
       "
-    ).group(
+    ).where(
+      company_id: params[:company_id],
+      pos: {
+        created_at: @beginning_of_week..@end_of_week
+      }
+    )
+
+    expenses = Branch.joins(
       "
-      products_branches.id
+      LEFT JOIN products_branches ON products_branches.branch_id = branches.id
+      LEFT JOIN products_quantities ON products_quantities.products_branch_id = products_branches.id
       "
-    ).where(conditions)
+    ).select(
+      "
+      SUM(products_branches.purchase_price * products_quantities.qty) AS total_expenses
+      "
+    ).where(
+      company_id: params[:company_id],
+      products_quantities: { 
+        created_at: @beginning_of_week..@end_of_week,
+        qty_type: 0 
+      }
+    )
 
     data = {}
     data[:incomes] = 0
     data[:expenses] = 0
 
-    reports.each do |report|
-      data[:incomes] = data[:incomes] + (report.total_incomes || 0)
-      data[:expenses] = data[:expenses] + (report.total_expenses || 0)
+    incomes.each do |income| 
+      data[:incomes] = data[:incomes] + (income.total_incomes || 0)
+    end
+
+    expenses.each do |expense| 
+      data[:expenses] = data[:expenses] + (expense.total_expenses || 0)
     end
 
     data
