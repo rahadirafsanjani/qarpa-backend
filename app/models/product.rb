@@ -7,7 +7,6 @@ class Product < ApplicationRecord
   has_many :detail_order
   has_many :orders, through: :detail_order
 
-  # image
   has_one_attached :image, :dependent => :destroy
   after_create_commit :products_branches_create
 
@@ -37,7 +36,7 @@ class Product < ApplicationRecord
     ]
   end
 
-  def products_branches_create
+  def products_branches_create params = {}
     @branch = Branch.find_by(id: self.branch_id)
     new_product = {
       product_id: self.id,
@@ -46,12 +45,9 @@ class Product < ApplicationRecord
       supplier_id: self.supplier_id || nil
     }
     if new_product[:product_id].present?
-      @qty = ProductsBranch.create(new_product.merge(branch_id: @branch.id))
-      ProductsBranch.qty_create(qty: self.qty, products_branches_id: @qty.id)
+      add_qty = ProductsBranch.create(new_product.merge(branch_id: @branch.id))
+      ProductsBranch.qty_create(qty: self.qty, products_branch_id: add_qty.id)
     end
-  end
-
-  def qty_create
   end
 
   def self.get_all_products params = {}

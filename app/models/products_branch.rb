@@ -1,4 +1,5 @@
 class ProductsBranch < ApplicationRecord
+  attr_accessor :qty
   has_many :detail_orders
   has_many :orders, through: :detail_orders
   has_many :products_quantities
@@ -11,23 +12,23 @@ class ProductsBranch < ApplicationRecord
   def self.qty_create params = {}
     new_product_qty = {
       qty: params[:qty],
-      type: 0
+      qty_type: 0
     }
     if new_product_qty.present?
-      ProductsQuantity.insert(new_product_qty.merge(products_branches_id: params[:products_branches_id]))
+      ProductsQuantity.insert(new_product_qty.merge(products_branch_id: params[:products_branch_id]))
     end
   end
 
   def self.get_index
-    @product_shared = ProductsBranch.all
-    @product_shared.map do | product |
+    @products_branch = ProductsBranch.all
+    @products_branch.map do | product |
       product.product_attribute
     end
   end
 
   def self.get_by_id params = {}
-    @product_shared = ProductsBranch.find_by(id: params[:id])
-    @product_shared.product_attribute
+    @products_branch = ProductsBranch.find_by(id: params[:id])
+    @products_branch.product_attribute
   end
 
   def self.get_product_branch params = {}
@@ -37,49 +38,50 @@ class ProductsBranch < ApplicationRecord
     end
   end
 
-  def self.sum_qty params = {}
-    @product_shared = ProductsBranch.find_by(supplier_id: params[:supplier_id], branch_id: params[:branch_id], product_id: params[:product_id])
-    if @product_shared.blank?
-      @product_shared = ProductsBranch.create(qty: params[:new_qty], selling_price: params[:selling_price],
-                                             purchase_price: params[:purchase_price], expire: params[:expire],
-                                             branch_id: params[:branch_id], supplier_id: params[:supplier_id], product_id: params[:product_id])
+  def self.create_product_branch params = {}
+    @products_branch = ProductsBranch.find_by(supplier_id: params[:supplier_id], branch_id: params[:branch_id], product_id: params[:product_id])
+    if @products_branch.blank?
+      @products_branch = ProductsBranch.create(selling_price: params[:selling_price], purchase_price: params[:purchase_price],
+                                              branch_id: params[:branch_id], supplier_id: params[:supplier_id], product_id: params[:product_id])
     else
-      sum = @product_shared.qty + params[:new_qty].to_i
-      @product_shared.update(qty: sum)
+      @qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id)
+      sum = @qty.qty + params[:qty].to_i
+      @product_qty = @qty.update(qty: sum)
     end
-    return @product_shared
   end
 
   def self.update_product params = {}
-    @product_shared = ProductsBranch.find_by(id: params[:product_shared_id])
-    @product_shared.update(qty: params[:qty],
-                           selling_price: params[:selling_price],
+    @products_branch = ProductsBranch.find_by(id: params[:products_branch_id])
+    @products_branch.update(selling_price: params[:selling_price],
                            branch_id: params[:branch_id])
-    @product = Product.find_by(id: @product_shared.product_id)
+    @product = Product.find_by(id: @products_branch.product_id)
+    @product_qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id)
     @product.update(name: params[:name], category_id: params[:category_id])
-    @product_shared.product_attribute
+    @product_qty.update(qty: params[:qty])
+    @products_branch.product_attribute
   end
 
-  def self.add_through_report params = {}
-    report = {
-      name: params[:name],
-      qty: params[:qty],
-      purchase_price: params[:purchase_price],
-      company_id: params[:company_id],
-      supplier_id: params[:supplier_id],
-      branch_id: params[:branch_id]
-    }
-    @report = ProductReport.insert(report)
+  def get_qty
+    @product_qty = []
+    @attrbute = ProductsQuantity.where(products_branch_id: self.id)
+    @attrbute.map do | attr |
+      qty = {
+        "qty_type": attr.qty_type,
+        "qty": attr.qty
+      }
+      @product_qty << qty
+    end
+
+    return @product_qty
   end
 
   def product_attribute
     {
       "id": self.id,
       "name": self.product.name || nil,
-      "qty": self.qty,
+      "qty": get_qty || nil,
       "quantity_type": self.product.quantity_type || nil,
       "category": self.product.category.id || nil,
-      "expire": self.expire,
       "selling_price": self.selling_price,
       "image": self.product.image_url || nil,
       "branch_id": self.branch_id
