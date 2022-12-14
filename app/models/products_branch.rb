@@ -29,23 +29,23 @@ class ProductsBranch < ApplicationRecord
   end
 
   def self.get_index
-    all_product = []
-
-    @products_branch = ProductsBranch.all
-    @products_branch.map do | product |
-      all_product << {
-          "id": product.id,
-          "name": product.product.name || nil,
-          "qty": product.products_quantities.first.qty || nil,
-          "quantity_type": product.product.quantity_type || nil,
-          "category": product.product.category.id || nil,
-          "selling_price": product.selling_price || nil,
-          "image": product.product.image_url || nil,
-          "branch_id": product.branch_id || nil,
-      }
-    end
-
-    return all_product
+    # all_product = []
+    #
+    # @products_branch = ProductsBranch.all
+    # @products_branch.map do | product |
+    #   all_product << {
+    #       "id": product.id,
+    #       "name": product.product.name || nil,
+    #       "qty": product.products_quantities.first.qty || nil,
+    #       "quantity_type": product.product.quantity_type || nil,
+    #       "category": product.product.category.id || nil,
+    #       "selling_price": product.selling_price || nil,
+    #       "image": product.product.image_url || nil,
+    #       "branch_id": product.branch_id || nil,
+    #   }
+    # end
+    #
+    return "under maintain"
   end
 
   def self.get_by_id params = {}
@@ -74,8 +74,6 @@ class ProductsBranch < ApplicationRecord
         "image": self.product.image_url,
         "branch_id": self.branch_id
     }
-
-    all_products
   end
 
   def self.create_product_branch params = {}
