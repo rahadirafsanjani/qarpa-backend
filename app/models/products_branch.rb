@@ -29,10 +29,23 @@ class ProductsBranch < ApplicationRecord
   end
 
   def self.get_index
+    all_product = []
+
     @products_branch = ProductsBranch.all
     @products_branch.map do | product |
-      product.product_attribute
+      all_product << {
+          "id": product.id,
+          "name": product.product.name || nil,
+          "qty": product.products_quantities.first.qty || nil,
+          "quantity_type": product.product.quantity_type || nil,
+          "category": product.product.category.id || nil,
+          "selling_price": product.selling_price || nil,
+          "image": product.product.image_url || nil,
+          "branch_id": product.branch_id || nil,
+      }
     end
+
+    return all_product
   end
 
   def self.get_by_id params = {}
@@ -40,11 +53,30 @@ class ProductsBranch < ApplicationRecord
     @products_branch.product_attribute
   end
 
-  def self.get_product_branch params = {}
-    @branch = Branch.find_by(id: params[:branch_id])
-    @branch.products_branches.map do |product_shared|
-      product_shared.product_attribute
+  def self.get_products_branch params = {}
+    products_branch = ProductsBranch.where(branch_id: params[:branch_id])
+    products_branch.map do |product|
+      product.new_product_attribute
     end
+  end
+
+  def new_product_attribute 
+    sum_inbound = self.products_quantities.where(products_quantities: { :qty_type => 0 }).sum(:qty)
+    sum_outbound = self.products_quantities.where(products_quantities: { :qty_type => 1 }).sum(:qty)
+    sum_quantities = sum_inbound - sum_outbound
+    all_products = []
+    all_products << {
+        "id": self.id,
+        "name": self.product.name,
+        "qty": sum_quantities,
+        "quantity_type": self.product.quantity_type,
+        "category": self.product.category.id,
+        "selling_price": self.selling_price,
+        "image": self.product.image_url,
+        "branch_id": self.branch_id
+    }
+
+    all_products
   end
 
   def self.create_product_branch params = {}

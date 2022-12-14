@@ -80,23 +80,6 @@ class Finance < ApplicationRecord
       SUM(products_branches.purchase_price * products_quantities.qty) AS total 
       "
     ).where(conditions)
-
-    # expenses = Shipping.joins(
-    #   "
-    #   LEFT JOIN branches ON branches.id = shippings.branch_id
-    #   LEFT JOIN item_shippings ON item_shippings.shipping_id = shippings.id
-    #   LEFT JOIN product_shareds ON product_shareds.id = item_shippings.product_shared_id
-    #   "
-    # ).select(
-    #   "
-    #   branches.id,
-    #   SUM(item_shippings.qty * product_shareds.purchase_price) AS total
-    #   "
-    # ).group(
-    #   "
-    #   branches.id
-    #   "
-    # ).where(conditions)
     
     data = {}
     data[:expenses] = 0
