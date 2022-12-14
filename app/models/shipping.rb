@@ -61,64 +61,60 @@ class Shipping < ApplicationRecord
     end
   end
 
-  def self.shipping_history
-    @report = []
-    @report_product = ProductReport.all
-    @report_shipping = Shipping.all
-    @report_shipping.map do | shipping |
-      branch_name = Branch.find_by(id: shipping.destination_id)
-      attribute_shipping = {
-        "id": shipping.id,
-        "branch_name": branch_name.name,
-        "date": shipping.created_at.to_date,
+  def self.shipping_history params = {}
+    conditions = {}
+    conditions.merge!(company_id: params[:company_id]) if params[:company_id].present?
+    conditions.merge!(id: params[:branch_id]) if params[:branch_id].present?
+
+    reports = []
+    reports_shippings = Shipping.joins(
+      "
+      LEFT JOIN branches ON branches.id = shippings.destination_id 
+      "
+    ).select(
+      "
+      shippings.id,
+      branches.name,
+      shippings.created_at
+      "
+    ).where(branches: conditions)
+
+    reports_suppliers = Branch.joins(
+      "
+      LEFT JOIN products_branches ON products_branches.branch_id = branches.id
+      LEFT JOIN suppliers ON suppliers.id = products_branches.supplier_id
+      LEFT JOIN products_quantities ON products_quantities.products_branch_id = products_branches.id
+      "
+    ).select(
+      "
+      products_branches.id,
+      suppliers.name,
+      products_quantities.created_at
+      "
+    ).where(conditions.merge!(products_quantities: { qty_type: 0 }))
+
+    shipping_attribute = {}
+
+    reports_suppliers.each do |report|
+      reports << {
+        "id": report.id,
+        "supplier_name": report.name,
+        "date": report.created_at.to_date,
+        "type": "supplier"
+      }
+    end
+
+    reports_shippings.each do |report|
+      reports << {
+        "id": report.id,
+        "branch_name": report.name,
+        "date": report.created_at.to_date,
         "type": "shipping"
       }
-      @report << attribute_shipping
     end
-    @report_product.map do | product |
-      supplier_name = Supplier.find_by(id: product.supplier_id)
-        if supplier_name.present?
-          attribute_product = {
-            "id": product.id,
-            "supplier_name": supplier_name.name,
-            "date": product.created_at.to_date,
-            "type": "supplier"
-          }
-          @report << attribute_product
-        end
-      end
-    return @report
-  end
 
-  def self.shipping_history_branch params = {}
-    @report = []
-    @report_product = ProductReport.where(branch_id: params[:branch_id])
-    @report_shipping = Shipping.where(destination_id: params[:branch_id]).or(Shipping.where(origin_id: params[:branch_id]))
-    @report_shipping.map do | shipping |
-      branch_name = Branch.find_by(id: shipping.destination_id)
-      attribute_shipping = {
-        "id": shipping.id,
-        "branch_name": branch_name.name,
-        "date": shipping.created_at.to_date,
-        "type": "shipping"
-      }
-      @report << attribute_shipping
-    end
-    @report_product.map do | product |
-      supplier_name = Supplier.find_by(id: product.supplier_id)
-      if supplier_name.present?
-        attribute_product = {
-          "id": product.id,
-          "supplier_name": supplier_name.name,
-          "date": product.created_at.to_date,
-          "type": "supplier"
-        }
-        @report << attribute_product
-      end
-    end
-    return @report
+    reports
   end
-
 
   def get_products_form
     @product_from = ProductsQuantity.where(products_branch_id: get_products_branch_id, qty_type: 0)
