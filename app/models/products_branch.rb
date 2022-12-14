@@ -10,12 +10,21 @@ class ProductsBranch < ApplicationRecord
 
 
   def self.qty_create params = {}
-    new_product_qty = {
+    create_qty = []
+    new_product_qty_in = {
       qty: params[:qty],
-      qty_type: 0
+      qty_type: 0,
+      products_branch_id: params[:products_branch_id]
     }
-    if new_product_qty.present?
-      ProductsQuantity.insert(new_product_qty.merge(products_branch_id: params[:products_branch_id]))
+    new_product_qty_out = {
+      qty: 0,
+      qty_type: 1,
+      products_branch_id: params[:products_branch_id]
+    }
+    create_qty << new_product_qty_in
+    create_qty << new_product_qty_out
+    if create_qty.present?
+      ProductsQuantity.insert_all(create_qty)
     end
   end
 
@@ -44,9 +53,9 @@ class ProductsBranch < ApplicationRecord
       @products_branch = ProductsBranch.create(selling_price: params[:selling_price], purchase_price: params[:purchase_price],
                                               branch_id: params[:branch_id], supplier_id: params[:supplier_id], product_id: params[:product_id])
     else
-      @qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id)
-      sum = @qty.qty + params[:qty].to_i
-      @product_qty = @qty.update(qty: sum)
+      @qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id, qty_type: 0)
+      sum = @qty.qty + params[:new_qty].to_i
+      @qty.update_attribute(:qty, sum)
     end
   end
 
@@ -55,7 +64,7 @@ class ProductsBranch < ApplicationRecord
     @products_branch.update(selling_price: params[:selling_price],
                            branch_id: params[:branch_id])
     @product = Product.find_by(id: @products_branch.product_id)
-    @product_qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id)
+    @product_qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id, qty_type: 0)
     @product.update(name: params[:name], category_id: params[:category_id])
     @product_qty.update(qty: params[:qty])
     @products_branch.product_attribute
