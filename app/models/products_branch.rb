@@ -53,24 +53,30 @@ class ProductsBranch < ApplicationRecord
     @products_branch.product_attribute
   end
 
-  def self.get_product_branch params = {}
-    all_product = []
-    @branch = Branch.find_by(id: params[:branch_id])
-    @product_branch = ProductsBranch.where(branch_id: @branch.id)
-    @product_branch.each do |product|
-      all_product << {
-        "id": product.id,
-        "name": product.product.name || nil,
-        "qty": product.products_quantities.where(:products_quantities => { :qty_type => 0}).sum(:qty) || nil,
-        "quantity_type": product.product.quantity_type || nil,
-        "category": product.product.category.id || nil,
-        "selling_price": product.selling_price,
-        "image": product.product.image_url || nil,
-        "branch_id": product.branch_id
-      }
+  def self.get_products_branch params = {}
+    products_branch = ProductsBranch.where(branch_id: params[:branch_id])
+    products_branch.map do |product|
+      product.new_product_attribute
     end
+  end
 
-    all_product
+  def new_product_attribute 
+    sum_inbound = self.products_quantities.where(products_quantities: { :qty_type => 0 }).sum(:qty)
+    sum_outbound = self.products_quantities.where(products_quantities: { :qty_type => 1 }).sum(:qty)
+    sum_quantities = sum_inbound - sum_outbound
+    all_products = []
+    all_products << {
+        "id": self.id,
+        "name": self.product.name,
+        "qty": sum_quantities,
+        "quantity_type": self.product.quantity_type,
+        "category": self.product.category.id,
+        "selling_price": self.selling_price,
+        "image": self.product.image_url,
+        "branch_id": self.branch_id
+    }
+
+    all_products
   end
 
   def self.create_product_branch params = {}

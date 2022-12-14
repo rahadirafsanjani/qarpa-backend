@@ -24,14 +24,14 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def show_product_by_id
-    @product_shared = ProductsBranch.get_by_id(id: params[:id])
-    response_to_json("success", @product_shared, :ok)
+    @product_shareds = ProductsBranch.find_by(id: params[:id])
+    @product_shareds.present? ? response_to_json("Product found", @product_shareds.new_product_attribute, :ok) : 
+                              response_error("Product not found", :not_found)
   end
 
   def get_product_branch
-    @products = ProductsBranch.get_product_branch(branch_id: params[:id])
-    @products ? response_to_json("List product", @products, :ok) :
-      response_error("something went wrong", :unprocessable_entity)
+    @products = ProductsBranch.get_products_branch(branch_id: params[:id])
+    response_to_json("List products", @products, :ok)
   end
 
   def update_product
