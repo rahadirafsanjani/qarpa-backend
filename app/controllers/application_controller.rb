@@ -8,7 +8,7 @@ class ApplicationController < ActionController::API
   def decode_token(token_params = "", secret)
     if token_params 
       token = token_params.split(' ')[1]
-      return nil if Session.find_by(token: token).nil?
+      # return nil if Session.find_by(token: token).nil?
       begin
         JWT.decode(token, secret)
       rescue JWT::DecodeError
