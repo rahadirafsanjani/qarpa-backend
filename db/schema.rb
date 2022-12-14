@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_14_034952) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_14_162017) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -201,9 +201,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_14_034952) do
   create_table "products_quantities", force: :cascade do |t|
     t.integer "qty"
     t.integer "qty_type"
-    t.bigint "products_branch_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "products_branch_id"
     t.index ["products_branch_id"], name: "index_products_quantities_on_products_branch_id"
   end
 
@@ -257,7 +257,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_14_034952) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "products_quantities", "products_branches"
   add_foreign_key "shippings", "addresses", column: "destination_id"
   add_foreign_key "shippings", "addresses", column: "origin_id"
 end

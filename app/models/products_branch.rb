@@ -2,7 +2,7 @@ class ProductsBranch < ApplicationRecord
   attr_accessor :qty
   has_many :detail_orders
   has_many :orders, through: :detail_orders
-  has_many :products_quantities
+  has_many :products_quantities, dependent: :destroy
 
   belongs_to :branch
   belongs_to :product
@@ -64,8 +64,7 @@ class ProductsBranch < ApplicationRecord
     sum_inbound = self.products_quantities.where(products_quantities: { :qty_type => 0 }).sum(:qty)
     sum_outbound = self.products_quantities.where(products_quantities: { :qty_type => 1 }).sum(:qty)
     sum_quantities = sum_inbound - sum_outbound
-    all_products = []
-    all_products << {
+    {
         "id": self.id,
         "name": self.product.name,
         "qty": sum_quantities,
@@ -75,8 +74,6 @@ class ProductsBranch < ApplicationRecord
         "image": self.product.image_url,
         "branch_id": self.branch_id
     }
-
-    all_products
   end
 
   def self.create_product_branch params = {}
