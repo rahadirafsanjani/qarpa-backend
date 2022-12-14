@@ -2,7 +2,7 @@ class ProductsBranch < ApplicationRecord
   attr_accessor :qty
   has_many :detail_orders
   has_many :orders, through: :detail_orders
-  has_many :products_quantities
+  has_many :products_quantities, :dependent => :destroy
 
   belongs_to :branch
   belongs_to :product
@@ -100,6 +100,16 @@ class ProductsBranch < ApplicationRecord
     @product.update(name: params[:name], category_id: params[:category_id])
     @product_qty.update(qty: params[:qty])
     @products_branch.product_attribute
+  end
+
+  def self.delete_product_branch params = {}
+    @delete_product = ProductsBranch.find_by(id: params[:id])
+    if @delete_product.delete
+      return @delete_product
+    else
+      return @delete_product.errors
+    end
+
   end
 
   def get_qty

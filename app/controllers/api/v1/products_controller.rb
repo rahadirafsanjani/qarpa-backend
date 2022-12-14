@@ -5,8 +5,11 @@ class Api::V1::ProductsController < ApplicationController
     @product = Product.find_by(name: params[:name])
     if @product.blank?
       @create = Product.new(set_product_from_supplier)
-      @create.save
-      response_to_json( "success", @create, :ok)
+      if @create.save
+        response_to_json( "success", @create, :ok)
+      else
+        response_error(@create.errors, :unprocessable_entity)
+      end
     elsif @product.present?
       @product = Product.find_by(name: params[:name], category_id: params[:category_id])
       @products_branch = ProductsBranch.create_product_branch(new_qty: params[:qty], supplier_id: params[:supplier_id],
@@ -47,9 +50,8 @@ class Api::V1::ProductsController < ApplicationController
 
   def delete_product
     if @user.role.downcase == "owner"
-      @product = ProductsBranch.find_by(id: params[:id])
-      @product.delete
-      response_to_json("success", @product, :ok)
+      @product = ProductsBranch.delete_product_branch(id: params[:id])
+      return @product
     end
   end
   
