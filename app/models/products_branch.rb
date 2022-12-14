@@ -29,10 +29,23 @@ class ProductsBranch < ApplicationRecord
   end
 
   def self.get_index
+    all_product = []
+
     @products_branch = ProductsBranch.all
     @products_branch.map do | product |
-      product.product_attribute
+      all_product << {
+          "id": product.id,
+          "name": product.product.name || nil,
+          "qty": product.products_quantities.first.qty || nil,
+          "quantity_type": product.product.quantity_type || nil,
+          "category": product.product.category.id || nil,
+          "selling_price": product.selling_price || nil,
+          "image": product.product.image_url || nil,
+          "branch_id": product.branch_id || nil,
+      }
     end
+
+    return all_product
   end
 
   def self.get_by_id params = {}
@@ -41,10 +54,23 @@ class ProductsBranch < ApplicationRecord
   end
 
   def self.get_product_branch params = {}
+    all_product = []
     @branch = Branch.find_by(id: params[:branch_id])
-    @branch.products_branches.map do |product_shared|
-      product_shared.product_attribute
+    @product_branch = ProductsBranch.where(branch_id: @branch.id)
+    @product_branch.each do |product|
+      all_product << {
+        "id": product.id,
+        "name": product.product.name || nil,
+        "qty": product.products_quantities.where(:products_quantities => { :qty_type => 0}).sum(:qty) || nil,
+        "quantity_type": product.product.quantity_type || nil,
+        "category": product.product.category.id || nil,
+        "selling_price": product.selling_price,
+        "image": product.product.image_url || nil,
+        "branch_id": product.branch_id
+      }
     end
+
+    all_product
   end
 
   def self.create_product_branch params = {}
