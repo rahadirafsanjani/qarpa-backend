@@ -14,6 +14,6 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def order_params 
-    params.require(:order).permit(:customer_id, :payment, :pos_id, :discount, items:[:product_shared_id, :qty])
+    params.require(:order).permit(:customer_id, :payment, :pos_id, :discount, items:[:products_branch_id, :qty])
   end
 end

@@ -34,13 +34,13 @@ class Finance < ApplicationRecord
       LEFT JOIN pos ON pos.branch_id = branches.id 
       LEFT JOIN orders ON orders.pos_id = pos.id
       LEFT JOIN detail_orders ON detail_orders.order_id = orders.id 
-      LEFT JOIN product_shareds ON product_shareds.id = detail_orders.product_shared_id 
+      LEFT JOIN products_branches ON products_branches.id = detail_orders.products_branch_id 
       "
     ).select(
       "
       branches.id,
       SUM(detail_orders.qty) AS total_products,
-      SUM(detail_orders.qty * product_shareds.selling_price) AS incomes,
+      SUM(detail_orders.qty * products_branches.selling_price) AS incomes,
       (SELECT COUNT(orders.id) FROM orders WHERE orders.pos_id = pos.id) AS total_transactions
       "
     ).group(
@@ -66,26 +66,37 @@ class Finance < ApplicationRecord
 
   def self.get_expenses params = {}
     conditions = {}
-    conditions.merge!(:branch_id => params[:branch_id]) if params[:branch_id].present?
-    conditions.merge!(:branches => {:company_id => params[:company_id]})
-    conditions.merge!(:assign_at => params[:date])
+    conditions.merge!(:company_id => params[:company_id])
+    conditions.merge!(:products_quantities => { :created_at => params[:date], :qty_type => 0 })
+    conditions.merge!(:id => params[:branch_id]) if params[:branch_id].present?
 
-    expenses = Shipping.joins(
+    expenses = Branch.joins(
       "
-      LEFT JOIN branches ON branches.id = shippings.branch_id
-      LEFT JOIN item_shippings ON item_shippings.shipping_id = shippings.id
-      LEFT JOIN product_shareds ON product_shareds.id = item_shippings.product_shared_id
+      LEFT JOIN products_branches ON products_branches.branch_id = branches.id
+      LEFT JOIN products_quantities ON products_quantities.products_branch_id = products_branches.id
       "
     ).select(
       "
-      branches.id,
-      SUM(item_shippings.qty * product_shareds.purchase_price) AS total
-      "
-    ).group(
-      "
-      branches.id
+      SUM(products_branches.purchase_price * products_quantities.qty) AS total 
       "
     ).where(conditions)
+
+    # expenses = Shipping.joins(
+    #   "
+    #   LEFT JOIN branches ON branches.id = shippings.branch_id
+    #   LEFT JOIN item_shippings ON item_shippings.shipping_id = shippings.id
+    #   LEFT JOIN product_shareds ON product_shareds.id = item_shippings.product_shared_id
+    #   "
+    # ).select(
+    #   "
+    #   branches.id,
+    #   SUM(item_shippings.qty * product_shareds.purchase_price) AS total
+    #   "
+    # ).group(
+    #   "
+    #   branches.id
+    #   "
+    # ).where(conditions)
     
     data = {}
     data[:expenses] = 0

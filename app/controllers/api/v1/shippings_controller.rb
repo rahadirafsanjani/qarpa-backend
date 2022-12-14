@@ -3,7 +3,7 @@ class Api::V1::ShippingsController < ApplicationController
   before_action :current_company
 
   def create
-    @shipping = Shipping.new(shipping_params.merge(assign_at: Time.now).merge(status: 1))
+    @shipping = Shipping.new(shipping_params.merge(assign_at: Time.now))
     @shipping.save ? response_to_json("succes", @shipping, :ok) : response_error(@shipping.errors, :unprocessable_entity)
   end
 
@@ -12,14 +12,19 @@ class Api::V1::ShippingsController < ApplicationController
     response_to_json("success", @shipping, :ok)
   end
 
-  def history
-    @history = Shipping.shipping_history
+  def history_all
+    @history = Shipping.shipping_history(company_id: @user.company_id)
+    response_to_json("Success", @history, :ok)
+  end
+
+  def history_branch
+    @history = Shipping.shipping_history(branch_id: @user.branch_id)
     response_to_json("Success", @history, :ok)
   end
 
   private
   def shipping_params
-    params.permit(:destination_id, :origin_id, items:[:product_shared_id, :qty])
+    params.permit(:destination_id, :origin_id, items:[:products_branch_id, :qty])
   end
 
   def current_company

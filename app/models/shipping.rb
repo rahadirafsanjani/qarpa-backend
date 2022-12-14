@@ -1,100 +1,136 @@
 class Shipping < ApplicationRecord
-  attr_accessor :items
-
-  after_create_commit :reduce_stock, :save_shipping_item
-  before_create :get_products_form, :validate_stock_products, :validate_product_destination
+  attr_accessor :items, :branch_id
 
   has_many :item_shippings
   belongs_to :origin, class_name: "Address", foreign_key: "origin_id"
   belongs_to :destination, class_name: "Address", foreign_key: "destination_id"
   belongs_to :branch, optional: true
 
-  enum status: { prepared: 0, delivered: 1 }
+  after_create_commit :reduce_stock, :save_shipping_item
+  before_create :get_products_form, :get_products_to, :validate_stock_products, :validate_product_destination
 
   def validate_stock_products
     valid = 0
     self.items.each do |item|
-      @product_from.each do |product|
-        if product.id == item[:product_shared_id] && product.qty < item[:qty]
-          errors.add(:qty, "#{product.name} not enough stock")
-          valid += 1
+      @product_to.each do |product|
+          if product.products_branch_id == item[:products_branch_id] && product.qty < item[:qty]
+            errors.add(:qty, "#{product.products_branch.product.name} not enough stock")
+            valid += 1
         end
       end
     end
-
     raise ActiveRecord::Rollback unless valid.zero?
   end
 
   def reduce_stock
     self.items.each do |item|
-      @product_from.each do |product|
-        if product.id == item[:product_shared_id]
-          product[:qty] -= item[:qty]
-          product.save!(validate: false)
+      @product_to.each do | qty |
+        if qty.products_branch_id == item[:products_branch_id]
+          qty[:qty] += item[:qty]
+          qty.save!(validate: false)
         end
       end
     end
   end
 
   def validate_product_destination
-    self.items.map do | item |
-    @product_from.each do | product |
-      @product_shared_to = ProductShared.find_by(product_id: product.product_id, branch_id: self.destination_id)
-        if @product_shared_to.blank?
+    self.items.each do |item|
+      @product_to.each do | qty |
+        product = ProductsBranch.find_by(id: item[:products_branch_id])
+        destination_product = ProductsBranch.find_by(product_id: product.product_id, branch_id: self.destination_id)
+        if destination_product.blank?
           new_product = {
-            qty: item[:qty],
             product_id: product.product_id,
             branch_id: self.destination_id,
             selling_price: product.selling_price,
             supplier_id: product.supplier_id,
-            expire: product.expire,
             purchase_price: product.purchase_price
           }
-          ProductShared.insert(new_product)
-          else
-          @product_shared_to.qty += item[:qty]
-          @product_shared_to.save!(validate: false)
+          @pb = ProductsBranch.create(new_product)
+          sum = qty.qty + item[:qty]
+          ProductsBranch.qty_create(products_branch_id: @pb.id, qty: item[:qty])
+          qty.update_attribute(:qty, sum)
+        else
+          if product.id == item[:products_branch_id]
+            @qty = ProductsQuantity.find_by(products_branch_id: destination_product.id)
+            sum = @qty.qty + item[:qty]
+            @qty.update_attribute(:qty, sum)
+          end
         end
       end
     end
   end
 
-  def self.shipping_history
-    @report = []
-    @report_product = ProductReport.all
-    @report_shipping = Shipping.all
-    @report_shipping.map do | shipping |
-      branch_name = Branch.find_by(id: shipping.destination_id)
-      attribute_shipping = {
-        "id": shipping.id,
-        "branch_name": branch_name.name,
-        "date": shipping.created_at.to_date,
-        "type": "barang terkirim"
+  def self.shipping_history params = {}
+    conditions = {}
+    conditions.merge!(company_id: params[:company_id]) if params[:company_id].present?
+    conditions.merge!(id: params[:branch_id]) if params[:branch_id].present?
+
+    reports = []
+    reports_shippings = Shipping.joins(
+      "
+      LEFT JOIN branches ON branches.id = shippings.destination_id 
+      "
+    ).select(
+      "
+      shippings.id,
+      branches.name,
+      shippings.created_at
+      "
+    ).where(branches: conditions)
+
+    reports_suppliers = Branch.joins(
+      "
+      LEFT JOIN products_branches ON products_branches.branch_id = branches.id
+      LEFT JOIN suppliers ON suppliers.id = products_branches.supplier_id
+      LEFT JOIN products_quantities ON products_quantities.products_branch_id = products_branches.id
+      "
+    ).select(
+      "
+      products_branches.id,
+      suppliers.name,
+      products_quantities.created_at
+      "
+    ).where(conditions.merge!(products_quantities: { qty_type: 0 }))
+
+    shipping_attribute = {}
+
+    reports_suppliers.each do |report|
+      reports << {
+        "id": report.id,
+        "supplier_name": report.name,
+        "date": report.created_at.to_date,
+        "type": "supplier"
       }
-      @report << attribute_shipping
     end
-    @report_product.map do | product |
-      supplier_name = Supplier.find_by(id: product.supplier_id)
-        if supplier_name.present?
-          attribute_product = {
-            "id": product.id,
-            "supplier_name": supplier_name.name,
-            "date": product.created_at.to_date,
-            "type": "barang diterima"
-          }
-          @report << attribute_product
-        end
-      end
-    return @report
-  end
-  
-  def get_products_form
-    @product_from = ProductShared.where(id: get_product_shared_id)
+
+    reports_shippings.each do |report|
+      reports << {
+        "id": report.id,
+        "branch_name": report.name,
+        "date": report.created_at.to_date,
+        "type": "shipping"
+      }
+    end
+
+    reports
   end
 
-  def get_product_shared_id
+  def get_products_form
+    @product_from = ProductsQuantity.where(products_branch_id: get_products_branch_id, qty_type: 0)
+  end
+
+  def get_products_to
+    @product_to = ProductsQuantity.where(products_branch_id: get_products_branch_id, qty_type: 0)
+  end
+
+  def add_out_bound_qty
+    @product_to = ProductsQuantity.where(products_branch_id: get_products_branch_id, qty_type: 1)
+  end
+
+  def get_products_branch_id
     return self.items.map do |item|
-      item[:product_shared_id]
+      item[:products_branch_id]
     end
   end
 

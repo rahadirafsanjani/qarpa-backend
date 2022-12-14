@@ -28,7 +28,7 @@ Rails.application.routes.draw do
         get 'get_all', to: "users#index"
         get 'show/:id', to: 'users#show'
         post 'create', to: 'users#create'
-        put 'update/:id', to: 'users#update'
+        put 'update', to: 'users#update_avatar'
         delete 'delete/:id', to: 'users#destroy'
       end
 
@@ -109,7 +109,8 @@ Rails.application.routes.draw do
       scope 'shipping' do
         post 'branch', to: 'shippings#create'
         get 'item', to: 'shippings#show'
-        get 'history', to: 'shippings#history'
+        get 'history', to: 'shippings#history_all'
+        get 'history_branch', to: 'shippings#history_branch'
       end
 
       # category 

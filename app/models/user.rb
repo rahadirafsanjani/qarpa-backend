@@ -13,7 +13,7 @@ class User < ApplicationRecord
 
   validates :email, uniqueness: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP } 
-  validates :password, length: { minimum: 6 }
+  validates :password, length: { minimum: 8 }
   validates :name, :email, :password, presence: true
 
   def is_owner?
@@ -63,7 +63,8 @@ class User < ApplicationRecord
       "email": self.email,
       "role": self.role,
       "company_id": self.company_id,
-      "branch_id": self.branch_id
+      "branch_id": self.branch_id,
+      "company_name": self.company.name
     }
   end
 
