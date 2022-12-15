@@ -16,13 +16,9 @@ class ProductsBranch < ApplicationRecord
       qty_type: 0,
       products_branch_id: params[:products_branch_id]
     }
-    new_product_qty_out = {
-      qty: 0,
-      qty_type: 1,
-      products_branch_id: params[:products_branch_id]
-    }
+
     create_qty << new_product_qty_in
-    create_qty << new_product_qty_out
+
     if create_qty.present?
       ProductsQuantity.insert_all(create_qty)
     end
