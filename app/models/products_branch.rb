@@ -29,23 +29,23 @@ class ProductsBranch < ApplicationRecord
   end
 
   def self.get_index
-    all_product = []
-
-    @products_branch = ProductsBranch.all
-    @products_branch.map do | product |
-      all_product << {
-          "id": product.id,
-          "name": product.product.name || nil,
-          "qty": product.products_quantities.first.qty || nil,
-          "quantity_type": product.product.quantity_type || nil,
-          "category": product.product.category.id || nil,
-          "selling_price": product.selling_price || nil,
-          "image": product.product.image_url || nil,
-          "branch_id": product.branch_id || nil,
-      }
-    end
-
-    return all_product
+    # all_product = []
+    #
+    # @products_branch = ProductsBranch.all
+    # @products_branch.map do | product |
+    #   all_product << {
+    #       "id": product.id,
+    #       "name": product.product.name || nil,
+    #       "qty": product.products_quantities.first.qty || nil,
+    #       "quantity_type": product.product.quantity_type || nil,
+    #       "category": product.product.category.id || nil,
+    #       "selling_price": product.selling_price || nil,
+    #       "image": product.product.image_url || nil,
+    #       "branch_id": product.branch_id || nil,
+    #   }
+    # end
+    #
+    return "under maintain"
   end
 
   def self.get_by_id params = {}
@@ -97,6 +97,16 @@ class ProductsBranch < ApplicationRecord
     @product.update(name: params[:name], category_id: params[:category_id])
     @product_qty.update(qty: params[:qty])
     @products_branch.product_attribute
+  end
+
+  def self.delete_product_branch params = {}
+    @delete_product = ProductsBranch.find_by(id: params[:id])
+    if @delete_product.delete
+      return @delete_product
+    else
+      return @delete_product.errors
+    end
+
   end
 
   def get_qty
