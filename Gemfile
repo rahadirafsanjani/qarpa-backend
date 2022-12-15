@@ -60,3 +60,4 @@ end
 
 gem 'image_processing', '~> 1.12', '>= 1.12.2'
 gem 'mini_magick', '~> 4.11'
+gem 'file_validators'

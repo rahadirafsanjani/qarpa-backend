@@ -7,6 +7,8 @@ class User < ApplicationRecord
   belongs_to :company
   belongs_to :branch, optional: true
   has_one_attached :avatar
+  # validates :avatar, file_size: { less_than_or_equal_to: 1.megabyte },
+  #           file_content_type: { allow: ['avatar/jpeg', 'avatar/png'] }
 
   require "securerandom"
   has_secure_password

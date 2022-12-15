@@ -52,7 +52,7 @@ class Shipping < ApplicationRecord
       else
         # if there was product qty add it
         if product.id == item[:products_branch_id]
-          @qty = ProductsQuantity.find_by(products_branch_id: destination_product.id)
+          @qty = ProductsQuantity.find_by(products_branch_id: destination_product.id, qty_type: "inbound")
           sum = @qty.qty + item[:qty]
           @qty.update_attribute(:qty, sum)
         end
