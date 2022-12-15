@@ -42,7 +42,8 @@ class Product < ApplicationRecord
     @branch = Branch.find_by(id: self.branch_id)
     new_product = {
       product_id: self.id,
-      purchase_price: self.purchase_price,
+      # little bit stupid but its hafiz says
+      purchase_price: self.selling_price || nil,
       selling_price: self.selling_price,
       supplier_id: self.supplier_id || nil
     }
@@ -75,7 +76,8 @@ class Product < ApplicationRecord
       "category": self.category,
       "expire": self.expire,
       "selling_price": self.selling_price,
-      "purchase_price": self.purchase_price,
+      # little bit stupid but its hafiz says
+      "purchase_price": self.selling_price || nil,
       "image": self.image_url
     }
   end
@@ -90,12 +92,14 @@ class Product < ApplicationRecord
 
   private
   def acceptable_image
-    unless image.byte_size <= 1.megabyte
-      errors.add(:image, "is too big")
-    end
-    acceptable_types = ["image/jpeg", "image/png"]
-    unless acceptable_types.include?(image.content_type)
-      errors.add(:image, "must be a JPEG or PNG")
+    if image.attached?
+      unless image.byte_size <= 1.megabyte
+        errors.add(:image, "is too big")
+      end
+      acceptable_types = ["image/jpeg", "image/png"]
+      unless acceptable_types.include?(image.content_type)
+        errors.add(:image, "must be a JPEG or PNG")
+      end
     end
   end
 

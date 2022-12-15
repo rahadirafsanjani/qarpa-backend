@@ -45,14 +45,15 @@ class Shipping < ApplicationRecord
           branch_id: self.destination_id,
           selling_price: product.selling_price,
           supplier_id: product.supplier_id,
-          purchase_price: product.purchase_price
+          # little bit stupid but its hafiz says
+          purchase_price: product.selling_price
         }
         @pb = ProductsBranch.create(new_product)
         ProductsBranch.qty_create(products_branch_id: @pb.id, qty: item[:qty])
       else
         # if there was product qty add it
         if product.id == item[:products_branch_id]
-          @qty = ProductsQuantity.find_by(products_branch_id: destination_product.id)
+          @qty = ProductsQuantity.find_by(products_branch_id: destination_product.id, qty_type: "inbound")
           sum = @qty.qty + item[:qty]
           @qty.update_attribute(:qty, sum)
         end
