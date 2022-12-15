@@ -28,11 +28,6 @@ class Api::V1::Users::UsersController < ApplicationController
 
   def update_avatar
     @user.update_attribute(:avatar, params[:avatar]) ? response_to_json("User has been updated", @user.user_attribute, :ok) : response_error(@user.errors, :unprocessable_entity)
-    # if @user_updated = User.update_profile_avatar(user_id: @user.id, avatar: params[:avatar])
-    #   response_to_json("updated", @user_updated.user_attribute, :ok)
-    # else
-    #   response_error("err", :unprocessable_entity)
-    # end
   end
 
   def destroy 
