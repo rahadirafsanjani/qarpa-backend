@@ -15,7 +15,12 @@ class Audit < ApplicationRecord
       "
     ).select(
       "
+      orders.discount,
       SUM(detail_orders.qty * products_branches.selling_price) AS total_incomes
+      "
+    ).group(
+      "
+      orders.discount
       "
     ).where(
       company_id: params[:company_id],
@@ -46,7 +51,7 @@ class Audit < ApplicationRecord
     data[:expenses] = 0
 
     incomes.each do |income| 
-      data[:incomes] = data[:incomes] + (income.total_incomes || 0)
+      data[:incomes] = data[:incomes] + (income.total_incomes || 0) - (income.discount || 0)
     end
 
     expenses.each do |expense| 
@@ -112,6 +117,7 @@ class Audit < ApplicationRecord
       branches.name,
       pos.open_at,
       pos.close_at,
+      orders.discount,
       (SELECT users.name FROM users WHERE users.id = pos.user_id) AS user,
       SUM(detail_orders.qty) AS total_products,
       SUM(detail_orders.qty * products_branches.selling_price) AS total_incomes
@@ -120,6 +126,7 @@ class Audit < ApplicationRecord
       "
       branches.id,
       branches.name,
+      orders.discount,
       pos.open_at,
       pos.close_at,
       pos.user_id
@@ -134,7 +141,7 @@ class Audit < ApplicationRecord
         "open_at": time_formater(branch.open_at),
         "close_at": time_formater(branch.close_at),
         "total_sold_product": branch.total_products,
-        "total_transaction_incomes": branch.total_incomes
+        "total_transaction_incomes": (branch.total_incomes || 0) - (branch.discount || 0)
       }
     end
 

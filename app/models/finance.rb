@@ -39,6 +39,7 @@ class Finance < ApplicationRecord
     ).select(
       "
       branches.id,
+      orders.discount,
       SUM(detail_orders.qty) AS total_products,
       SUM(detail_orders.qty * products_branches.selling_price) AS incomes,
       (SELECT COUNT(orders.id) FROM orders WHERE orders.pos_id = pos.id) AS total_transactions
@@ -46,6 +47,7 @@ class Finance < ApplicationRecord
     ).group(
       "
       pos.id,
+      orders.discount,
       branches.id
       "
     ).where(conditions)
@@ -56,7 +58,7 @@ class Finance < ApplicationRecord
     data[:total_products] = 0
 
     reports.each do |report|
-      data[:incomes] += (report[:incomes] || 0)
+      data[:incomes] += (report[:incomes] || 0) - (report[:discount] || 0)
       data[:total_products] += (report[:total_products] || 0)
       data[:total_transactions] += (report[:total_transactions] || 0)
     end
