@@ -95,7 +95,9 @@ class ProductsBranch < ApplicationRecord
     @product = Product.find_by(id: @products_branch.product_id)
     @product_qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id, qty_type: 0)
     @product.update(name: params[:name], category_id: params[:category_id])
-    @product_qty.update(qty: params[:qty])
+    @product.image.attach(params[:image])
+    @product_qty.update(qty: params[:qty]) if @product_qty.present?
+    ProductsQuantity.create(qty: params[:qty], qty_type: 0, products_branch_id: @products_branch.id) unless @product_qty.present?
     @products_branch.product_attribute
   end
 
