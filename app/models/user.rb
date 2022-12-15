@@ -22,6 +22,12 @@ class User < ApplicationRecord
     return self.role == "owner"
   end
 
+  def self.update_profile_avatar params = {}
+    user_update = User.find_by(id: params[:user_id])
+    user_update.avatar.attach(params[:avatar])
+    return user_update
+  end
+
   def self.get_all params = {}
     users = User.where("users.company_id = ? AND users.id != ?", params[:company_id], params[:id])
     users.map do |user|
