@@ -27,7 +27,7 @@ class Api::V1::AttendancesController < ApplicationController
       @attendance.update(status: true)
       render json: @attendance
     else
-      render json: { message: "there was problem" }
+      render json: { message: "there was problem" }, status: :unprocessable_entity
     end
   end
 
@@ -36,7 +36,7 @@ class Api::V1::AttendancesController < ApplicationController
        @attendance.update(status: nil)
        render json: @attendance
     else
-      render json: { message: "there was problem" }
+      render json: { message: "there was problem" }, status: :unprocessable_entity
     end
   end
 
@@ -44,6 +44,7 @@ class Api::V1::AttendancesController < ApplicationController
 
   def pick_users
     @attendance = Attendance.find_by(user_id: @user.id, status: true)
+    response_error("Attendance not found", :not_found) unless @attendance.present?
   end
   
   def set_attendance
