@@ -16,7 +16,7 @@ class Api::V1::ProductsController < ApplicationController
       @products_branch = ProductsBranch.create_product_branch(new_qty: params[:qty], supplier_id: params[:supplier_id],
                                                              name: params[:name], branch_id: params[:branch_id], product_id: @product.id,
                                                              selling_price: params[:selling_price],
-                                                              # still bugs gaes uix angel
+                                                              # little bit stupid but its hafiz says
                                                               purchase_price: params[:selling_price])
       response_to_json("success", @products_branch, :ok)
     else

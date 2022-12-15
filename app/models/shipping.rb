@@ -45,7 +45,8 @@ class Shipping < ApplicationRecord
           branch_id: self.destination_id,
           selling_price: product.selling_price,
           supplier_id: product.supplier_id,
-          purchase_price: product.purchase_price
+          # little bit stupid but its hafiz says
+          purchase_price: product.selling_price
         }
         @pb = ProductsBranch.create(new_product)
         ProductsBranch.qty_create(products_branch_id: @pb.id, qty: item[:qty])

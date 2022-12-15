@@ -42,7 +42,8 @@ class Product < ApplicationRecord
     @branch = Branch.find_by(id: self.branch_id)
     new_product = {
       product_id: self.id,
-      purchase_price: self.purchase_price || nil,
+      # little bit stupid but its hafiz says
+      purchase_price: self.selling_price || nil,
       selling_price: self.selling_price,
       supplier_id: self.supplier_id || nil
     }
@@ -75,7 +76,8 @@ class Product < ApplicationRecord
       "category": self.category,
       "expire": self.expire,
       "selling_price": self.selling_price,
-      "purchase_price": self.purchase_price || nil,
+      # little bit stupid but its hafiz says
+      "purchase_price": self.selling_price || nil,
       "image": self.image_url
     }
   end
