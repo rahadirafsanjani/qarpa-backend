@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_many :attendances
   has_many :orders
-  has_many :management_works
+  has_many :management_works, dependent: :destroy
   has_many :leave_managements
   has_many :sessions
   belongs_to :company
