@@ -18,7 +18,7 @@ module QarpaBackend
     #
     # config.time_zone = "Central Time (US & Canada)"
     config.time_zone = "Jakarta"
-    config.active_record.default_timezone = :local
+    # config.active_record.default_timezone = :local
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Only loads a smaller set of middleware suitable for API only apps.
