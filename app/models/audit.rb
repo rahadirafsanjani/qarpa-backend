@@ -1,7 +1,7 @@
 class Audit < ApplicationRecord
 
   def self.expenses_incomes params = {}
-    date = Time.now 
+    date = Time.now
 
     @beginning_of_week = date.beginning_of_week
     @end_of_week = date.end_of_week
@@ -193,7 +193,7 @@ class Audit < ApplicationRecord
   end
 
   def self.time_formater time = ""
-    time.to_fs(:time) if time.present?
+    time.in_time_zone("Jakarta").to_fs(:time) if time.present?
   end
 
   def self.date_formater date 

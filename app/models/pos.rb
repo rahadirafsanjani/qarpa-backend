@@ -7,13 +7,13 @@ class Pos < ApplicationRecord
   validates :fund, numericality: { only_integer: true }
 
   def open_pos
-    self.open_at = Time.now.utc
+    self.open_at = Time.zone.now
     branch = search_branch  
     branch.open_branch
   end
 
   def close_pos
-    self.close_at = Time.now.utc
+    self.close_at = Time.zone.now
     save!(validate: false) 
     branch = search_branch
     branch.close_branch
