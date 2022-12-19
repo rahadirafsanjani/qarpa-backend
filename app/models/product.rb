@@ -38,7 +38,7 @@ class Product < ApplicationRecord
     ]
   end
 
-  def products_branches_create params = {}
+  def products_branches_create
     @branch = Branch.find_by(id: self.branch_id)
     new_product = {
       product_id: self.id,
