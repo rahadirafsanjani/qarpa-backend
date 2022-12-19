@@ -193,7 +193,7 @@ class Audit < ApplicationRecord
   end
 
   def self.time_formater time = ""
-    time.strftime("%k:%M") if time.present?
+    time.to_fs(:time) if time.present?
   end
 
   def self.date_formater date 
