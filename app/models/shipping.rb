@@ -13,7 +13,7 @@ class Shipping < ApplicationRecord
     valid = 0
     self.items.each do |item|
       @product_from_inbound.each do |product|
-          if product.products_branch_id == item[:products_branch_id] && product.qty < item[:qty]
+        if product.products_branch_id == item[:products_branch_id] && @sum_in < item[:qty]
             errors.add(:qty, "#{product.products_branch.product.name} not enough stock")
             valid += 1
         end
@@ -24,11 +24,9 @@ class Shipping < ApplicationRecord
 
   def reduce_stock
     self.items.each do |item|
-      @product_from_outbound.each do | qty |
-        # add outbound branch from
-        if qty.products_branch_id == item[:products_branch_id]
-          qty[:qty] += item[:qty]
-          qty.save!(validate: false)
+      @product_from_inbound.each do | product |
+        if product.products_branch_id == item[:products_branch_id]
+          ProductsQuantity.create(qty: item[:qty], qty_type: 1, products_branch_id: item[:products_branch_id])
         end
       end
     end
@@ -53,10 +51,9 @@ class Shipping < ApplicationRecord
       else
         # if there was product qty add it
         if product.id == item[:products_branch_id]
-          @qty = ProductsQuantity.find_by(products_branch_id: destination_product.id, qty_type: "inbound")
-          sum = @qty.qty + item[:qty]
-          @qty.update_attribute(:qty, sum)
+          @qty = ProductsQuantity.create(products_branch_id: destination_product.id, qty_type: 0, qty: item[:qty])
         end
+
       end
     end
   end
@@ -95,7 +92,7 @@ class Shipping < ApplicationRecord
 
     shipping_attribute = {}
 
-    reports_suppliers.each do |report|
+    reports_suppliers.each do |report |
       reports << {
         "id": report.id,
         "supplier_name": report.name,
@@ -104,7 +101,7 @@ class Shipping < ApplicationRecord
       }
     end
 
-    reports_shippings.each do |report|
+    reports_shippings.each do |report |
       reports << {
         "id": report.id,
         "branch_name": report.name,
@@ -117,7 +114,11 @@ class Shipping < ApplicationRecord
   end
 
   def get_products_to
+    @sum_in = 0
     @product_from_inbound = ProductsQuantity.where(products_branch_id: get_products_branch_id, qty_type: 0)
+    @product_from_inbound.each do | qty |
+      @sum_in += qty[:qty]
+    end
     @product_from_outbound = ProductsQuantity.where(products_branch_id: get_products_branch_id, qty_type: 1)
   end
 
