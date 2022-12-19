@@ -2,8 +2,8 @@ class Shipping < ApplicationRecord
   attr_accessor :items, :branch_id
 
   has_many :item_shippings
-  belongs_to :origin, class_name: "Address", foreign_key: "origin_id"
-  belongs_to :destination, class_name: "Address", foreign_key: "destination_id"
+  belongs_to :origin, class_name: "Branch", foreign_key: "origin_id"
+  belongs_to :destination, class_name: "Branch", foreign_key: "destination_id"
   belongs_to :branch, optional: true
 
   after_create_commit :reduce_stock, :save_shipping_item

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_14_162017) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_19_062233) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -217,10 +217,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_14_162017) do
 
   create_table "shippings", force: :cascade do |t|
     t.datetime "assign_at"
-    t.bigint "destination_id", null: false
-    t.bigint "origin_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "origin_id"
+    t.bigint "destination_id"
     t.index ["destination_id"], name: "index_shippings_on_destination_id"
     t.index ["origin_id"], name: "index_shippings_on_origin_id"
   end
@@ -257,6 +257,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_14_162017) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "shippings", "addresses", column: "destination_id"
-  add_foreign_key "shippings", "addresses", column: "origin_id"
+  add_foreign_key "shippings", "branches", column: "destination_id"
+  add_foreign_key "shippings", "branches", column: "origin_id"
 end
