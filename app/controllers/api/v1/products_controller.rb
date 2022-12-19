@@ -6,21 +6,14 @@ class Api::V1::ProductsController < ApplicationController
     @product = Product.find_by(name: params[:name])
     if @product.blank?
       @create = Product.new(set_product_from_supplier)
-      if @create.save
-        response_to_json( "success", @create, :ok)
-      else
-        response_error(@create.errors, :unprocessable_entity)
-      end
+      @create.save ? response_to_json( "success", @create, :ok) : response_error(@create.errors, :unprocessable_entity)
     elsif @product.present?
       @product = Product.find_by(name: params[:name], category_id: params[:category_id])
-      @products_branch = ProductsBranch.create_product_branch(new_qty: params[:qty], supplier_id: params[:supplier_id],
-                                                             name: params[:name], branch_id: params[:branch_id], product_id: @product.id,
-                                                             selling_price: params[:selling_price],
-                                                              # little bit stupid but its hafiz says
-                                                              purchase_price: params[:selling_price])
-      response_to_json("success", @products_branch, :ok)
+      @products_branch = ProductsBranch.create_product_branch(qty: params[:qty], supplier_id: params[:supplier_id], name: params[:name], branch_id: params[:branch_id],
+                                                              product_id: @product.id, selling_price: params[:selling_price], purchase_price: params[:selling_price]) # little bit stupid but its hafiz says
+      @products_branch.present? ? response_to_json("success", @products_branch, :ok) : response_error("error", :unprocessable_entity)
     else
-      render json: "something went wrong"
+      response_error("something went wrong", :unprocessable_entity)
     end
   end
 
@@ -41,22 +34,16 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def update_product
-    @find_product = ProductsBranch.find_by(id: params[:id])
-    @product_shared = ProductsBranch.update_product(name: params[:name],
-                                   qty: params[:qty],
-                                   category_id: params[:category_id],
-                                   selling_price: params[:selling_price],
-                                   image: params[:image],
-                                   branch_id: params[:branch_id], products_branch_id: @find_product.id)
+    @product_shared = ProductsBranch.update_product(name: params[:name], qty: params[:qty], category_id: params[:category_id], selling_price: params[:selling_price],
+                                                    image: params[:image], branch_id: params[:branch_id], products_branch_id: params[:id])
     response_to_json("success", @product_shared, :ok)
   end
 
   def delete_product
     @product = ProductsBranch.find_by(id: params[:id])
-    @product.present? ? response_to_json("Product has been deleted", @product.destroy, :ok) :
-                        response_error("Product not found", :not_found)
+    @product.present? ? response_to_json("Product has been deleted", @product.destroy, :ok) : response_error("Product not found", :not_found)
   end
-  
+
   def unit_dropdown
     @units = Product.units
     response_to_json("Dropdown units", @units, :ok)

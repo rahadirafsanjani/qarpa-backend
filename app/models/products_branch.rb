@@ -16,11 +16,9 @@ class ProductsBranch < ApplicationRecord
       qty_type: 0,
       products_branch_id: params[:products_branch_id]
     }
-
     create_qty << new_product_qty_in
-
     if create_qty.present?
-      ProductsQuantity.insert_all(create_qty)
+      ProductsQuantity.create(create_qty)
     end
   end
 
@@ -75,36 +73,34 @@ class ProductsBranch < ApplicationRecord
   def self.create_product_branch params = {}
     @products_branch = ProductsBranch.find_by(supplier_id: params[:supplier_id], branch_id: params[:branch_id], product_id: params[:product_id])
     if @products_branch.blank?
-      @products_branch = ProductsBranch.create(selling_price: params[:selling_price], purchase_price: params[:purchase_price],
-                                              branch_id: params[:branch_id], supplier_id: params[:supplier_id], product_id: params[:product_id])
+      @products_branch = ProductsBranch.create(selling_price: params[:selling_price], purchase_price: params[:purchase_price], branch_id: params[:branch_id], supplier_id: params[:supplier_id], product_id: params[:product_id])
     else
-      @qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id, qty_type: 0)
-      sum = @qty.qty + params[:new_qty].to_i
-      @qty.update_attribute(:qty, sum)
+      @qty = ProductsQuantity.create(qty: params[:qty], qty_type: 0, products_branch_id: @products_branch.id)
     end
   end
 
   def self.update_product params = {}
+    old_qty = 0
+    new_qty = params[:qty].to_i
     @products_branch = ProductsBranch.find_by(id: params[:products_branch_id])
-    @products_branch.update(selling_price: params[:selling_price],
-                           branch_id: params[:branch_id])
     @product = Product.find_by(id: @products_branch.product_id)
-    @product_qty = ProductsQuantity.find_by(products_branch_id: @products_branch.id, qty_type: 0)
-    @product.update(name: params[:name], category_id: params[:category_id])
-    @product.image.attach(params[:image])
-    @product_qty.update(qty: params[:qty]) if @product_qty.present?
-    ProductsQuantity.create(qty: params[:qty], qty_type: 0, products_branch_id: @products_branch.id) unless @product_qty.present?
-    @products_branch.product_attribute
+    @product_qty = ProductsQuantity.where(products_branch_id: @products_branch.id, qty_type: 0)
+    @product_qty.map do | qty |
+      old_qty += qty.qty
+    end
+    sum = new_qty*2 - old_qty
+    if @products_branch.present? && @product.present?
+      @products_branch.update(selling_price: params[:selling_price], branch_id: params[:branch_id])
+      @product.update(name: params[:name], category_id: params[:category_id])
+      ProductsQuantity.create(qty: sum, qty_type: 0, products_branch_id: @products_branch.id)
+      @product.image.attach(params[:image]) if params[:image].present?
+      @products_branch.product_attribute
+    end
   end
 
   def self.delete_product_branch params = {}
     @delete_product = ProductsBranch.find_by(id: params[:id])
-    if @delete_product.delete
-      return @delete_product
-    else
-      return @delete_product.errors
-    end
-
+    return @delete_product ? @delete_product.delete : @delete_product.errors
   end
 
   def get_qty
