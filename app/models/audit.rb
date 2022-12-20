@@ -83,16 +83,19 @@ class Audit < ApplicationRecord
     )
 
     total_incomes = 0
+    total_expenses = 0
     
     incomes.each do |income|
       total_incomes = total_incomes + (income[:total_transaction_incomes] || 0)
+      total_expenses = total_expenses + (income[:discount] || 0)
     end
 
     data = {}
     data.merge!(branch: incomes)
+    data.merge!(total_discount: total_expenses)
     data.merge!(total_incomes: total_incomes)
     data.merge!(total_shipment_branch: shippings)
-    data.merge!(total_profit: total_incomes - expenses[:total_expenses])
+    data.merge!(total_profit: total_incomes - total_expenses)
     data.merge!(expenses)
   end
 
@@ -117,7 +120,7 @@ class Audit < ApplicationRecord
       branches.name,
       pos.open_at,
       pos.close_at,
-      orders.discount,
+      SUM(orders.discount) AS discount,
       (SELECT users.name FROM users WHERE users.id = pos.user_id) AS user,
       SUM(detail_orders.qty) AS total_products,
       SUM(detail_orders.qty * products_branches.selling_price) AS total_incomes
@@ -126,7 +129,6 @@ class Audit < ApplicationRecord
       "
       branches.id,
       branches.name,
-      orders.discount,
       pos.open_at,
       pos.close_at,
       pos.user_id
@@ -140,8 +142,9 @@ class Audit < ApplicationRecord
         "user": branch.user,
         "open_at": time_formater(branch.open_at),
         "close_at": time_formater(branch.close_at),
+        "discount": branch.discount,
         "total_sold_product": branch.total_products,
-        "total_transaction_incomes": (branch.total_incomes || 0) - (branch.discount || 0)
+        "total_transaction_incomes": branch.total_incomes
       }
     end
 
