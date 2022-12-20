@@ -41,7 +41,6 @@ class Api::V1::ProductsController < ApplicationController
   def delete_product
       @product = ProductsBranch.find_by(id: params[:id])
       @product.present? ? response_to_json("Product has been deleted", @product.destroy, :ok) : response_error("Product not found", :not_found)
-      response_error("Youre not owner", :unprocessable_entity)
   end
 
   def unit_dropdown
