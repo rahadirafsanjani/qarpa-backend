@@ -1,6 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
   before_action :authorize
-  before_action :user_permission, only: %i[ delete_product ]
 
   def new_product
     @product = Product.find_by(name: params[:name])
@@ -40,8 +39,9 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def delete_product
-    @product = ProductsBranch.find_by(id: params[:id])
-    @product.present? ? response_to_json("Product has been deleted", @product.destroy, :ok) : response_error("Product not found", :not_found)
+      @product = ProductsBranch.find_by(id: params[:id])
+      @product.present? ? response_to_json("Product has been deleted", @product.destroy, :ok) : response_error("Product not found", :not_found)
+      response_error("Youre not owner", :unprocessable_entity)
   end
 
   def unit_dropdown
@@ -55,7 +55,6 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   private
-  
   def set_product_from_supplier
     params.permit(:name, :image, :quantity_type, :qty, :selling_price, :purchase_price, :category_id, :supplier_id, :branch_id)
   end

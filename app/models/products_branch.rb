@@ -88,7 +88,12 @@ class ProductsBranch < ApplicationRecord
     @product_qty.map do | qty |
       old_qty += qty.qty
     end
-    sum = new_qty*2 - old_qty
+    if new_qty < old_qty
+      sum = old_qty - new_qty
+      sum = sum - sum*2
+    elsif new_qty > old_qty
+      sum = new_qty - old_qty
+    end
     if @products_branch.present? && @product.present?
       @products_branch.update(selling_price: params[:selling_price], branch_id: params[:branch_id])
       @product.update(name: params[:name], category_id: params[:category_id])
