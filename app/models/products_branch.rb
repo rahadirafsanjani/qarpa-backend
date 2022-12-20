@@ -86,7 +86,7 @@ class ProductsBranch < ApplicationRecord
     @product = Product.find_by(id: @products_branch.product_id)
     @product_qty = ProductsQuantity.where(products_branch_id: @products_branch.id, qty_type: 0)
     @product_qty.map do | qty |
-      old_qty += qty.qty
+      old_qty += (qty.qty || 0)
     end
     if new_qty < old_qty
       sum = old_qty - new_qty

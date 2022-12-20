@@ -117,7 +117,7 @@ class Shipping < ApplicationRecord
     @sum_in = 0
     @product_from_inbound = ProductsQuantity.where(products_branch_id: get_products_branch_id, qty_type: 0)
     @product_from_inbound.each do | qty |
-      @sum_in += qty[:qty]
+      @sum_in += (qty[:qty] || 0)
     end
     @product_from_outbound = ProductsQuantity.where(products_branch_id: get_products_branch_id, qty_type: 1)
   end
